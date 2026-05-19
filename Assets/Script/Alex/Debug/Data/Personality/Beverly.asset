@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2930f8752e6eb554fae26b7b7860a39b, type: 3}
+  m_Name: Beverly
+  m_EditorClassIdentifier: Assembly-CSharp::PersonalityParamSO
+  paramName: Beverly
+  icon: {fileID: 21300000, guid: 891364ece6ad0ae40975013cce3d26dc, type: 3}
+  minValue: 0
+  maxValue: 10
+  defaultValue: 0
+  paramColor: {r: 0.4542987, g: 0.7830189, b: 0.47317013, a: 1}
