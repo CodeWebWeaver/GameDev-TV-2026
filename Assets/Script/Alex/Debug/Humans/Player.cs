@@ -1,14 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : Human {
-    
 
     private InputSystem_Actions.PlayerActions player;
     private InputAction _interactAction;
     [SerializeField] PlayerDialogSystem dialogSystem;
+    [Header ("Personality Settings")]
+    public PlayerPersonality Personality { get; } = new();
+    [SerializeField] List<PersonalityParamSO> startingEmotions;
+    [SerializeField] PersonalitiesUIManager personalitiesUIManager;
 
     private void Start() {
+        personalitiesUIManager.Observe(Personality);
+        Personality.Initialize(startingEmotions);
+
         player = InputManager.Instance.InputActions.Player;
 
         _interactAction = player.Interact;
@@ -16,10 +25,9 @@ public class Player : Human {
     }
 
     private void OnDestroy() {
+        if (_interactAction != null)
         _interactAction.performed -= OnInteract;
     }
-
-    
 
     private void OnInteract(InputAction.CallbackContext ctx) {
         HandleInteraction();
@@ -36,3 +44,4 @@ public class Player : Human {
         DialogueManager.Instance.EnterDialogueMode(npc.BeginDialogue(), this, npc);
     }
 }
+

@@ -9,8 +9,6 @@ using Zenject;
 /// Drives an Ink story and routes input.
 /// All choice UI is delegated to <see cref="ChoiceSelector"/>.
 /// </summary>
-
-[RequireComponent(typeof(ChoiceSelector))]
 public class DialogueManager : Singleton<DialogueManager> {
     [Header("UI")]
     
@@ -33,7 +31,7 @@ public class DialogueManager : Singleton<DialogueManager> {
 
     protected override void Awake() {
         base.Awake();
-        choiceSelector ??= GetComponent<ChoiceSelector>();
+
         if (inkJsonAsset == null) {
             Debug.LogWarning("[DialogueManager] inkJsonAsset is null — aborting.");
             return;
@@ -49,6 +47,10 @@ public class DialogueManager : Singleton<DialogueManager> {
                 npc.AddFriend(player);
                 player.AddFriend(npc);
             }
+        });
+
+        _story.BindExternalFunction("changePersonality", (string name, int delta) => {
+            player?.Personality.ChangeParam(name, delta);
         });
     }
 
@@ -134,36 +136,25 @@ public class DialogueManager : Singleton<DialogueManager> {
         else if (x < -0.5f) choiceSelector.Navigate(-1);
     }
 
-    // ── Story loop ────────────────────────────────────────────────────────
     private void ContinueStory() {
         while (_story.canContinue) {
-            string line = _story.Continue().Trim();
-            string speakerName = "";
-            Sprite speakerPortrait = null;
+            string rawLine = _story.Continue();
 
+            bool hasText = !string.IsNullOrWhiteSpace(rawLine);
+            bool hasChoices = _story.currentChoices.Count > 0;
+            bool hasTags = _story.currentTags.Count > 0;
+
+            if (!hasText && !hasChoices && !hasTags) continue;
+
+            string line = rawLine.Trim();
             ProcessEventTags(_story.currentTags);
 
-            if (string.IsNullOrWhiteSpace(line)) continue;
-
-            foreach (var tag in _story.currentTags) {
-                int colon = tag.IndexOf(':');
-
-                string key = tag[..colon].Trim();
-                string value = tag[(colon + 1)..].Trim();
-
-                if (key.Equals("speaker")) {
-                    speakerName = value;
-
-                    if (speakers.TryGetValue(speakerName, out Human human)) {
-                        if (human.personDataSO)
-                        speakerPortrait = human.personDataSO.Portrait;
-                    }
-                }
-            }
+            string speakerName = GetSpeakerName(_story.currentTags);
+            Sprite speakerPortrait = GetSpeakerPortrait(speakerName);
 
             dialogWindow.ShowLine(line, speakerName, speakerPortrait);
 
-            if (_story.currentChoices.Count > 0)
+            if (hasChoices)
                 choiceSelector.Show(_story.currentChoices);
             else
                 _waitingForInput = true;
@@ -171,22 +162,74 @@ public class DialogueManager : Singleton<DialogueManager> {
             return;
         }
 
+        // ── Choise without text──────────────────────
+        if (_story.currentChoices.Count > 0) {
+            dialogWindow.ShowLine(string.Empty, string.Empty, null);
+            choiceSelector.Show(_story.currentChoices);
+            return;
+        }
+
         ExitDialogueMode();
     }
 
+    private string GetSpeakerName(List<string> tags) {
+        foreach (string tag in tags) {
+            if (!TryParseTag(tag, out string key, out string value))
+                continue;
+
+            if (key.Equals("speaker", StringComparison.OrdinalIgnoreCase))
+                return value;
+        }
+
+        return string.Empty;
+    }
+    private Sprite GetSpeakerPortrait(string speakerName) {
+        if (string.IsNullOrWhiteSpace(speakerName))
+            return null;
+
+        if (speakers.TryGetValue(speakerName, out Human human)) {
+            if (human != null && human.personDataSO != null)
+                return human.personDataSO.Portrait;
+        }
+
+        return null;
+    }
+
+
     private void ProcessEventTags(List<string> tags) {
         foreach (string tag in tags) {
-            int colon = tag.IndexOf(':');
-            if (colon < 0) continue;
+            if (!TryParseTag(tag, out string key, out string value))
+                continue;
 
-            string key = tag[..colon].Trim();
-            string value = tag[(colon + 1)..].Trim();
+            switch (key.ToLower()) {
+                case "anim":
+                    DialogueEvents.FireAnimationTag(value);
+                    break;
 
-            switch (key) {
-                case "anim": DialogueEvents.FireAnimationTag(value); break;
-                case "sfx": DialogueEvents.FireSfxTag(value); break;
+                case "sfx":
+                    DialogueEvents.FireSfxTag(value);
+                    break;
             }
         }
+    }
+
+
+    private bool TryParseTag(string tag, out string key, out string value) {
+        key = string.Empty;
+        value = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(tag))
+            return false;
+
+        int colon = tag.IndexOf(':');
+
+        if (colon <= 0 || colon >= tag.Length - 1)
+            return false;
+
+        key = tag[..colon].Trim();
+        value = tag[(colon + 1)..].Trim();
+
+        return true;
     }
 
     private void OnChoiceSelected(Choice choice) {
