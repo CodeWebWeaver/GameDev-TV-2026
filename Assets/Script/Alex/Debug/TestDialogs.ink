@@ -6,8 +6,8 @@ I'm just a ball frozen in infinity empty world created by the developer.
 + [Warm greeting]
     #speaker: {player_name}
     "Hey {npc_name}! Great to see you!"
-        ~ changeHappiness(npc_name, 2)
-        ~ changeHappiness(player_name, 1)
+        ~ npc_happiness += 1
+        ~ player_happiness += 1
         # anim: sphere:color_green
         Oh! {player_name}! What a pleasant surprise!
         -> check_help
@@ -15,7 +15,7 @@ I'm just a ball frozen in infinity empty world created by the developer.
 + [Neutral greeting] 
     #speaker: {player_name}
     "Hello {npc_name}."
-        ~ changeHappiness(npc_name, 1)
+        ~ npc_happiness += 1
         Oh... hello {player_name}.
         -> check_help
     
@@ -40,16 +40,14 @@ I'm just a ball frozen in infinity empty world created by the developer.
         #speaker: {npc_name}
         # anim: sphere:color_green
         Okay! Great!
-        ~ changeHappiness(npc_name, 1)
-        ~ changeHappiness(player_name, 1)
+        ~ npc_happiness += 1
         ~ addFriend(npc_name)
         -> END
         
     + {npc_happiness > 7} [Hug you] 
         # anim: sphere:color_green
         ~ addFriend(npc_name)
-        ~ changeHappiness(npc_name, 1)
-        ~ changeHappiness(player_name, 1)
+        ~ npc_happiness += 1
         #speaker: {npc_name}
         Aww, thanks!
         -> END
@@ -59,7 +57,7 @@ I'm just a ball frozen in infinity empty world created by the developer.
         # anim:sphere:color_fade
         #speaker: {npc_name}
         Sorry to bother
-        ~ changeHappiness(npc_name, -1)
+        ~ npc_happiness -= 1
         -> END
         
         
