@@ -27,8 +27,6 @@ public class FmodAudioService : IAudioService {
     public FmodAudioService(AudioStateConfig config) {
         InitDictionary();
         _config = config;
-        StartMusicPlaylist(MusicPlaylist.MainMenu);
-        SetVolume(AudioChannelType.Master, 0.5f);
     }
 
     private void InitDictionary() {
@@ -37,7 +35,7 @@ public class FmodAudioService : IAudioService {
         }
     }
 
-    #region IAudioService Implementation (??????E??Q??????)
+    #region IAudioService Implementation 
 
     public float GetVolume(AudioChannelType channel) {
         if (!buses.TryGetValue(channel, out var bus)) {
@@ -93,6 +91,14 @@ public class FmodAudioService : IAudioService {
     #region One-Shot Sounds
     public void PlaySound(string eventPath) {
         RuntimeManager.PlayOneShot(eventPath);
+    }
+
+    public void PlayOneShot(EventReference eventRef) {
+        if (eventRef.IsNull) {
+            Debug.LogWarning("FmodAudioService: Event reference is null!");
+            return;
+        }
+        RuntimeManager.PlayOneShot(eventRef);
     }
 
     public void PlayOneShot(EventReference eventRef, Vector3 position) {
