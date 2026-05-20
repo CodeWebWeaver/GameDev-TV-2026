@@ -2,7 +2,7 @@ INCLUDE TestDialogs.ink
 INCLUDE charlie-script.ink
 
 EXTERNAL addFriend(friend_name)
-EXTERNAL changePersonality(name, delta)
+EXTERNAL changePersonalityTrait(name, delta)
 
 EXTERNAL changeHappiness(name, delta)
 
