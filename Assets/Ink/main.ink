@@ -1,6 +1,8 @@
 //For reference:
 //When using in unity, you should be able to just call the "talk_to_name" knots - those will branch out to relevant knots based on the global flags.
 
+VAR dayCount = 0
+
 //player attributes
 VAR name="placeholder"
 VAR pragmatic = 0
