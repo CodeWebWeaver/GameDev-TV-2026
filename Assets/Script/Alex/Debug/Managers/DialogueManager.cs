@@ -98,9 +98,6 @@ public class DialogueManager : Singleton<DialogueManager> {
         _story.ChoosePathString(dialogueNodeSO.InkKnotName);
         // Inject values directly into Ink variables
         _story.variablesState["player_name"] = player.Name;
-        _story.variablesState["player_happiness"] = player.Happiness;
-        _story.variablesState["npc_name"] = npc.Name;
-        _story.variablesState["npc_happiness"] = npc.Happiness;
         _story.variablesState["player_friends_count"] = player.GetFriendCount();
 
         CacheSpeakerSprite(player);
@@ -160,7 +157,7 @@ public class DialogueManager : Singleton<DialogueManager> {
             string speakerName = GetSpeakerName(_story.currentTags);
             Sprite speakerPortrait = GetSpeakerPortrait(speakerName);
 
-            dialogWindow.ShowLine(line, speakerName, speakerPortrait);
+            ShowLine(line, speakerName, speakerPortrait);
 
             if (hasChoices)
                 choiceSelector.Show(_story.currentChoices);
@@ -172,12 +169,34 @@ public class DialogueManager : Singleton<DialogueManager> {
 
         // ── Choise without text──────────────────────
         if (_story.currentChoices.Count > 0) {
-            dialogWindow.ShowLine(string.Empty, string.Empty, null);
+            ShowLine(string.Empty, string.Empty, null);
             choiceSelector.Show(_story.currentChoices);
             return;
         }
 
         ExitDialogueMode();
+    }
+
+    private void ShowLine(string line, string speakerName = "???", Sprite speakerPortrait = null) {
+        dialogWindow.SetDialogueText(line);
+        bool isEmptyName = string.IsNullOrEmpty(speakerName);
+
+        if (isEmptyName) {
+            dialogWindow.HideSpeakerName();
+        } else {
+            dialogWindow.ShowSpeakerName();
+            dialogWindow.SetSpeakerName(speakerName);
+        }
+
+        
+
+        // Portrait
+        if (isEmptyName || speakerPortrait == null) {
+            dialogWindow.HidePortrait();
+        } else {
+            dialogWindow.SetPortrait(speakerPortrait);
+            dialogWindow.ShowPortrait();
+        }
     }
 
     private string GetSpeakerName(List<string> tags) {
@@ -249,7 +268,7 @@ public class DialogueManager : Singleton<DialogueManager> {
         IsDialoguePlaying = false;
 
         _waitingForInput = false;
-        dialogWindow.HideDialogPanel();
+        dialogWindow.HideDialoguePanel();
         choiceSelector.Hide();
         OnDialogueEnd?.Invoke();
     }

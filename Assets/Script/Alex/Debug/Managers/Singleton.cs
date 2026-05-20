@@ -6,7 +6,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : Singleton<T> {
     public static T Instance {
         get {
             if (_instance == null) {
-                _instance = FindObjectOfType<T>();
+                _instance = FindAnyObjectByType<T>();
 
                 if (_instance == null) {
                     GameObject obj = new GameObject(typeof(T).Name);
@@ -19,7 +19,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : Singleton<T> {
 
     protected virtual void Awake() {
         if (_instance != null && _instance != this) {
-            Debug.LogWarning($"Більше одного екземпляра {typeof(T)}! Видаляємо зайвий.");
+            Debug.LogWarning($"More than one {typeof(T)}! Destroying the extra instance.");
             Destroy(gameObject);
             return;
         }

@@ -1,5 +1,7 @@
 //For reference:
 //When using in unity, you should be able to just call the "talk_to_name" knots - those will branch out to relevant knots based on the global flags.
+VAR player_name = "Player"
+VAR player_friends_count = 0
 
 //player attributes
 VAR name="placeholder"
@@ -59,6 +61,7 @@ VAR lino = 0
 VAR coco = 0
 VAR annika = 0
 
+-> talk_to_someone
 
 === talk_to_someone ===
 + Charlie

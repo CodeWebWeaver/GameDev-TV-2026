@@ -1,20 +1,28 @@
+using FMODUnity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Pool;
+using Zenject;
 using static UnityEngine.Audio.GeneratorInstance;
 
-public class PersonalitiesUIManager : MonoBehaviour {
+public class PersonalitiesViewManager : MonoBehaviour {
     [SerializeField] private PersonalityParamUI personalityPrefab;
     [SerializeField] private Transform container;
     [SerializeField] private bool usePooling = true;
     [SerializeField] private int maxVisibleParams = 20;
 
+    
+
     private ObjectPool<PersonalityParamUI> _pool;
     private readonly Dictionary<string, PersonalityParamUI> _activeUI = new();
     private PlayerPersonality _personality;
+
+    [Header ("Audio")]
+    [InjectOptional] FmodAudioService _audioService;
+    [SerializeField] private EventReference aquiredEventReference;
 
     private void Awake() {
         if (usePooling) {
@@ -72,6 +80,8 @@ public class PersonalitiesUIManager : MonoBehaviour {
             // UI оновиться автоматично через підписку всередині ui.Setup()
             // Тому тут нічого не потрібно робити
         }
+
+        _audioService?.PlayOneShot(aquiredEventReference);
     }
 
     private void OnTakeFromPool(PersonalityParamUI ui) {

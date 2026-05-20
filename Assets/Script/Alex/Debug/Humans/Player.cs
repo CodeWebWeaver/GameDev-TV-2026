@@ -5,18 +5,18 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : Human {
-
+    private const string Personalities_Path = "PersonalityParams";
     private InputSystem_Actions.PlayerActions player;
     private InputAction _interactAction;
     [SerializeField] PlayerDialogSystem dialogSystem;
     [Header ("Personality Settings")]
     public PlayerPersonality Personality { get; } = new();
-    [SerializeField] List<PersonalityParamSO> startingEmotions;
-    [SerializeField] PersonalitiesUIManager personalitiesUIManager;
+    [SerializeField] PersonalitiesViewManager personalitiesUIManager;
 
     private void Start() {
         personalitiesUIManager.Observe(Personality);
-        Personality.Initialize(startingEmotions);
+        List<PersonalityParamSO> personalityParamSOs = Resources.LoadAll<PersonalityParamSO>(Personalities_Path).ToList();
+        Personality.Initialize(personalityParamSOs);
 
         player = InputManager.Instance.InputActions.Player;
 
