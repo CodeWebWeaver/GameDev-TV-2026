@@ -49,8 +49,34 @@ public class DialogueManager : Singleton<DialogueManager> {
             }
         });
 
-        _story.BindExternalFunction("changePersonality", (string name, int delta) => {
-            player?.Personality.ChangeParam(name, delta);
+        _story.BindExternalFunction("changePersonality", (string traitName, int delta) => {
+            PersonalityParam personalityParam = player?.Personality.GetParam(traitName);
+            if (personalityParam == null) return;
+
+            personalityParam.ChangeValue(delta);
+            _story.variablesState[traitName] = personalityParam.CurrentValue;
+        });
+
+        // Підписуємося на ВСІ зміни змінних в Ink
+        _story.variablesState.variableChangedEvent += (string varName, Ink.Runtime.Object newValue) => {
+
+            // Перевіряємо, чи є ця змінна числом (int)
+            if (newValue is Ink.Runtime.IntValue intVal) {
+                int actualValue = intVal.value;
+
+                // Шукаємо параметр у Unity за назвою змінної з Ink
+                PersonalityParam personalityParam = player?.Personality.GetParam(varName);
+
+                // Якщо такий параметр існує в Unity — оновлюємо його!
+                if (personalityParam != null) {
+                    personalityParam.SetValue(actualValue); // Зверніть увагу: міняємо на конкретне значення, а не дельту
+                    Debug.Log($"[Sync] {varName} автоматично синхронізовано з Unity. Нове значення: {actualValue}");
+                }
+            }
+        };
+
+        _story.ObserveVariable("ambitious", (string varName, object newValue) => {
+            Debug.Log($"[DialogueManager] Ink variable '{varName}' changed to {newValue}");
         });
     }
 

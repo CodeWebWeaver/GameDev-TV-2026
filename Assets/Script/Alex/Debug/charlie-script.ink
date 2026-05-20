@@ -7,6 +7,8 @@ VAR charlie = 0
 
 
 === charlie_day_one ===
+~ ambitious += 1
+Your ambitious is {ambitious}
 
 { met_charlie:
     -> charlie_first_convo
@@ -97,12 +99,14 @@ I would’ve stayed out even later than that, but Mom was already so mad…
 She wouldn’t even listen to my reason for staying out!
 
 + [That’s not fair at all. Maybe I can talk to your mom and explain the situation.]
-
-    ~ changePersonality("ambitious", 1)
-    ~ changePersonality("easygoing", 1)
+    
+    ~ ambitious += 1
+    ~ easygoing += 1
     ~ charlie += 1
     ~ emily += 1
     ~ emily_charlie_quest = true
+
+Your ambitious is now {ambitious}
 
     #speaker: Charlie
     You would do that for me?
@@ -126,8 +130,8 @@ She wouldn’t even listen to my reason for staying out!
 
 
 + [Oh no, your neighbor’s dog is missing? I can help look for it.]
-    ~ changePersonality("adventurous", 1)
-    ~ changePersonality("helpful", 1)
+    ~ adventurous += 1
+    ~ helpful += 1
     ~ dog_quest = true
     ~ charlie += 1
     ~ beverly += 1
@@ -151,11 +155,13 @@ She wouldn’t even listen to my reason for staying out!
 
 
 + [That’s too bad. Good luck with that. I hope everything works out.]
- ~ changePersonality("helpful", -1)
-  ~ changePersonality("charlie", -1)
-   ~ changePersonality("beverly", -1)
+    ~ helpful -= 1
+    ~ beverly -= 1
+    ~ charlie -= 1
 
     #speaker: Charlie
     Thanks anyway.
 
     -> END
+    
+
