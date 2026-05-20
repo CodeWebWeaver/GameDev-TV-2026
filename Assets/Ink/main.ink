@@ -133,7 +133,7 @@ Hey! You came back!
     ~dog_step=4
     ~dog_quest=false
     ~ changePersonality("helpful", medChange)
-         ~ changePersonality("pragmatic", medChange)
+    ~ changePersonality("pragmatic", medChange)
     ~ changePersonality("friendly", medChange)
     ->END
     
@@ -223,7 +223,7 @@ Oh, dear. Coco, Coco, please come back!
     Quest: The Lost Dog
     Next Objective: Find Coco
     ~dog_step=1
-         ~ changePersonality("pragmatic", smallChange)
+    ~ changePersonality("pragmatic", smallChange)
     ~ changePersonality("helpful", smallChange)
     ~beverly+=1
     ->END
@@ -277,7 +277,7 @@ Oh, dear. Coco, Coco, please come back!
     Next Objective: Check in with Charlie
     ~dog_step=3
     ~ changePersonality("helpful", medChange)
-         ~ changePersonality("adventurous", smallChange)
+    ~ changePersonality("adventurous", smallChange)
     ~beverly+=5
     ~coco+=5
     ->END
@@ -331,8 +331,8 @@ Maybe you can tell him to come home?
     You should probably see if he made it back okay.
     Quest: The Lost Dog
     Next Objective: Check in with Beverly
-         ~ changePersonality("friendly", smallChange)
-         ~ changePersonality("adventurous", smallChange)
+    ~ changePersonality("friendly", smallChange)
+    ~ changePersonality("adventurous", smallChange)
     ~coco+=5
     ~dog_step=2
     ->END
@@ -567,7 +567,7 @@ I'm ~name.
     -> emily_charlie_reaction
 + Did you hear that Beverly's dog is missing?
     ~ changePersonality("ambitious", smallChange)
-         ~ changePersonality("friendly", smallChange)
+    ~ changePersonality("friendly", smallChange)
     #speaker: Emily
     Oh no, how awful!
     Though, now that you mention it, Charlie did say something about a lost dog.
@@ -642,7 +642,7 @@ Any news to share?
     ~has_walkies=false
     ~emily+=5
     ~charlie+=5
-         ~ changePersonality("pragmatic", medChange)
+    ~ changePersonality("pragmatic", medChange)
     ~ changePersonality("helpful", bigChange)
     ->END
     
@@ -1049,7 +1049,7 @@ Hello, there! What can I do ya for?
     Next Objective: Give Lino the Gift
     ~lino_gift="shawl"
     ~lino_step=3
-         ~ changePersonality("friendly", smallChange)
+    ~ changePersonality("friendly", smallChange)
     ~ changePersonality("thoughtful", smallChange)
     ~stevie+=3
     ->END
@@ -1068,7 +1068,7 @@ Hello, there! What can I do ya for?
     ~lino_step=3
     ~lino_gift="pen"
     ~ changePersonality("pragmatic", smallChange)
-         ~ changePersonality("friendly", smallChange)
+    ~ changePersonality("friendly", smallChange)
     ~stevie+=3
     ->END
 + The Chili Dog!
@@ -1089,7 +1089,7 @@ Hello, there! What can I do ya for?
     ~lino_step=3
     ~lino_gift="chili"
     ~ changePersonality("funny", medChange)
-         ~ changePersonality("friendly", smallChange)
+    ~ changePersonality("friendly", smallChange)
     ~stevie +=10
     ->END
 + I'm not sure. I'll think about it and get back to you later.
