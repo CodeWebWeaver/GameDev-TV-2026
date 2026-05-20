@@ -1,7 +1,5 @@
 //For reference:
 //When using in unity, you should be able to just call the "talk_to_name" knots - those will branch out to relevant knots based on the global flags.
-VAR player_name = "Player"
-VAR player_friends_count = 0
 
 //player attributes
 VAR name="placeholder"
@@ -13,6 +11,7 @@ VAR adventurous = 0
 VAR friendly = 0
 VAR thoughtful = 0
 VAR funny=0
+VAR creative=0
 
 //change vals for attributes
 VAR smallChange = 1
@@ -28,6 +27,7 @@ VAR met_stevie = false
 VAR met_annika = false
 VAR met_lino = false
 VAR met_coco = false
+VAR met_korra = false
 
 //dog quest
 //step 0: talk to beverly for a description of where the dog might be
@@ -57,6 +57,22 @@ VAR lino_step = 0 //0-2
 VAR lino_gift = "" //options are null, shawl, pen, chili 
 
 
+//annika settling in
+//annika had her interview but is trying to decide if she wants to take the job.
+//step 0: annika wants to know about public transit in the town - ask stevie for a bus schedule. progress by telling annika
+//step 1: give annika the bus schedule; next she wants to know what neighborhood lino lives in. ask Lino. progress by telling annika
+//step 2: give annika the neighborhood info, then find something happening in the city (talk to musician). progress by telling annika.
+//step 3: give annika the information for the concert. progress by telling annika.
+VAR annika_interviewed=false
+VAR annika_quest=false
+VAR annika_step=0 
+VAR have_new_info_annika = false
+
+
+//the four gophers
+VAR four_gophers = false
+VAR gophers_step = 0
+
 //friendship scores
 VAR emily = 0
 VAR charlie = 0
@@ -65,8 +81,8 @@ VAR stevie = 0
 VAR lino = 0
 VAR coco = 0
 VAR annika = 0
+VAR korra = 0
 
--> talk_to_someone
 
 === talk_to_someone ===
 + Charlie
@@ -135,9 +151,9 @@ Hey! You came back!
     ~charlie+=5
     ~dog_step=4
     ~dog_quest=false
-    ~ changePersonality("helpful", medChange)
-    ~ changePersonality("pragmatic", medChange)
-    ~ changePersonality("friendly", medChange)
+    ~helpful+=medChange
+    ~pragmatic+=medChange
+    ~friendly+=medChange
     ->END
     
 + I found Coco!
@@ -151,9 +167,9 @@ Hey! You came back!
     ~charlie+=5
     ~dog_step=4
     ~dog_quest=false
-    ~ changePersonality("helpful", medChange)
-    ~ changePersonality("adventurous", medChange)
-    ~ changePersonality("friendly", medChange)
+    ~helpful+=medChange
+    ~adventurous+=medChange
+    ~friendly+=medChange
     ->END
 + Got to go, we'll talk soon.
     ->END
@@ -196,23 +212,23 @@ Oh, dear. Coco, Coco, please come back!
     ~dog_step=0
     ~beverly+=1
     ~coco+=1
-    ~ changePersonality("friendly", smallChange)
-    ~ changePersonality("helpful", smallChange)
-    ~ changePersonality("adventurous", smallChange)
+    ~friendly+=smallChange
+    ~helpful+=smallChange
+    ~adventurous+=smallChange
     ->beverly_quest_progress
 + That's too bad, I'm sorry to hear it. Best of luck.
     #speaker: Beverly
     Thank you.
     ~beverly -=1
     ~coco -=1
-    ~ changePersonality("friendly", -smallChange)
-    ~ changePersonality("helpful", -smallChange)
+    ~friendly-=smallChange
+    ~helpful-=smallChange
     ->END
 + I don't have time for this.
     ~beverly -=5
     ~coco -=5
-    ~ changePersonality("friendly", -smallChange)
-    ~ changePersonality("helpful", -smallChange)
+    ~friendly-=smallChange
+    ~helpful-=smallChange
     ->END
 ===beverly_quest_progress===
 * {dog_step==0} [Can you give me a description of your lost dog?]
@@ -226,8 +242,8 @@ Oh, dear. Coco, Coco, please come back!
     Quest: The Lost Dog
     Next Objective: Find Coco
     ~dog_step=1
-    ~ changePersonality("pragmatic", smallChange)
-    ~ changePersonality("helpful", smallChange)
+    ~pragmatic+=smallChange
+    ~helpful+=smallChange
     ~beverly+=1
     ->END
 * {dog_step==0 and from_charlie} [Charlie told me your dog is lost, I am so sorry! How can I help?]
@@ -242,8 +258,8 @@ Oh, dear. Coco, Coco, please come back!
     Quest: The Lost Dog
     Next Objective: Find Coco
     ~dog_step=1
-    ~ changePersonality("helpful", smallChange)
-    ~ changePersonality("thoughtful", smallChange)
+    ~helpful+=smallChange
+    ~thoughtful+=smallChange
     ~beverly+=1
     ->END
 * {dog_step<=2 and met_coco}[I think I saw Coco down the street!]
@@ -279,8 +295,8 @@ Oh, dear. Coco, Coco, please come back!
     Quest: The Lost Dog
     Next Objective: Check in with Charlie
     ~dog_step=3
-    ~ changePersonality("helpful", medChange)
-    ~ changePersonality("adventurous", smallChange)
+    ~helpful+=medChange
+    ~adventurous+=smallChange
     ~beverly+=5
     ~coco+=5
     ->END
@@ -334,8 +350,8 @@ Maybe you can tell him to come home?
     You should probably see if he made it back okay.
     Quest: The Lost Dog
     Next Objective: Check in with Beverly
-    ~ changePersonality("friendly", smallChange)
-    ~ changePersonality("adventurous", smallChange)
+    ~friendly+=smallChange
+    ~adventurous+=smallChange
     ~coco+=5
     ~dog_step=2
     ->END
@@ -349,7 +365,7 @@ Maybe you can tell him to come home?
     #speaker: Narrator
     Coco is heavier than you expected. You can't pull her home.
     ~coco -=1
-    ~ changePersonality("friendly", -smallChange)
+    ~friendly-=smallChange
     ->END
 ===coco_chat===
 #speaker: Coco
@@ -544,8 +560,8 @@ Hey! I'm not grounded anymore!
 }
 === emily_meet_convo ===
 #speaker: Unknown
-???: Mph. 
-???: Kids these days...
+Mph. 
+Kids these days...
 + Are you Emily?
     ->emily_charlie_overview
 + Keep Walking.
@@ -569,8 +585,8 @@ I'm ~name.
     Emily sighs.
     -> emily_charlie_reaction
 + Did you hear that Beverly's dog is missing?
-    ~ changePersonality("ambitious", smallChange)
-    ~ changePersonality("friendly", smallChange)
+    ~ambitious+=smallChange
+    ~friendly+=smallChange
     #speaker: Emily
     Oh no, how awful!
     Though, now that you mention it, Charlie did say something about a lost dog.
@@ -584,9 +600,9 @@ I'm ~name.
 ===emily_charlie_reaction===
 #speaker: Emily
 I'm sorry if he bothered you.
-+ Not at all! He's actually trying to find his neighbor's lost dog.
-    ~ changePersonality("friendly", smallChange)
-    ~ changePersonality("helpful", smallChange)
++ Not at all! He's actually trying to find his neighbor's lost dog
+    ~friendly+=smallChange
+    ~helpful+=smallChange
     #speaker: Emily
     Really? That's so sweet of him.
     I feel awful for grounding him, then.
@@ -595,8 +611,8 @@ I'm sorry if he bothered you.
     The world is a scary place after all...
     ->emily_charlie_step1
 + Thank you, you should really keep an eye on him, though.
-    ~ changePersonality("friendly", -smallChange)
-    ~ changePersonality("thoughtful", smallChange)
+    ~friendly-=smallChange
+    ~thoughtful-=smallChange
     #speaker: Emily
     You're right.
     I try, I really do.
@@ -645,8 +661,8 @@ Any news to share?
     ~has_walkies=false
     ~emily+=5
     ~charlie+=5
-    ~ changePersonality("pragmatic", medChange)
-    ~ changePersonality("helpful", bigChange)
+    ~pragmatic+=medChange
+    ~helpful+=bigChange
     ->END
     
 + Not yet, I'll come back later.
@@ -707,8 +723,8 @@ I think Charlie might be getting a little sick of them!
     #speaker: Narrator
     You hand back Lino's money.
     ~lino -=1
-    ~ changePersonality("friendly", -smallChange)
-    ~ changePersonality("thoughtful", -smallChange)
+    ~friendly-=smallChange
+    ~thoughtful-=smallChange
     ->END
 + Talk to you later.
     ->END
@@ -723,8 +739,8 @@ Did you find something?
     She has a job interview coming up. This will be just the confidence boost she needs.
     Thank you for finding this. I really do appreciate it.
     ~lino+=5
-    ~ changePersonality("helpful", bigChange)
-    ~ changePersonality("pragmatic", bigChange)
+    ~helpful+=bigChange
+    ~pragmatic+=bigChange
     ~lino_step=4
     ~lino_quest=false
     #speaker: Narrator
@@ -740,8 +756,8 @@ Did you find something?
     It's so soft and warm. And it looks just like something she used to wear at home.
     Thank you, truly. She is going to love this.
     ~lino+=5
-    ~ changePersonality("thoughtful", bigChange)
-    ~ changePersonality("helpful", bigChange)
+    ~helpful+=bigChange
+    ~thoughtful+=bigChange
     ~lino_step=4
     ~lino_quest=false
     #speaker: Narrator
@@ -758,8 +774,8 @@ Did you find something?
     Ugh, where did you find this?
     I don't have any money left for another gift... I suppose this will have to do...
     ~lino-=5
-    ~ changePersonality("thoughtful", -smallChange)
-    ~ changePersonality("funny", smallChange)
+    ~thoughtful-=smallChange
+    ~funny+=smallChange
     #speaker: Narrator
     Quest: A Gift for Annika
     Quest Complete!
@@ -778,6 +794,13 @@ Did you find something?
 #speaker: Lino
 Hello, my friend!
 How are you? What can I do for you?
+* {annika_step==1}[Lino, can you remind me which neighborhood you live in?]
+    #speaker: Lino
+    Ah, yes, of course!
+    I am over on the east side of town.
+    Formally, it's called Reagent Village...
+    But we just call it the Orange Grove!
+    ->END
 + I'm alright at the moment, but thank you!
     #speaker: Lino
     Alright, we will talk again soon!
@@ -906,24 +929,29 @@ The young woman looks a bit frazzled and unfamiliar with the area.
 ===annika_chat_base===
 #speaker: Annika
 Hey, {name}.
-{lino_gift=="pen":
-    ->annika_chat_pen
--else:
-    {lino_gift=="shawl":
-        ->annika_chat_shawl
+{annika_quest==false:
+    {lino_gift=="pen":
+        ->annika_chat_pen
     -else:
-        {lino_gift=="chili":
-        ->annika_chat_chili
+        {lino_gift=="shawl":
+            ->annika_chat_shawl
         -else:
-        ->END
+            {lino_gift=="chili":
+            ->annika_chat_chili
+            -else:
+            ->END
+            }
         }
     }
+-else:
+->annika_quest_progress
 }
 ===annika_chat_shawl===
 #speaker: Annika
 Thank you for helping Lino pick out a gift for me.
 I feel so much warmer and at home in the city now.
 Nothing like a warm shawl to make you feel at home.
+~annika_interviewed=true
 ->END
 ===annika_chat_chili===
 #speaker: Annika
@@ -935,13 +963,239 @@ My dumb cousin got me a chili dog... I think it's gone bad...
 Thank you for helping Lino pick out a gift for me.
 I didn't think I wanted anything, but...
 I really feel much more prepared for my interview now.
+~annika_interviewed=true
 ->END
 
+===annika_quest_offer===
 /////////////////////////////////////////
-//lino quests///////////////////////////
+//annika quests///////////////////////////
 ////////////////////////////////////////
+#speaker: Annika
+Whew. I've finally gotten through my interview.
+Would you believe they've already offered me a job?
++ Wow, congratulations!
+    ~annika+=smallChange
+    ~friendly+=smallChange
+    #speaker: Annika
+    Thank you, I'm really excited about it.
+    Though, I'm not sure if I'll take the job.
+    ->annika_quest_start
++ Already? Sounds like a red flag...
+    ~annika-=smallChange
+    ~pragmatic+=smallChange
+    #speaker: Annika
+    Not necessarily.
+    Though, I suppose you're right.
+    Honestly, I'm not sure if I'll take the job.
+    ->annika_quest_start
++ How do you feel about it?
+    ~annika+=medChange
+    ~thoughtful+=smallChange
+    #speaker: Annika
+    Honestly, I'm not sure how I feel about it.
+    ->annika_quest_start
 
+->END
 
+===annika_quest_start===
+    #speaker: Annika
+    I'm not really familiar with the area.
+    I don't know the public transit map.
+    And I don't know if it's even close to my cousin's neighborhood.
+    + Is there anything I can help with?
+        ~thoughtful+=smallChange
+        Maybe you could help me settle into the area.
+        Can you see if you can find a bus plan?
+        I think the traveling vendor should have one.
+        #speaker Narrator
+        Quest: Annika's New Job
+        Next Objective: Get a Bus Pass from Stevie
+        ~annika_quest=true
+        ~annika_step=0
+        ->END
+    + Yeah, it sounds like that's something to think about. 
+        #speaker: Annika
+        I suppose so.
+        ->END
+
+===annika_quest_progress===
+* {annika_step==0 and have_new_info_annika==false}[Can you remind me what you want me to find?]
+    #speaker: Annika
+    I need a bus plan from Stevie. He should be on this street somewhere.
+    ->END
+* {annika_step==0 and have_new_info_annika}[Here, I got the bus plan from Stevie.]
+    #speaker: Narrator
+    You give the bus plan to Annika.
+    ~have_new_info_annika=false
+    ~annika_step=1
+    #speaker: Annika
+    Oh, great. This is helpful.
+    #speaker: Narrator
+    Annika looks through the brochure for a moment.
+    #speaker: Annika
+    Good, good. This should work.
+    Okay, the public transit seems like it should work okay.
+    I still need to know which neighborhood Lino lives in, though.
+    Would you mind asking him?
+    #speaker Narrator
+    Quest: Annika's New Job
+    Next Objective: Ask Lino about his Neighborhood
+    ->END
+* {annika_step==1 and have_new_info_annika==false}[Can you remind me what you want me to find?]
+    #speaker: Annika
+    Please ask Lino what neighborhood he lives in.
+    ->END
+* {annika_step==1 and have_new_info_annika}[I just talked to Lino; he lives in Orange Grove, but it may be listed as Reagent Village in the brochure.]
+    #speaker: Annika
+    Ah, I see. Excellent, yes, it's right here on the brochure.
+    Thank you, this has all been really useful information.
+    #speaker: Narrator
+    Annika sighs, her eyes cast downward a little disappointedly.
+    #speaker: Annika
+    Logistically, I can see myself living here.
+    But I'm not sure if this is a spot I'd want to be.
+    I wish I knew of something fun happening downtown...
+    Somewhere I could meet new friends and engage in the culture of the city.
+    Do you think you could find something like that? Maybe a club or something?
+    ~helpful+=smallChange
+    ~pragmatic+=smallChange
+    ~annika+=smallChange
+    ~have_new_info_annika=false
+    ~annika_step=2
+    #speaker Narrator
+    Quest: Annika's New Job
+    Next Objective: Find an advertisement for an upcoming event.
+    ->END
+* {annika_step==2 and have_new_info_annika==false}[Can you remind me what you want me to find?]
+    #speaker: Annika
+    I wish I knew of something fun happening downtown...
+    Somewhere I could meet new friends and engage in the culture of the city.
+    Do you think you could find something like that? Maybe a club or something?
+    ->END
+* {annika_step==2 and have_new_info_annika}[Any chance you'd be interested in joining a local band?]
+    #speaker: Narrator
+    You hand Annika the poster for the Four Gophers' performance.
+    #speaker: Annika
+    Hmm. The Four Gophers?
+    Strange name for a band. But... that sounds like a really nice time. 
+    Thank you, {name}, I think I'm starting to feel at home here.
+    I'm really glad I was able to meet you!
+    ~annika_quest=false
+    ~annika_step = 3
+    ~annika+=bigChange
+    ~lino+=bigChange
+    ~friendly+=bigChange
+    ~helpful+=bigChange
+    ~have_new_info_annika=false
+    #speaker Narrator
+    Quest: Annika's New Job
+    Quest Complete!
+    #speaker Narrator
+    Quest: The Four Gophers
+    Next Objective: Tell Korra the Good News
+    ->END
+* {annika_step==3}[Hi, Annika! Good to see you.]
+    #speaker: Annika
+    Likewise. I hope to see you at our concert on Friday!
+    ->END
++ Nevermind, we'll talk later.
+    #speaker: Annika
+    Okay.
+    ->END
+    
+===talk_to_korra===
+{met_korra:
+    ->korra_chat
+-else:
+    ->korra_meet_convo
+}
+
+===korra_chat===
+#speaker: Korra
+Howdy there, friend!
+* {gophers_step==0}[I'm still looking for a fourth gopher!]
+    #speaker: Korra
+    Thanks for doing that!
+    Best of luck :-)
+    ->END
+* {gophers_step==1}[Good news! I found you a fourth gopher! Er- Band member!]
+    #speaker: Korra
+    Really? That's fantastic! 
+    I'm looking forward to meeting them at practice.
+    Thanks for your help, friend! :-)
+    ~korra+=bigChange
+    ~helpful+=bigChange
+    ~friendly+=bigChange
+    ~creative+=bigChange
+    ~gophers_step=2
+    ~four_gophers=false
+    #speaker Narrator
+    Quest: The Four Gophers
+    Next Objective: Quest Complete!
+    ->END
+* {gophers_step==2}[Looiking forward to your concert this Friday!]
+    You got it! It'll be a blast :-)
+    ->END
++ Howdy! Talk to you later.
+    #speaker: Korra
+    You got it!
+    ->END
+    
+===korra_meet_convo===
+#speaker: Unknown
+Howdy, there!
+Any chance you're around this Friday evening?
++ Pardon? 
+    #speaker: Unknown
+    Oh, right, I guess I should introduce myself.
+    The name is Korra! :-D
+    ~met_korra=true
+    ->korra_introduce
++ Sure, sounds fun! What's going on?
+    #speaker: Unknown
+    Oh, wait, I guess I should introduce myself first.
+    The name is Korra! :-D
+    ~adventurous+=smallChange
+    ~friendly+=smallChange
+    ~met_korra=true
+    ->korra_introduce
+
+==korra_introduce===
+#speaker: Korra
+Anyways. I'm part of a 3-person alt-folk-punk-rock group. We're the Four Gophers!
++ But... there's three of you?
+    ~pragmatic+=smallChange
+    #speaker: Korra
+    Well, that's our biggest problem.
+    Ya see, we really thought we'd have another person by now. :-(
+    They don't have to do anything crazy, or anything. We just need someone on tambourine.
+    It really gives the whole thing another layer.
+    Do you think you could find us a fourth member?
+    #speaker Narrator
+    Quest: The Four Gophers
+    Next Objective: Find a Fourth Member for the Four Gophers
+    ~four_gophers=true
+    ~gophers_step=0
+    ->END
++ Cool, sounds like fun!
+    ~adventurous+=smallChange
+    #speaker: Korra
+    It is!
+    ...although, we do have an issue.
+    Ya see, we really thought we'd have another person by now. :-(
+    They don't have to do anything crazy, or anything. We just need someone on tambourine.
+    It really gives the whole thing another layer.
+    Do you think you could find us a fourth member?
+    Here's a poster you can use.
+    #speaker Narrator
+    Korra gives you a poster with four gophers holding musical instruments.
+    Quest: The Four Gophers
+    Next Objective: Find a Fourth Member for the Four Gophers
+    ~four_gophers=true
+    ~gophers_step=0
+    ->END
+
+    
 === stevie_meet_convo ===
 {met_stevie:
 -> stevie_quest_convo
@@ -993,6 +1247,19 @@ Hello, there! What can I do ya for?
     #speaker: Stevie
     Thirty tickets! What do you say?
     ->gift
+* {annika_step==0}[Do you have a bus plan, by any chance?]
+    #speaker: Stevie
+    Aha, yes! You are in luck!
+    I do in fact have a bus plan right here.
+    #speaker: Narrator
+    Stevie pulls a dark blue brochure from his vest pocket and opens it up to show you...
+    A twelve-panel brochure?!
+    #speaker: Stevie
+    As you can see it is equipped with all of the transport information one could ever need!
+    Though, as you can imagine, it costs a pretty penny...
+    What do you say to...
+    One thousand tickets?
+    ->bus_pass
 + Nothing right now, thanks.
     #speaker: Stevie
     Well, come back if you need anything!
@@ -1017,7 +1284,7 @@ Hello, there! What can I do ya for?
     Next Objective: Give Walkie-Talkies to Emily
     ->END
 + ha! That's perfect!
-    ~ changePersonality("funny", medChange)
+    ~funny+=medChange
     #speaker: Stevie
     I knew you'd get it!
     Now, normally these puppies would go for twenty tickets or so.
@@ -1052,8 +1319,8 @@ Hello, there! What can I do ya for?
     Next Objective: Give Lino the Gift
     ~lino_gift="shawl"
     ~lino_step=3
-    ~ changePersonality("friendly", smallChange)
-    ~ changePersonality("thoughtful", smallChange)
+    ~friendly+=smallChange
+    ~thoughtful+=smallChange
     ~stevie+=3
     ->END
 + The Fountain Pen.
@@ -1070,8 +1337,8 @@ Hello, there! What can I do ya for?
     Next Objective: Give Lino the Gift
     ~lino_step=3
     ~lino_gift="pen"
-    ~ changePersonality("pragmatic", smallChange)
-    ~ changePersonality("friendly", smallChange)
+    ~pragmatic+=smallChange
+    ~friendly+=smallChange
     ~stevie+=3
     ->END
 + The Chili Dog!
@@ -1091,8 +1358,8 @@ Hello, there! What can I do ya for?
     Next Objective: Give Lino the Gift
     ~lino_step=3
     ~lino_gift="chili"
-    ~ changePersonality("funny", medChange)
-    ~ changePersonality("friendly", smallChange)
+    ~funny+=medChange
+    ~friendly+=smallChange
     ~stevie +=10
     ->END
 + I'm not sure. I'll think about it and get back to you later.
@@ -1100,3 +1367,41 @@ Hello, there! What can I do ya for?
     Understood, understood.
     But don't take too long; these gifts go fast!
     ->END
+===bus_pass===
++ One thousand?! That's egregious!
+    ->bus_pass_continue
++ I don't have that much...
+    ->bus_pass_continue
+===bus_pass_continue===
+    #speaker: Stevie
+    Now, don't panic.
+    You don't have to pay that sum all at once!
+    I'll simply open a tab for you...
+    ...at a steep interest rate, of course.
+    What do you say to 72% APR?
+    + ...Fine. This currency seems made up, anyways.
+        #speaker: Stevie
+        A wise decision! Here you are, good madame. 
+        #speaker: Narrator
+        Stevie hands you the bus pass.
+        #speaker: Stevie
+        Best wishes!
+        ~have_new_info_annika=true
+        ~funny+=1
+        ->END
+    + Umm, I suppose that's alright? (Maybe Annika will pay me back...)
+        #speaker: Stevie
+        A wise decision! Here you are, good madame. 
+        #speaker: Narrator
+        Stevie hands you the bus pass.
+        #speaker: Stevie
+        Best wishes!
+        ~have_new_info_annika=true
+        ~pragmatic+=1
+        ->END
+    + That's too much. Sorry, Stevie, maybe next time.
+        #speaker: Stevie
+        Alright, well, come back if you change your  mind!
+        I can't guarantee I'll still have it on hand the next time you need it.
+        ->END
+    
