@@ -342,6 +342,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8330698954269655322}
+  - component: {fileID: 4575511475509371815}
+  - component: {fileID: 8683196990683344746}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -370,3 +372,34 @@ RectTransform:
   m_AnchoredPosition: {x: 629, y: 0}
   m_SizeDelta: {x: 600, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4575511475509371815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7189474429810745779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26751ed6222534d4797d9c2435c0ebfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPanel
+  canvasGroup: {fileID: 0}
+  fadeInDuration: 0.2
+  fadeOutDuration: 0.3
+  fadeInEase: 6
+  fadeOutEase: 5
+  startVisible: 0
+  closeButton: {fileID: 4533116866389773449}
+--- !u!225 &8683196990683344746
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7189474429810745779}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

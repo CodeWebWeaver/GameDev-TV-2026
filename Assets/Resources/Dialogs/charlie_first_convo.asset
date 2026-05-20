@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c328fe489a2aff409837c6f7d664e1c, type: 3}
   m_Name: charlie_first_convo
   m_EditorClassIdentifier: Assembly-CSharp::DialogueNodeSO
-  inkKnotName: charlie_day_one
+  inkKnotName: talk_to_charlie
