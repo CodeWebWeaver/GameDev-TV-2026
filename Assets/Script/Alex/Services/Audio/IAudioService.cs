@@ -7,12 +7,14 @@ public interface IAudioService {
     List<AudioChannelType> GetSupportedChannelsTypes();
     void StopCurrentMusic();
     void StartMusicPlaylist(MusicPlaylist mainMenu);
+    void ToggleChannel(AudioChannelType channel, bool arg0);
 }
 
 public enum MusicPlaylist {
     MainMenu,
     GameLoop,
-    BossFight
+    BossFight,
+    GameOver
 }
 public enum AudioChannelType {
     Master,
@@ -33,6 +35,13 @@ public class AudioSystem : IDataLoader, IDataSaveable {
         AudioSettings audioSettings = _dataRepository.Load();
         if (audioSettings == null) {
             audioSettings = new AudioSettings();
+            audioSettings.channels = new List<AudioChannel>();
+             foreach (var channelType in _audioService.GetSupportedChannelsTypes()) {
+                audioSettings.channels.Add(new AudioChannel {
+                    ChannelType = channelType,
+                    Volume = 0.5f
+                });
+            }
         }
         ApplyAudioData(audioSettings);
     }
