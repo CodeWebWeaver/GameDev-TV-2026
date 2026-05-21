@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 public class Player : Human {
     private const string Personalities_Path = "PersonalityParams";
@@ -12,13 +13,14 @@ public class Player : Human {
     [Header ("Personality Settings")]
     public PlayerPersonality Personality { get; } = new();
     [SerializeField] PersonalitiesViewManager personalitiesUIManager;
+    [Inject] private InputManager InputManager;
 
     private void Start() {
         personalitiesUIManager.Observe(Personality);
         List<PersonalityParamSO> personalityParamSOs = Resources.LoadAll<PersonalityParamSO>(Personalities_Path).ToList();
         Personality.Initialize(personalityParamSOs);
 
-        player = InputManager.Instance.InputActions.Player;
+        player = InputManager.InputActions.Player;
 
         _interactAction = player.Interact;
         _interactAction.performed += OnInteract;
