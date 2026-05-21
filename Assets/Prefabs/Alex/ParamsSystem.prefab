@@ -121,7 +121,7 @@ MonoBehaviour:
       Data2: 1134967422
       Data3: -1597932361
       Data4: -130926126
-    Path: event:/personality_param_changed
+    Path: event:/SFX/personality_param_changed
 --- !u!1 &432548750329642509
 GameObject:
   m_ObjectHideFlags: 0

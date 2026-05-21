@@ -245,6 +245,15 @@ MonoBehaviour:
   portraitObject: {fileID: 6355557527020861076}
   speakerPortraitImage: {fileID: 6040802676703931444}
   dialogueText: {fileID: 119623502361125205}
+  useTypewriter: 1
+  charsPerSecond: 40
+  typingEvent:
+    Guid:
+      Data1: -1387933976
+      Data2: 1257140461
+      Data3: -46310753
+      Data4: 1407547203
+    Path: event:/SFX/Typing
 --- !u!114 &4833258283863316214
 MonoBehaviour:
   m_ObjectHideFlags: 0

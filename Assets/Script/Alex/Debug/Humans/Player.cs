@@ -12,12 +12,21 @@ public class Player : Human {
     [SerializeField] PlayerDialogSystem dialogSystem;
     [Header ("Personality Settings")]
     public PlayerPersonality Personality { get; } = new();
-    [SerializeField] PersonalitiesViewManager personalitiesUIManager;
+    [SerializeField] private PersonalitiesViewManager personalitiesUIManagerPrefab;
+    private PersonalitiesViewManager personalitiesUIManager;
+
     [Inject] private InputManager InputManager;
     [Inject] private DialogueManager dialogueManager;
+    [Inject] private UIManager uIManager;
 
+    private void Awake() {
+        GameObject gameObject1 = uIManager.InstantiateUIElement(personalitiesUIManagerPrefab.gameObject);
+        if (gameObject1 != null) {
+            personalitiesUIManager = gameObject1.GetComponent<PersonalitiesViewManager>();
+        }
+    }
     private void Start() {
-        personalitiesUIManager.Observe(Personality);
+        personalitiesUIManager?.Observe(Personality);
         List<PersonalityParamSO> personalityParamSOs = Resources.LoadAll<PersonalityParamSO>(Personalities_Path).ToList();
         Personality.Initialize(personalityParamSOs);
 
