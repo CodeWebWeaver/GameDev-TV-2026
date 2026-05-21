@@ -8,7 +8,7 @@
   - Layers:
     - Default, TransparentFX, Ignore Raycast, NPC, Water, UI
 - Active game object:
-  - Name: building-a
+  - Name: NPC
   - Tag: Untagged
-  - Layer: Default
+  - Layer: NPC
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

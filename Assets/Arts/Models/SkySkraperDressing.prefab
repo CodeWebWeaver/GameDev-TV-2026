@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.8415
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.8415
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.8415
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_LocalPosition.x
@@ -60,9 +60,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_Name
-      value: building-skyscraper-a
+      value: SkySkraperDressing
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

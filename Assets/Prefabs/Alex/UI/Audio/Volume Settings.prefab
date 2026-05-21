@@ -1504,6 +1504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioSlider
   sliderValue: {fileID: 393672939550482043}
+  muteToggle: {fileID: 5099143057702303779}
   channel: 1
   OnVolumeChanged:
     m_PersistentCalls:

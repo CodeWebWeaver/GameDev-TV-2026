@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class FmodAudioService : IAudioService {
     private readonly Dictionary<AudioChannelType, string> busNames = new() {
-        { AudioChannelType.Master, "bus:/" },
-        { AudioChannelType.Music, "bus:/Music" },
-        { AudioChannelType.SFX, "bus:/SFX" },
-        { AudioChannelType.Ambience, "bus:/Ambience" }
+        { AudioChannelType.Master, "bus:/Master" },
+        { AudioChannelType.Music, "bus:/Master/Music" },
+        { AudioChannelType.SFX, "bus:/Master/SFX" },
+        { AudioChannelType.Ambience, "bus:/Master/Ambience" }
     };
-
+    
     private Dictionary<AudioChannelType, FMOD.Studio.Bus> buses = new();
 
     private Dictionary<string, EventInstance> loopedInstances = new();
@@ -255,12 +255,12 @@ public class FmodAudioService : IAudioService {
         SetVolume(channel, volume);
     }
 
-    public void SetBusMute(AudioChannelType channel, bool mute) {
+    public void SetBusMute(AudioChannelType channel, bool doMute) {
         if (!buses.TryGetValue(channel, out var bus)) {
             Debug.LogError($"Bus for channel {channel} not found!");
             return;
         }
-        bus.setMute(mute);
+        bus.setMute(doMute);
     }
 
     public void SetBusPaused(AudioChannelType channel, bool paused) {
