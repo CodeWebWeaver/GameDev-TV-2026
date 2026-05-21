@@ -28,8 +28,8 @@ public class AudioSlider : MonoBehaviour {
 
     }
 
-    private void HandleMuteToggleChanged(bool arg0) {
-        audioService.ToggleChannel(Channel, arg0);
+    private void HandleMuteToggleChanged(bool isEnabled) {
+        audioService.SetBusMute(Channel, !isEnabled);
     }
 
     private void HandleSliderValueChanged(float normalizedValue) {

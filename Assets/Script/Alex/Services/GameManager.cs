@@ -50,7 +50,14 @@ public class GameManager : MonoBehaviour, IGameManager {
 }
 
 public class ExitState : State<GameManager> {
+    private readonly ISaveLoadService _saveLoadService;
+
+    public ExitState(ISaveLoadService saveLoad) {
+        _saveLoadService = saveLoad;
+    }
+
     public override void Enter() {
+        _saveLoadService.SaveAll();
         Context.ExitGame();
     }
 

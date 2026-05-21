@@ -7,7 +7,7 @@ public interface IAudioService {
     List<AudioChannelType> GetSupportedChannelsTypes();
     void StopCurrentMusic();
     void StartMusicPlaylist(MusicPlaylist mainMenu);
-    void ToggleChannel(AudioChannelType channel, bool arg0);
+    void SetBusMute(AudioChannelType channel, bool arg0);
 }
 
 public enum MusicPlaylist {
