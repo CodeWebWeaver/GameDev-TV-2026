@@ -8,100 +8,111 @@ using Zenject;
 /// <summary>
 /// Drives an Ink story and routes input.
 /// All choice UI is delegated to <see cref="ChoiceSelector"/>.
+/// Supports an optional typewriter effect in <see cref="DialogWindowView"/>:
+///   • First Submit while text is typing  → reveals full text immediately.
+///   • Second Submit (text fully shown)   → advances the dialogue.
 /// </summary>
 public class DialogueManager : MonoBehaviour {
-    [Header("UI")]
-    
-    private ChoiceSelector choiceSelector;
-    private DialogWindowView dialogWindow;
+    // ── Dependencies ──────────────────────────────────────────────────────
+    [Inject] private UIManager uIManager;
+    [InjectOptional] private InputManager inputManager;
 
-    [Inject] UIManager uIManager;
     [SerializeField] private GameObject dialogWindowPrefab;
-    
+    [SerializeField] private TextAsset inkJsonAsset;
 
-    public bool IsDialoguePlaying { get; private set; }
+    // ── Runtime references ────────────────────────────────────────────────
+    private ChoiceSelector _choiceSelector;
+    private DialogWindowView _dialogWindow;
 
     private Story _story;
     private bool _waitingForInput;
+
     private InputSystem_Actions.UIActions _uiMap;
 
+    private Player _player;
+    private DialogueNPC _npc;
+
+    private readonly Dictionary<string, Human> _speakers = new();
+
+    // ── Public state ──────────────────────────────────────────────────────
+    public bool IsDialoguePlaying { get; private set; }
+
+    // ── Events ────────────────────────────────────────────────────────────
     public event Action OnDialogueBegin;
     public event Action OnDialogueEnd;
 
-    [SerializeField] private TextAsset inkJsonAsset;
-
-    private Dictionary<string, Human> speakers = new();
-    [InjectOptional] InputManager inputManager;
+    // ── Unity lifecycle ───────────────────────────────────────────────────
     protected void Awake() {
-        GameObject gameObject = uIManager.InstantiateUIElement(dialogWindowPrefab);
-        if (gameObject == null) {
-            Debug.LogError("Oh my god its null");
-            return;
-        }
-        choiceSelector = gameObject.GetComponent<ChoiceSelector>();
-        dialogWindow = gameObject.GetComponent<DialogWindowView>();
-
-        if (inkJsonAsset == null) {
-            Debug.LogWarning("[DialogueManager] inkJsonAsset is null — aborting.");
-            return;
-        }
-        _story = new Story(inkJsonAsset.text);
-
-        _story.BindExternalFunction("addFriend", (string name) => {
-            if (npc == null || player == null) return;
-            if (name == npc.Name) {
-                npc.AddFriend(player);
-                player.AddFriend(npc);
-            }
-        });
-
-        // Підписуємося на ВСІ зміни змінних в Ink
-        _story.variablesState.variableChangedEvent += (string varName, Ink.Runtime.Object newValue) => {
-
-            if (newValue is Ink.Runtime.IntValue intVal) {
-                int actualValue = intVal.value;
-
-                PersonalityParam personalityParam = player?.Personality.GetParam(varName);
-
-                if (personalityParam != null) {
-                    personalityParam.SetValue(actualValue);
-                    Debug.Log($"[INK_VAR] {varName} changed. New value: {actualValue}");
-                }
-            }
-        };
+        InitUI();
+        InitStory();
     }
 
     private void Start() {
         ExitDialogueMode();
-        choiceSelector.OnChoiceSelected += OnChoiceSelected;
+
+        _choiceSelector.OnChoiceSelected += OnChoiceSelected;
 
         if (inputManager != null) {
             _uiMap = inputManager.InputActions.UI;
             _uiMap.Submit.performed += HandleSubmit;
             _uiMap.Navigate.performed += HandleNavigation;
         }
-        
-        
     }
 
     protected void OnDestroy() {
         if (inputManager != null) {
             _uiMap.Submit.performed -= HandleSubmit;
             _uiMap.Navigate.performed -= HandleNavigation;
-            choiceSelector.OnChoiceSelected -= OnChoiceSelected;
         }
-        choiceSelector.OnChoiceSelected -= OnChoiceSelected;
+
+        if (_choiceSelector != null)
+            _choiceSelector.OnChoiceSelected -= OnChoiceSelected;
     }
 
-    private Player player;
-    private DialogueNPC npc;
-    private string currentSpeaker;
+    // ── Initialisation helpers ────────────────────────────────────────────
+    private void InitUI() {
+        GameObject go = uIManager.InstantiateUIElement(dialogWindowPrefab);
+        if (go == null) {
+            Debug.LogError("[DialogueManager] Failed to instantiate dialogWindowPrefab.");
+            return;
+        }
+
+        _choiceSelector = go.GetComponent<ChoiceSelector>();
+        _dialogWindow = go.GetComponent<DialogWindowView>();
+    }
+
+    private void InitStory() {
+        if (inkJsonAsset == null) {
+            Debug.LogWarning("[DialogueManager] inkJsonAsset is null — aborting story init.");
+            return;
+        }
+
+        _story = new Story(inkJsonAsset.text);
+
+        _story.BindExternalFunction("addFriend", (string name) => {
+            if (_npc == null || _player == null) return;
+            if (name != _npc.Name) return;
+
+            _npc.AddFriend(_player);
+            _player.AddFriend(_npc);
+        });
+
+        _story.variablesState.variableChangedEvent += OnInkVariableChanged;
+    }
+
+    // ── Ink variable listener ─────────────────────────────────────────────
+    private void OnInkVariableChanged(string varName, Ink.Runtime.Object newValue) {
+        if (newValue is not Ink.Runtime.IntValue intVal) return;
+
+        PersonalityParam param = _player?.Personality.GetParam(varName);
+        if (param == null) return;
+
+        param.SetValue(intVal.value);
+        Debug.Log($"[INK_VAR] {varName} → {intVal.value}");
+    }
 
     // ── Public entry point ────────────────────────────────────────────────
     public void EnterDialogueMode(DialogueNodeSO dialogueNodeSO, Player player, DialogueNPC npc) {
-        this.player = player;
-        this.npc = npc;
-
         if (IsDialoguePlaying) {
             Debug.LogWarning("[DialogueManager] Dialogue already playing — ignoring.");
             return;
@@ -111,53 +122,54 @@ public class DialogueManager : MonoBehaviour {
             return;
         }
 
+        _player = player;
+        _npc = npc;
+
         _story.ChoosePathString(dialogueNodeSO.InkKnotName);
-        // Inject values directly into Ink variables
         _story.variablesState["player_name"] = player.Name;
         _story.variablesState["player_friends_count"] = player.GetFriendCount();
 
-        CacheSpeakerSprite(player);
-        CacheSpeakerSprite(npc);
+        CacheSpeaker(player);
+        CacheSpeaker(npc);
 
         IsDialoguePlaying = true;
-        dialogWindow.ShowDialoguePanel();
-        ContinueStory();
+        _dialogWindow.ShowDialoguePanel();
         OnDialogueBegin?.Invoke();
-    }
 
-    private void CacheSpeakerSprite(Human human) {
-        if (human != null && human.personDataSO != null) {
-            speakers[human.Name] = human;
-        }
-    }
-    private void ChangeHappiness(string name, int delta) {
-        Human toChange = null;
-        if (player.Name.Equals(name)) toChange = player;
-        if (npc.Name.Equals(name)) toChange = npc;
-        if (toChange != null) toChange.ChangeHappiness(delta);
+        ContinueStory();
     }
 
     // ── Input handlers ────────────────────────────────────────────────────
     private void HandleSubmit(InputAction.CallbackContext ctx) {
         if (!IsDialoguePlaying) return;
 
-        if (choiceSelector.IsShowingChoices)
-            choiceSelector.ConfirmSelection();
-        else if (_waitingForInput) {
+        // Choices take priority; let ChoiceSelector handle confirmation.
+        if (_choiceSelector.IsShowingChoices) {
+            _choiceSelector.ConfirmSelection();
+            return;
+        }
+
+        // If the typewriter is still running, skip it — do NOT advance yet.
+        if (_dialogWindow.TrySkipTypewriter()) return;
+
+        // Text is fully visible; advance on next Submit.
+        if (_waitingForInput) {
             _waitingForInput = false;
             ContinueStory();
         }
     }
 
     private void HandleNavigation(InputAction.CallbackContext ctx) {
-        if (!IsDialoguePlaying || !choiceSelector.IsShowingChoices) return;
+        if (!IsDialoguePlaying || !_choiceSelector.IsShowingChoices) return;
 
         float x = ctx.ReadValue<Vector2>().x;
-        if (x > 0.5f) choiceSelector.Navigate(+1);
-        else if (x < -0.5f) choiceSelector.Navigate(-1);
+        if (x > 0.5f) _choiceSelector.Navigate(+1);
+        else if (x < -0.5f) _choiceSelector.Navigate(-1);
     }
 
+    // ── Story progression ─────────────────────────────────────────────────
     private void ContinueStory() {
+        // Advance past empty, tag-only lines that have no visible text.
         while (_story.canContinue) {
             string rawLine = _story.Continue();
 
@@ -167,138 +179,131 @@ public class DialogueManager : MonoBehaviour {
 
             if (!hasText && !hasChoices && !hasTags) continue;
 
-            string line = rawLine.Trim();
             ProcessEventTags(_story.currentTags);
 
             string speakerName = GetSpeakerName(_story.currentTags);
             Sprite speakerPortrait = GetSpeakerPortrait(speakerName);
 
-            ShowLine(line, speakerName, speakerPortrait);
+            ShowLine(rawLine.Trim(), speakerName, speakerPortrait);
 
             if (hasChoices)
-                choiceSelector.Show(_story.currentChoices);
+                _choiceSelector.Show(_story.currentChoices);
             else
                 _waitingForInput = true;
 
             return;
         }
 
-        // ── Choise without text──────────────────────
+        // Choices without preceding text.
         if (_story.currentChoices.Count > 0) {
             ShowLine(string.Empty, string.Empty, null);
-            choiceSelector.Show(_story.currentChoices);
+            _choiceSelector.Show(_story.currentChoices);
             return;
         }
 
         ExitDialogueMode();
     }
 
-    private void ShowLine(string line, string speakerName = "???", Sprite speakerPortrait = null) {
-        dialogWindow.SetDialogueText(line);
-        bool isEmptyName = string.IsNullOrEmpty(speakerName);
+    private void ShowLine(string line, string speakerName, Sprite speakerPortrait) {
+        _dialogWindow.SetDialogueText(line);
 
-        if (isEmptyName) {
-            dialogWindow.HideSpeakerName();
+        bool hasName = !string.IsNullOrEmpty(speakerName);
+
+        if (hasName) {
+            _dialogWindow.ShowSpeakerName();
+            _dialogWindow.SetSpeakerName(speakerName);
         } else {
-            dialogWindow.ShowSpeakerName();
-            dialogWindow.SetSpeakerName(speakerName);
+            _dialogWindow.HideSpeakerName();
         }
 
-        
-
-        // Portrait
-        if (isEmptyName || speakerPortrait == null) {
-            dialogWindow.HidePortrait();
+        if (hasName && speakerPortrait != null) {
+            _dialogWindow.SetPortrait(speakerPortrait);
+            _dialogWindow.ShowPortrait();
         } else {
-            dialogWindow.SetPortrait(speakerPortrait);
-            dialogWindow.ShowPortrait();
+            _dialogWindow.HidePortrait();
         }
     }
 
+    // ── Tag parsing ───────────────────────────────────────────────────────
     private string GetSpeakerName(List<string> tags) {
-        foreach (string tag in tags) {
-            if (!TryParseTag(tag, out string key, out string value))
-                continue;
-
-            if (key.Equals("speaker", StringComparison.OrdinalIgnoreCase))
+        foreach (string tag in tags)
+            if (TryParseTag(tag, out string key, out string value) &&
+                key.Equals("speaker", StringComparison.OrdinalIgnoreCase))
                 return value;
-        }
 
         return string.Empty;
     }
-    private Sprite GetSpeakerPortrait(string speakerName) {
-        if (string.IsNullOrWhiteSpace(speakerName))
-            return null;
 
-        if (speakers.TryGetValue(speakerName, out Human human)) {
-            if (human != null && human.personDataSO != null)
-                return human.personDataSO.Portrait;
-        }
+    private Sprite GetSpeakerPortrait(string speakerName) {
+        if (string.IsNullOrWhiteSpace(speakerName)) return null;
+
+        if (_speakers.TryGetValue(speakerName, out Human human) &&
+            human?.personDataSO != null)
+            return human.personDataSO.Portrait;
 
         return null;
     }
 
-
     private void ProcessEventTags(List<string> tags) {
         foreach (string tag in tags) {
-            if (!TryParseTag(tag, out string key, out string value))
-                continue;
+            if (!TryParseTag(tag, out string key, out string value)) continue;
 
-            switch (key.ToLower()) {
-                case "anim":
-                    DialogueEvents.FireAnimationTag(value);
-                    break;
-
-                case "sfx":
-                    DialogueEvents.FireSfxTag(value);
-                    break;
+            switch (key.ToLowerInvariant()) {
+                case "anim": DialogueEvents.FireAnimationTag(value); break;
+                case "sfx": DialogueEvents.FireSfxTag(value); break;
             }
         }
     }
 
-
-    private bool TryParseTag(string tag, out string key, out string value) {
+    private static bool TryParseTag(string tag, out string key, out string value) {
         key = string.Empty;
         value = string.Empty;
 
-        if (string.IsNullOrWhiteSpace(tag))
-            return false;
+        if (string.IsNullOrWhiteSpace(tag)) return false;
 
         int colon = tag.IndexOf(':');
-
-        if (colon <= 0 || colon >= tag.Length - 1)
-            return false;
+        if (colon <= 0 || colon >= tag.Length - 1) return false;
 
         key = tag[..colon].Trim();
         value = tag[(colon + 1)..].Trim();
-
         return true;
     }
 
+    // ── Choice callback ───────────────────────────────────────────────────
     private void OnChoiceSelected(Choice choice) {
         _story.ChooseChoiceIndex(choice.index);
         ContinueStory();
     }
 
+    // ── Exit ──────────────────────────────────────────────────────────────
     private void ExitDialogueMode() {
         IsDialoguePlaying = false;
-
         _waitingForInput = false;
-        dialogWindow.HideDialoguePanel();
-        choiceSelector.Hide();
+
+        _dialogWindow.HideDialoguePanel();
+        _choiceSelector.Hide();
         OnDialogueEnd?.Invoke();
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────
+    private void CacheSpeaker(Human human) {
+        if (human?.personDataSO != null)
+            _speakers[human.Name] = human;
+    }
+
+    private void ChangeHappiness(string name, int delta) {
+        if (_player.Name.Equals(name)) _player.ChangeHappiness(delta);
+        else if (_npc.Name.Equals(name)) _npc.ChangeHappiness(delta);
     }
 }
 
 
+// ── Static event bus ──────────────────────────────────────────────────────────
 public static class DialogueEvents {
-    public static event Action<string> OnDialogueBegin;
-    public static event Action<string> OnDialogueEnd;
-
     public static event Action<string> OnAnimationTag;
     public static event Action<string> OnSfxTag;
     public static event Action<string> OnSpeakerChanged;
-    
+
     public static void FireAnimationTag(string tag) => OnAnimationTag?.Invoke(tag);
     public static void FireSfxTag(string tag) => OnSfxTag?.Invoke(tag);
     public static void FireSpeakerChanged(string speaker) => OnSpeakerChanged?.Invoke(speaker);

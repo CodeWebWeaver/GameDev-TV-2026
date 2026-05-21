@@ -8,7 +8,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6316518810363952909}
+  - component: {fileID: 4327902017898484620}
   - component: {fileID: 2919212384821246680}
   m_Layer: 0
   m_Name: UIManager
@@ -17,22 +17,26 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6316518810363952909
-Transform:
+--- !u!224 &4327902017898484620
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1184068521725354178}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 344.99756, y: 0.00001, z: 2147.6}
+  m_LocalPosition: {x: 0, y: 0, z: 2147.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8074467463559247099}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 344.99756, y: 0.00001}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2919212384821246680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45,10 +49,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ad830354e9985f49b243ed7236d5d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
-  pauseUI: {fileID: 1433502774207422999}
-  settingsPanel: {fileID: 9168468826837347544}
-  eventSysPrefab: {fileID: 5497479841562953126, guid: dbccfe67d27250b4c98d9195f36662d2, type: 3}
-  canvas: {fileID: 5336196413156756372}
+  _pauseUI: {fileID: 1433502774207422999}
+  _settingsPanel: {fileID: 9168468826837347544}
+  _eventSystemPrefab: {fileID: 5497479841562953126, guid: dbccfe67d27250b4c98d9195f36662d2, type: 3}
+  _autoCreateEventSystem: 1
+  _logWarnings: 1
+  _canvas: {fileID: 5336196413156756372}
 --- !u!1 &2385519479585266370
 GameObject:
   m_ObjectHideFlags: 0
@@ -82,7 +88,7 @@ RectTransform:
   m_Children:
   - {fileID: 6847510838185033898}
   - {fileID: 3737737192074792549}
-  m_Father: {fileID: 6316518810363952909}
+  m_Father: {fileID: 4327902017898484620}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
