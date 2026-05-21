@@ -1,4 +1,15 @@
+using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using Zenject;
+
+
+public interface IUiService {
+    void HideAll();
+    void ShowSettings();
+    void TogglePanel(UIPanel panel);
+}
 
 public class UIManager : MonoBehaviour, IUiService {
 
@@ -6,15 +17,25 @@ public class UIManager : MonoBehaviour, IUiService {
 
     [SerializeField] UIPanel settingsPanel;
 
-    public UIPanel SettingsMenu => settingsPanel;
-    public UIPanel PauseUI => pauseUI;
+    [InjectOptional] ISceneDataService sceneDataService;
+    [SerializeField] EventSystem eventSysPrefab;
 
-    public void HidePanel(UIPanel panel) {
-        panel.Hide();
+    private void Awake() {
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    public void ShowPanel(UIPanel panel) {
-        panel.Show();
+    private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1) {
+        TryAddEventSystem();
+    }
+
+    private void OnDestroy() {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void TryAddEventSystem() {
+        EventSystem eventSystem = FindAnyObjectByType<EventSystem>();
+        if (eventSystem != null) return;
+        Instantiate(eventSysPrefab);
     }
 
     public void TogglePanel(UIPanel panel) {
@@ -24,14 +45,25 @@ public class UIManager : MonoBehaviour, IUiService {
             panel.Show();
         }
     }
-}
 
-public interface IUiService {
-    UIPanel SettingsMenu { get; }
-    UIPanel PauseUI { get; }
+    public void HandleCancel() {
+        if (sceneDataService != null) {
+            if (sceneDataService.IsMainMenu()) {
+                TogglePanel(settingsPanel);
+            } else {
+                TogglePanel(pauseUI);
+            }
+        } else {
+            TogglePanel(pauseUI);
+        }
+    }
 
-    void HidePanel(UIPanel pauseUI);
-    void ShowPanel(UIPanel pauseUI);
+    public void HideAll() {
+        pauseUI.Hide();
+        settingsPanel.Hide();
+    }
 
-    void TogglePanel(UIPanel panel);
+    public void ShowSettings() {
+        HandleCancel();
+    }
 }

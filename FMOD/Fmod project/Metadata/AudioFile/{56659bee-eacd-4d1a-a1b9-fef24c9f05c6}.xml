@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{56659bee-eacd-4d1a-a1b9-fef24c9f05c6}">
+		<property name="assetPath">
+			<value>Music/Menu/starostin-soft-calm-background-music-376497.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>190.14530612244897</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{ee8b1d53-c29f-4ca0-a29d-54eaac272a33}</destination>
+		</relationship>
+	</object>
+</objects>
