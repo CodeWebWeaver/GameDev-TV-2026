@@ -289,6 +289,14 @@ public class FmodAudioService : IAudioService {
         return paused;
     }
 
+
+    public void ToggleChannel(AudioChannelType channel, bool enableChannel) {
+        if (!buses.TryGetValue(channel, out var bus)) {
+            Debug.LogError($"Bus for channel {channel} not found!");
+        }
+        bus.setMute(!enableChannel);
+    }
+
     #endregion
 
     #region VCA Control
