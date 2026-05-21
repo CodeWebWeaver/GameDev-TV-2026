@@ -16,8 +16,24 @@ MonoBehaviour:
   - playlist: 0
     eventReference:
       Guid:
-        Data1: 1114487059
-        Data2: 1106738849
-        Data3: 1896731553
-        Data4: -1435346184
-      Path: event:/Test Event
+        Data1: 1219305543
+        Data2: 1208238893
+        Data3: -741586265
+        Data4: -960560837
+      Path: event:/Music/Main_Menu
+  - playlist: 1
+    eventReference:
+      Guid:
+        Data1: 698474201
+        Data2: 1145385019
+        Data3: -1809764196
+        Data4: 1455441007
+      Path: event:/Music/GamePlay
+  - playlist: 3
+    eventReference:
+      Guid:
+        Data1: -1876375000
+        Data2: 1164989938
+        Data3: -1528404346
+        Data4: -527426601
+      Path: event:/Music/GameOver

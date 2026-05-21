@@ -6,6 +6,7 @@ public class GameController : MonoBehaviour
 {
     [InjectOptional] private UIManager uiManager;
     private InputSystem_Actions.UIActions uIMap;
+    [InjectOptional] GameManager gameManager;
 
     private void OnEnable() {
         if (InputManager.Instance == null) return;
@@ -15,7 +16,11 @@ public class GameController : MonoBehaviour
     }
 
     private void TogglePause(UnityEngine.InputSystem.InputAction.CallbackContext context) {
-        uiManager?.TogglePanel(uiManager.PauseUI);
+        uiManager?.HandleCancel();
+    }
+
+    public void HandleMenuRequest() {
+        gameManager.EnterMenu();
     }
 
     
