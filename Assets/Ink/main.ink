@@ -14,6 +14,11 @@ VAR friendly = 0
 VAR thoughtful = 0
 VAR funny=0
 
+//change vals for attributes
+VAR smallChange = 1
+VAR medChange = 3
+VAR bigChange = 5
+
 
 //people met identifiers
 VAR met_charlie = false
@@ -130,9 +135,9 @@ Hey! You came back!
     ~charlie+=5
     ~dog_step=4
     ~dog_quest=false
-    ~helpful+=3
-    ~pragmatic+=3
-    ~friendly+=3
+    ~ changePersonality("helpful", medChange)
+    ~ changePersonality("pragmatic", medChange)
+    ~ changePersonality("friendly", medChange)
     ->END
     
 + I found Coco!
@@ -146,9 +151,9 @@ Hey! You came back!
     ~charlie+=5
     ~dog_step=4
     ~dog_quest=false
-    ~helpful+=3
-    ~adventurous+=3
-    ~friendly+=3
+    ~ changePersonality("helpful", medChange)
+    ~ changePersonality("adventurous", medChange)
+    ~ changePersonality("friendly", medChange)
     ->END
 + Got to go, we'll talk soon.
     ->END
@@ -191,23 +196,23 @@ Oh, dear. Coco, Coco, please come back!
     ~dog_step=0
     ~beverly+=1
     ~coco+=1
-    ~friendly+=1
-    ~helpful+=1
-    ~adventurous+=1
+    ~ changePersonality("friendly", smallChange)
+    ~ changePersonality("helpful", smallChange)
+    ~ changePersonality("adventurous", smallChange)
     ->beverly_quest_progress
 + That's too bad, I'm sorry to hear it. Best of luck.
     #speaker: Beverly
     Thank you.
     ~beverly -=1
     ~coco -=1
-    ~friendly -=1
-    ~helpful -=1
+    ~ changePersonality("friendly", -smallChange)
+    ~ changePersonality("helpful", -smallChange)
     ->END
 + I don't have time for this.
     ~beverly -=5
     ~coco -=5
-    ~friendly -=1
-    ~helpful -=1
+    ~ changePersonality("friendly", -smallChange)
+    ~ changePersonality("helpful", -smallChange)
     ->END
 ===beverly_quest_progress===
 * {dog_step==0} [Can you give me a description of your lost dog?]
@@ -221,8 +226,8 @@ Oh, dear. Coco, Coco, please come back!
     Quest: The Lost Dog
     Next Objective: Find Coco
     ~dog_step=1
-    ~pragmatic +=1
-    ~helpful +=1
+    ~ changePersonality("pragmatic", smallChange)
+    ~ changePersonality("helpful", smallChange)
     ~beverly+=1
     ->END
 * {dog_step==0 and from_charlie} [Charlie told me your dog is lost, I am so sorry! How can I help?]
@@ -237,8 +242,8 @@ Oh, dear. Coco, Coco, please come back!
     Quest: The Lost Dog
     Next Objective: Find Coco
     ~dog_step=1
-    ~helpful+=1
-    ~thoughtful+=1
+    ~ changePersonality("helpful", smallChange)
+    ~ changePersonality("thoughtful", smallChange)
     ~beverly+=1
     ->END
 * {dog_step<=2 and met_coco}[I think I saw Coco down the street!]
@@ -274,8 +279,8 @@ Oh, dear. Coco, Coco, please come back!
     Quest: The Lost Dog
     Next Objective: Check in with Charlie
     ~dog_step=3
-    ~helpful+=3
-    ~adventurous+=1
+    ~ changePersonality("helpful", medChange)
+    ~ changePersonality("adventurous", smallChange)
     ~beverly+=5
     ~coco+=5
     ->END
@@ -329,8 +334,8 @@ Maybe you can tell him to come home?
     You should probably see if he made it back okay.
     Quest: The Lost Dog
     Next Objective: Check in with Beverly
-    ~friendly+=1
-    ~adventurous+=1
+    ~ changePersonality("friendly", smallChange)
+    ~ changePersonality("adventurous", smallChange)
     ~coco+=5
     ~dog_step=2
     ->END
@@ -344,7 +349,7 @@ Maybe you can tell him to come home?
     #speaker: Narrator
     Coco is heavier than you expected. You can't pull her home.
     ~coco -=1
-    ~friendly -=1
+    ~ changePersonality("friendly", -smallChange)
     ->END
 ===coco_chat===
 #speaker: Coco
@@ -564,8 +569,8 @@ I'm ~name.
     Emily sighs.
     -> emily_charlie_reaction
 + Did you hear that Beverly's dog is missing?
-    ~ambitious+=1
-    ~friendly+=1
+    ~ changePersonality("ambitious", smallChange)
+    ~ changePersonality("friendly", smallChange)
     #speaker: Emily
     Oh no, how awful!
     Though, now that you mention it, Charlie did say something about a lost dog.
@@ -580,8 +585,8 @@ I'm ~name.
 #speaker: Emily
 I'm sorry if he bothered you.
 + Not at all! He's actually trying to find his neighbor's lost dog.
-    ~friendly +=1
-    ~helpful +=1
+    ~ changePersonality("friendly", smallChange)
+    ~ changePersonality("helpful", smallChange)
     #speaker: Emily
     Really? That's so sweet of him.
     I feel awful for grounding him, then.
@@ -590,8 +595,8 @@ I'm sorry if he bothered you.
     The world is a scary place after all...
     ->emily_charlie_step1
 + Thank you, you should really keep an eye on him, though.
-    ~friendly -=1
-    ~thoughtful +=1
+    ~ changePersonality("friendly", -smallChange)
+    ~ changePersonality("thoughtful", smallChange)
     #speaker: Emily
     You're right.
     I try, I really do.
@@ -640,8 +645,8 @@ Any news to share?
     ~has_walkies=false
     ~emily+=5
     ~charlie+=5
-    ~pragmatic+=3
-    ~helpful+=5
+    ~ changePersonality("pragmatic", medChange)
+    ~ changePersonality("helpful", bigChange)
     ->END
     
 + Not yet, I'll come back later.
@@ -702,8 +707,8 @@ I think Charlie might be getting a little sick of them!
     #speaker: Narrator
     You hand back Lino's money.
     ~lino -=1
-    ~friendly-=1
-    ~thoughtful-=1
+    ~ changePersonality("friendly", -smallChange)
+    ~ changePersonality("thoughtful", -smallChange)
     ->END
 + Talk to you later.
     ->END
@@ -718,8 +723,8 @@ Did you find something?
     She has a job interview coming up. This will be just the confidence boost she needs.
     Thank you for finding this. I really do appreciate it.
     ~lino+=5
-    ~helpful+=5
-    ~pragmatic+=5
+    ~ changePersonality("helpful", bigChange)
+    ~ changePersonality("pragmatic", bigChange)
     ~lino_step=4
     ~lino_quest=false
     #speaker: Narrator
@@ -735,8 +740,8 @@ Did you find something?
     It's so soft and warm. And it looks just like something she used to wear at home.
     Thank you, truly. She is going to love this.
     ~lino+=5
-    ~thoughtful+=5
-    ~helpful+=5
+    ~ changePersonality("thoughtful", bigChange)
+    ~ changePersonality("helpful", bigChange)
     ~lino_step=4
     ~lino_quest=false
     #speaker: Narrator
@@ -753,8 +758,8 @@ Did you find something?
     Ugh, where did you find this?
     I don't have any money left for another gift... I suppose this will have to do...
     ~lino-=5
-    ~thoughtful-=1
-    ~funny+=1
+    ~ changePersonality("thoughtful", -smallChange)
+    ~ changePersonality("funny", smallChange)
     #speaker: Narrator
     Quest: A Gift for Annika
     Quest Complete!
@@ -1012,7 +1017,7 @@ Hello, there! What can I do ya for?
     Next Objective: Give Walkie-Talkies to Emily
     ->END
 + ha! That's perfect!
-    ~funny+=3
+    ~ changePersonality("funny", medChange)
     #speaker: Stevie
     I knew you'd get it!
     Now, normally these puppies would go for twenty tickets or so.
@@ -1047,8 +1052,8 @@ Hello, there! What can I do ya for?
     Next Objective: Give Lino the Gift
     ~lino_gift="shawl"
     ~lino_step=3
-    ~friendly+=1
-    ~thoughtful+=1
+    ~ changePersonality("friendly", smallChange)
+    ~ changePersonality("thoughtful", smallChange)
     ~stevie+=3
     ->END
 + The Fountain Pen.
@@ -1065,8 +1070,8 @@ Hello, there! What can I do ya for?
     Next Objective: Give Lino the Gift
     ~lino_step=3
     ~lino_gift="pen"
-    ~pragmatic+=1
-    ~friendly+=1
+    ~ changePersonality("pragmatic", smallChange)
+    ~ changePersonality("friendly", smallChange)
     ~stevie+=3
     ->END
 + The Chili Dog!
@@ -1086,8 +1091,8 @@ Hello, there! What can I do ya for?
     Next Objective: Give Lino the Gift
     ~lino_step=3
     ~lino_gift="chili"
-    ~funny +=3
-    ~friendly+=1
+    ~ changePersonality("funny", medChange)
+    ~ changePersonality("friendly", smallChange)
     ~stevie +=10
     ->END
 + I'm not sure. I'll think about it and get back to you later.
