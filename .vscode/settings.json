@@ -67,6 +67,6 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "GameDev-TV-2026.slnx",
+    "dotnet.defaultSolution": "GameJam2026.slnx",
     "dotnet.enableWorkspaceBasedDevelopment": false
 }
