@@ -28,7 +28,7 @@ public class DialogueManager : Singleton<DialogueManager> {
     [SerializeField] private TextAsset inkJsonAsset;
 
     private Dictionary<string, Human> speakers = new();
-
+    [InjectOptional] InputManager inputManager;
     protected override void Awake() {
         base.Awake();
 
@@ -64,16 +64,24 @@ public class DialogueManager : Singleton<DialogueManager> {
 
     private void Start() {
         ExitDialogueMode();
-        _uiMap = InputManager.Instance.InputActions.UI;
-        _uiMap.Submit.performed += HandleSubmit;
-        _uiMap.Navigate.performed += HandleNavigation;
         choiceSelector.OnChoiceSelected += OnChoiceSelected;
+
+        if (inputManager != null) {
+            _uiMap = inputManager.InputActions.UI;
+            _uiMap.Submit.performed += HandleSubmit;
+            _uiMap.Navigate.performed += HandleNavigation;
+        }
+        
+        
     }
 
     protected override void OnDestroy() {
         base.OnDestroy();
-        _uiMap.Submit.performed -= HandleSubmit;
-        _uiMap.Navigate.performed -= HandleNavigation;
+        if (inputManager != null) {
+            _uiMap.Submit.performed -= HandleSubmit;
+            _uiMap.Navigate.performed -= HandleNavigation;
+            choiceSelector.OnChoiceSelected -= OnChoiceSelected;
+        }
         choiceSelector.OnChoiceSelected -= OnChoiceSelected;
     }
 

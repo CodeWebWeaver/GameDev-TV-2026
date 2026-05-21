@@ -13,6 +13,7 @@ public class GameInstaller : MonoInstaller {
         .FromComponentInNewPrefab(_gameBootstrapper)
         .AsSingle()
         .NonLazy();
+
         Container.Bind<IStateFactory<GameManager>>()
            .To<StateFactory<GameManager>>()
            .AsSingle();
@@ -20,6 +21,8 @@ public class GameInstaller : MonoInstaller {
         Container.Bind<GameController>().FromComponentInNewPrefab(gameControllerPrefab).AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<UIManager>().FromComponentInNewPrefab(uiManagerPrefab).AsSingle().NonLazy();
         Container.Bind<ISceneDataService>().To<SceneDataService>().FromComponentInNewPrefab(_sceneDataService).AsSingle().NonLazy();
+
+        Container.BindInterfacesAndSelfTo<InputManager>().AsSingle().NonLazy();
     }
 
     private void StateMachineInstall() {

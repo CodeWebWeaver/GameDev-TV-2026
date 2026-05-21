@@ -5,13 +5,15 @@ using Zenject;
 public class GameController : MonoBehaviour
 {
     [InjectOptional] private UIManager uiManager;
+    [InjectOptional] private InputManager inputManager;
+
     private InputSystem_Actions.UIActions uIMap;
     [InjectOptional] GameManager gameManager;
 
     private void OnEnable() {
-        if (InputManager.Instance == null) return;
+        if (inputManager == null) return;
 
-        uIMap = InputManager.Instance.InputActions.UI;
+        uIMap = inputManager.InputActions.UI;
         uIMap.Cancel.performed += TogglePause;
     }
 
