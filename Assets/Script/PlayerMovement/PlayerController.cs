@@ -27,12 +27,13 @@ public class PlayerController : MonoBehaviour
         }
 
         Vector2 movement = inputManagement.GetPlayerMovement();
-        Vector3 move = new Vector3(movement.x, 0f, movement.y);
-        controller.Move(move * Time.deltaTime * playerSpeed);
+        Vector3 localMoveInput = new Vector3(movement.x, 0f, movement.y);
 
-        if (move != Vector3.zero)
+        controller.Move(localMoveInput * Time.deltaTime * playerSpeed);
+
+        if (localMoveInput != Vector3.zero)
         {
-            gameObject.transform.forward = move;
+            gameObject.transform.forward = localMoveInput;
         }
 
         if (inputManagement.PlayerJumpedThisFrame() && groundedPlayer)

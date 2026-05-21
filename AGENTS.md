@@ -1,8 +1,8 @@
 <!-- UNITY CODE ASSIST INSTRUCTIONS START -->
-- Project name: GameDev-TV-2026
+- Project name: GameDev TV 2026
 - Unity version: Unity 6000.4.6f1
 - Active game object:
-  - Name: DialogSystem
+  - Name: DialogueManager
   - Tag: Untagged
-  - Layer: UI
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
