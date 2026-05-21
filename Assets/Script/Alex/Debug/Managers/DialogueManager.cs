@@ -9,11 +9,14 @@ using Zenject;
 /// Drives an Ink story and routes input.
 /// All choice UI is delegated to <see cref="ChoiceSelector"/>.
 /// </summary>
-public class DialogueManager : Singleton<DialogueManager> {
+public class DialogueManager : MonoBehaviour {
     [Header("UI")]
     
-    [SerializeField] private ChoiceSelector choiceSelector;
-    [SerializeField] private DialogWindowView dialogWindow;
+    private ChoiceSelector choiceSelector;
+    private DialogWindowView dialogWindow;
+
+    [Inject] UIManager uIManager;
+    [SerializeField] private GameObject dialogWindowPrefab;
     
 
     public bool IsDialoguePlaying { get; private set; }
@@ -29,8 +32,14 @@ public class DialogueManager : Singleton<DialogueManager> {
 
     private Dictionary<string, Human> speakers = new();
     [InjectOptional] InputManager inputManager;
-    protected override void Awake() {
-        base.Awake();
+    protected void Awake() {
+        GameObject gameObject = uIManager.InstantiateUIElement(dialogWindowPrefab);
+        if (gameObject == null) {
+            Debug.LogError("Oh my god its null");
+            return;
+        }
+        choiceSelector = gameObject.GetComponent<ChoiceSelector>();
+        dialogWindow = gameObject.GetComponent<DialogWindowView>();
 
         if (inkJsonAsset == null) {
             Debug.LogWarning("[DialogueManager] inkJsonAsset is null — aborting.");
@@ -75,8 +84,7 @@ public class DialogueManager : Singleton<DialogueManager> {
         
     }
 
-    protected override void OnDestroy() {
-        base.OnDestroy();
+    protected void OnDestroy() {
         if (inputManager != null) {
             _uiMap.Submit.performed -= HandleSubmit;
             _uiMap.Navigate.performed -= HandleNavigation;
