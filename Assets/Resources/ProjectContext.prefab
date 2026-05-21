@@ -107,3 +107,4 @@ MonoBehaviour:
   uiManagerPrefab: {fileID: 2919212384821246680, guid: 2f9286ebc80f83549a507f0efc79d20c, type: 3}
   _sceneDataService: {fileID: 1438317784836898080, guid: 70627f58474ed5845924ab70f8758c1d, type: 3}
   _gameBootstrapper: {fileID: 1025796699843952778, guid: 9982d399719ec4548955210fac71c2c8, type: 3}
+  dialogueManager: {fileID: 6486587186506429363, guid: 1de2327681bc20d429bc29e9b6a98391, type: 3}

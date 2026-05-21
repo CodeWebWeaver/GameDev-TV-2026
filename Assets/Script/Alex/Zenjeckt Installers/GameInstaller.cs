@@ -8,6 +8,8 @@ public class GameInstaller : MonoInstaller {
     [SerializeField] UIManager uiManagerPrefab;
     [SerializeField] SceneDataService _sceneDataService;
     [SerializeField] GameManager _gameBootstrapper;
+    [SerializeField] DialogueManager dialogueManager;
+
     public override void InstallBindings() {
         Container.BindInterfacesAndSelfTo<GameManager>()
         .FromComponentInNewPrefab(_gameBootstrapper)
@@ -20,6 +22,8 @@ public class GameInstaller : MonoInstaller {
 
         Container.Bind<GameController>().FromComponentInNewPrefab(gameControllerPrefab).AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<UIManager>().FromComponentInNewPrefab(uiManagerPrefab).AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<DialogueManager>().FromComponentInNewPrefab(dialogueManager).AsSingle().NonLazy();
+
         Container.Bind<ISceneDataService>().To<SceneDataService>().FromComponentInNewPrefab(_sceneDataService).AsSingle().NonLazy();
 
         Container.BindInterfacesAndSelfTo<InputManager>().AsSingle().NonLazy();
