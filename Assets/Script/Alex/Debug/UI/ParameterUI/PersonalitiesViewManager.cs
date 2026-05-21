@@ -14,8 +14,6 @@ public class PersonalitiesViewManager : MonoBehaviour {
     [SerializeField] private bool usePooling = true;
     [SerializeField] private int maxVisibleParams = 20;
 
-    
-
     private ObjectPool<PersonalityParamUI> _pool;
     private readonly Dictionary<string, PersonalityParamUI> _activeUI = new();
     private PlayerPersonality _personality;

@@ -19,6 +19,7 @@ public class UIManager : MonoBehaviour, IUiService {
 
     [InjectOptional] ISceneDataService sceneDataService;
     [SerializeField] EventSystem eventSysPrefab;
+    [SerializeField] Canvas canvas;
 
     private void Awake() {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -65,5 +66,18 @@ public class UIManager : MonoBehaviour, IUiService {
 
     public void ShowSettings() {
         HandleCancel();
+    }
+
+    public GameObject InstantiateUIElement(GameObject uiPrefab) {
+        Transform parent = gameObject.transform;
+        if (canvas != null) {
+            Canvas anyCanvas = FindAnyObjectByType<Canvas>();
+            if (anyCanvas == null) {
+                Debug.LogWarning("I give up there is no canvas");
+                return null;
+            }
+            parent = anyCanvas.transform;
+        }
+        return Instantiate(uiPrefab, parent);
     }
 }

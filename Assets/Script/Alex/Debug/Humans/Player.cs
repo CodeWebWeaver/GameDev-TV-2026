@@ -14,6 +14,7 @@ public class Player : Human {
     public PlayerPersonality Personality { get; } = new();
     [SerializeField] PersonalitiesViewManager personalitiesUIManager;
     [Inject] private InputManager InputManager;
+    [Inject] private DialogueManager dialogueManager;
 
     private void Start() {
         personalitiesUIManager.Observe(Personality);
@@ -36,14 +37,15 @@ public class Player : Human {
     }
 
     private void HandleInteraction() {
-        if (DialogueManager.Instance.IsDialoguePlaying) return;
+        if (dialogueManager == null) return;
+        if (dialogueManager.IsDialoguePlaying) return;
 
         DialogueNPC[] npcs = dialogSystem.FindDialogueNPC();
         if (npcs.Length == 0) return;
 
         DialogueNPC npc = npcs[0];
         npc.OnDialogueBegin(); // NPC підписується на свої події
-        DialogueManager.Instance.EnterDialogueMode(npc.BeginDialogue(), this, npc);
+        dialogueManager.EnterDialogueMode(npc.BeginDialogue(), this, npc);
     }
 }
 

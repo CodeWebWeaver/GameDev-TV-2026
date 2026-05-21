@@ -53,7 +53,7 @@ public class PlayerDialogSystem : MonoBehaviour {
 
     private void OnDrawGizmos() {
         Color grey = Color.grey;
-        grey.a = 0.1f;
+        grey.a = 0.2f;
         Gizmos.color = grey;
         Gizmos.DrawSphere(transform.position, dialogSearchingDistance);
     }
