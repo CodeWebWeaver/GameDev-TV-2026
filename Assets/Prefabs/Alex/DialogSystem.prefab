@@ -196,8 +196,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5954828542210523659}
-  - component: {fileID: 4833258283863316214}
   - component: {fileID: 7053768988177093416}
+  - component: {fileID: 4833258283863316214}
   - component: {fileID: 7586708148210637220}
   - component: {fileID: 2099231138308392966}
   m_Layer: 5
@@ -227,21 +227,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &4833258283863316214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3298678292330944119}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70cfe269f4a501643919a5c629e7a27d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChoiceSelector
-  choiceContainer: {fileID: 7266124854648843400}
-  choicePrefab: {fileID: 5373280146093074770, guid: 0944ec03a92793640bcb49d5c85c1790, type: 3}
-  poolMaxSize: 8
 --- !u!114 &7053768988177093416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,6 +245,21 @@ MonoBehaviour:
   portraitObject: {fileID: 6355557527020861076}
   speakerPortraitImage: {fileID: 6040802676703931444}
   dialogueText: {fileID: 119623502361125205}
+--- !u!114 &4833258283863316214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3298678292330944119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70cfe269f4a501643919a5c629e7a27d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChoiceSelector
+  choiceContainer: {fileID: 7266124854648843400}
+  choicePrefab: {fileID: 5373280146093074770, guid: 0944ec03a92793640bcb49d5c85c1790, type: 3}
+  poolMaxSize: 8
 --- !u!114 &7586708148210637220
 MonoBehaviour:
   m_ObjectHideFlags: 0

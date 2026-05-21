@@ -85,6 +85,7 @@ VAR coco = 0
 VAR annika = 0
 VAR korra = 0
 
+-> talk_to_someone
 
 === talk_to_someone ===
 + Charlie
