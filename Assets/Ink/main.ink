@@ -32,6 +32,21 @@ VAR met_annika = false
 VAR met_lino = false
 VAR met_coco = false
 VAR met_korra = false
+VAR met_august = false
+VAR met_jojo = false
+
+//people friend identifiers
+VAR charlie_friend = false
+VAR emily_friend = false
+VAR beverly_friend = false
+VAR stevie_friend = false
+VAR annika_friend = false
+VAR lino_friend = false
+VAR coco_friend = false
+VAR korra_friend = false
+VAR august_friend = false
+VAR jojo_friend = false
+
 
 //dog quest
 //step 0: talk to beverly for a description of where the dog might be
@@ -41,6 +56,7 @@ VAR met_korra = false
 VAR dog_quest = false
 VAR dog_step = 0 //0-3
 VAR from_charlie=false
+VAR char_convo = false
 
 
 //emily-charlie quest
@@ -77,15 +93,28 @@ VAR have_new_info_annika = false
 VAR four_gophers = false
 VAR gophers_step = 0
 
+//summer mural
+VAR mural_quest = false
+VAR mural_step = 0
+VAR mural_loc = ""
+
+//chrlie's pranks
+VAR paint = false
+VAR gum = false
+VAR handshake = false
+
 //friendship scores
 VAR emily = 0
 VAR charlie = 0
 VAR beverly = 0
 VAR stevie = 0
+VAR stevieSales=0
 VAR lino = 0
 VAR coco = 0
 VAR annika = 0
 VAR korra = 0
+VAR august = 0
+VAR jojo = 0
 
 -> talk_to_someone
 
@@ -103,6 +132,10 @@ VAR korra = 0
     ->talk_to_coco
 + Lino
     ->talk_to_lino
++ August
+    ->talk_to_august
++ Jojo 
+    ->talk_to_jojo
 
 
 /////////////////////////////////////////
@@ -129,7 +162,7 @@ VAR korra = 0
         {emily_charlie_step==3:
         ->charlie_post_walkies
         -else:
-        ->charlie_day_one
+        ->charlie_general_chat
         }
         }
     }
@@ -154,6 +187,7 @@ Hey! You came back!
     #speaker: Narrator
     Quest: The Lost Dog
     Quest Complete!
+    ~charlie_friend=true
     ~charlie+=5
     ~dog_step=4
     ~dog_quest=false
@@ -170,6 +204,7 @@ Hey! You came back!
     #speaker: Narrator
     Quest: The Lost Dog
     Quest Complete!
+    ~charlie_friend=true
     ~charlie+=5
     ~dog_step=4
     ~dog_quest=false
@@ -300,6 +335,7 @@ Oh, dear. Coco, Coco, please come back!
     #speaker: Narrator
     Quest: The Lost Dog
     Next Objective: Check in with Charlie
+    ~beverly_friend=true
     ~dog_step=3
     ~helpful+=medChange
     ~adventurous+=smallChange
@@ -311,6 +347,19 @@ Oh, dear. Coco, Coco, please come back!
 #speaker: Beverly
 Ah, ~name, it's lovely to see you, dear!
 Do you need help with anything?
+* {mural_step==1}[Actually, yes! Do you know anywhere in town where August could paint their next mural?]
+    #speaker: Beverly
+    August is looking for somewhere to paint their next mural?
+    That's excellent news! Perhaps they could paint something on this free wall here? It would certainly liven up this street.
+    And, of course, I would love the chance to catch up with August.
+    We used to be schoolmates, you know. They were not always the best at arithmetic or spelling, but their art has always been astonishing.
+    I look forward to seeing what they'll paint next!
+    #speaker: Narrator
+    Quest: A Summer Mural
+    Next Objective: Tell August where they can paint their next mural.
+    ~mural_step=2
+    ~mural_loc="empty wall"
+    ->END
 + No, thank you!
     #speaker: Beverly
     Well, you know where to find me if you need anything, dear!
@@ -356,6 +405,7 @@ Maybe you can tell him to come home?
     You should probably see if he made it back okay.
     Quest: The Lost Dog
     Next Objective: Check in with Beverly
+    ~coco_friend=true
     ~friendly+=smallChange
     ~adventurous+=smallChange
     ~coco+=5
@@ -408,7 +458,7 @@ Oh... dear me...
 
 { met_charlie:
 
--> charlie_first_convo
+-> talk_to_charlie
 
 -else: 
 
@@ -429,9 +479,20 @@ Took you long enough. My name is Charlie!
 Oh, hi, Charlie.
 ~ met_charlie = true
 -> charlie_first_convo
+
+
+===charlie_general_chat===
+#speaker: Charlie
+Hey there! Back so soon?
+* {dog_quest==false and emily_charlie_quest==false and dog_step==0 and emily_charlie_step==0}[You said you needed help with something?]
+    ->lost_dog_overview
++ Just stopping by, we can talk later.
+    ->END
+
 === charlie_first_convo ===
 
 + What are you doing up there?
+~char_convo=true
 
 ->lost_dog_overview
 
@@ -505,7 +566,19 @@ She wouldn’t even listen to my reason for staying out!
     -> END
 ===charlie_post_dog===
 #speaker: Charlie
-Hey! What are you up to?
+Hey! What are you up to
+* {mural_step==1}[I'm trying to find somewhere for August to paint their next mural. Any ideas?]
+    #speaker: Charlie
+    Oh, that's an easy one!
+    The school has been looking for some new art for ages. 
+    Mom's on the school board so I hear all the drama. 
+    But, yeah, they should be good to paint there.
+    #speaker: Narrator
+    Quest: A Summer Mural
+    Next Objective: Tell August where they can paint their next mural.
+    ~mural_step=2
+    ~mural_loc="school"
+    ->END
 + Not much, still grounded?
     #speaker: Charlie
     Ugh. Yes, another 6 days, I think.
@@ -520,7 +593,19 @@ Hey! What are you up to?
 ===charlie_post_walkies===
 #speaker: Charlie
 Hey! I'm not grounded anymore!
-+ Excellent!
+* {mural_step == 1} [That's great news! Any chance you can help me find where August can paint a mural?]
+    #speaker: Charlie
+    Oh, that's an easy one!
+    The school has been looking for some new art for ages. 
+    Mom's on the school board so I hear all the drama. 
+    But, yeah, they should be good to paint there.
+    #speaker: Narrator
+    Quest: A Summer Mural
+    Next Objective: Tell August where they can paint their next mural.
+    ~mural_step=2
+    ~mural_loc="school"
+    ->END
+* {mural_step != 1} [Excellent!]
     #speaker: Charlie
     Thanks for talking to my mom.
     I'm allowed to explore even more now that I've got this walkie-talkie!
@@ -662,6 +747,10 @@ Any news to share?
     Oh, these will be so much fun!
     Charlie and I might even search the neighborhood together with these.
     Thank you, {name}, I can't tell you how much I appreciate your help!
+    #speaker: Narrator
+    Quest: Emily and Charlie
+    Quest Complete!
+    ~emily_friend=true
     ~emily_charlie_step=3
     ~emily_charlie_quest=false
     ~has_walkies=false
@@ -752,6 +841,7 @@ Did you find something?
     #speaker: Narrator
     Quest: A Gift for Annika
     Quest Complete!
+    ~lino_friend=true
     ->END
 * {lino_gift=="shawl"}[Give Lino the shawl]
     #speaker: Lino
@@ -761,6 +851,7 @@ Did you find something?
     #speaker: Lino
     It's so soft and warm. And it looks just like something she used to wear at home.
     Thank you, truly. She is going to love this.
+    ~lino_friend=true
     ~lino+=5
     ~helpful+=bigChange
     ~thoughtful+=bigChange
@@ -908,8 +999,9 @@ The young woman looks a bit frazzled and unfamiliar with the area.
     I don't even know why I came here in the first place.
     #speaker: Narrator
     The woman sighs.
-    ???: Sorry, I know you were just trying to be helpful.
-    ???: My name is Annika. 
+    #speaker: Unknown
+    Sorry, I know you were just trying to be helpful.
+    My name is Annika. 
     ~met_annika=true
     ->annika_ask_qs
 + She seems busy, best to not bother her...
@@ -1068,6 +1160,7 @@ Would you believe they've already offered me a job?
     ~annika+=smallChange
     ~have_new_info_annika=false
     ~annika_step=2
+    ~annika_friend=true
     #speaker Narrator
     Quest: Annika's New Job
     Next Objective: Find an advertisement for an upcoming event.
@@ -1119,6 +1212,20 @@ Would you believe they've already offered me a job?
 ===korra_chat===
 #speaker: Korra
 Howdy there, friend!
+* {mural_step==1}[Any chance you're interested in a mural?]
+    #speaker: Korra
+    A mural? I can't say I'm a fan of mushrooms.
+    ...Oh! You said mural!
+    Oooooooh, let me think. Yes, I think that would be perfect!
+    We've got a stage back in the park where we like to perform, and it's been seeming pretty bare lately.
+    Yeah, yeah, that would be a great way to liven things up.
+    Please let August know we're in!
+    ~mural_step=2
+    ~mural_loc="park"
+    #speaker: Narrator
+    Quest: A Summer Mural
+    Next Objective: Tell August where they can paint their mural
+    ->END
 * {gophers_step==0}[I'm still looking for a fourth gopher!]
     #speaker: Korra
     Thanks for doing that!
@@ -1135,6 +1242,7 @@ Howdy there, friend!
     ~creative+=bigChange
     ~gophers_step=2
     ~four_gophers=false
+    ~korra_friend=true
     #speaker Narrator
     Quest: The Four Gophers
     Next Objective: Quest Complete!
@@ -1177,7 +1285,7 @@ Anyways. I'm part of a 3-person alt-folk-punk-rock group. We're the Four Gophers
     They don't have to do anything crazy, or anything. We just need someone on tambourine.
     It really gives the whole thing another layer.
     Do you think you could find us a fourth member?
-    #speaker Narrator
+    #speaker: Narrator
     Quest: The Four Gophers
     Next Objective: Find a Fourth Member for the Four Gophers
     ~four_gophers=true
@@ -1193,12 +1301,105 @@ Anyways. I'm part of a 3-person alt-folk-punk-rock group. We're the Four Gophers
     It really gives the whole thing another layer.
     Do you think you could find us a fourth member?
     Here's a poster you can use.
-    #speaker Narrator
+    #speaker: Narrator
     Korra gives you a poster with four gophers holding musical instruments.
     Quest: The Four Gophers
     Next Objective: Find a Fourth Member for the Four Gophers
     ~four_gophers=true
     ~gophers_step=0
+    ->END
+    
+===talk_to_august===
+{met_august:
+    ->august_chat
+-else:
+    ->august_meet_convo
+}
+
+===august_chat===
+#speaker: August
+Hello, there!
+* {mural_quest==false and mural_step==0}[Is there anything I can help you with?]
+    #speaker: August
+    As a matter of fact, there is something I could use a hand with.
+    ->august_quest_offer
+* {mural_quest==true and mural_step==0}[Can you give me some ideas for where to ask about the mural?]
+    #speaker: August
+    Hmm. I think a stage, a school, or a somewhere in town would be a perfect location.
+    Maybe ask around town. I suspect you have a friend who might be interested in a mural.
+    ->END
+* {mural_quest==true and mural_step==1}[Good news! I found a spot for your mural!]
+    ->share_mural
+* {mural_quest==false and mural_step==2}[How is the mural coming along?]
+    #speaker: August
+    Oh, it's coming along quite nicely. I'd rather not spoil it, but I look forward to showing you once it's done.
+    ->END
++ Hello to you!
+    ->END
+
+
+===share_mural===
+#speaker: August
+The {mural_loc}, you say? That sounds... perfect!
+I'll get started on it right away.
+Thank you kindly for helping me with this. I'd rather not spoil my idea, but I know exactly what I'll be painting.
+I hope to catch up with you soon!
+#speaker: Narrator
+Quest: A Summer Mural
+Quest Complete!
+~august_friend=true
+~mural_quest=false
+~mural_step=2
+->END
+
+===august_quest_offer===
+#speaker: August
+You see, I'm planning my next artwork. It will be a mural illustrating the instrumental connection between community and nature.
+However, I haven't the foggiest idea of where to paint it.
+I have some ideas, but I've been here so long that I'm used to everything.
+You have a fresh pair of eyes. Maybe you'd be willing to ask around for me?
++ Of course! I'd be happy to help.
+    #speaker: August
+    Excellent!
+    I'm sure there are plenty of spots around town.
+    Maybe ask some of the neighbors? I think a stage, a school, or a somewhere in town would be a perfect location.
+    #speaker: Narrator
+    Quest: A Summer Mural
+    Next Objective: Find a new Art Site for August
+    ~mural_quest=true
+    ->END
++ That's not really my thing.
+    #speaker: August
+    I see. Well, I suppose I'll make do.
+    ->END
+
+===august_meet_convo===
+#speaker: Unknown
+Hmm.
+Ah - no, that's not it.
+But perhaps...? No, not that, either.
++ Hello there, do you need something?
+    #speaker: Unknown
+    Hmm, what's that?
+    Ah! You're new here, aren't you?
+    ...yes, I suppose I do need help. But we should be introduced first, shouldn't we?
+    My name is August. I'm the local painter here.
+    As for what Im looking for a hand with...
+    ->august_quest_offer
++ You look like a friendly face. What's your name?
+    #speaker: Unknown
+    Well aren't you polite.
+     I'm August, the local painter.
+    I'm fairly well known around these parts. And, by extension, I know most of the folks here. You're new to the area, aren't you?
+     Well, no matter, it is a pleasure to meet you. You're going to love it here.
+    ~met_august=true
+    ->END
++ You're talking to yourself awfully loudly.
+    #speaker: Unknown
+    Ah, my apologies. I let my mind get away from me.
+    Then again, that tends to happen. You're new around here, so I imagine you're not used to it yet. I'm August, the local painter, and this sort of thing will happen a lot.
+    So, if you'll excuse me.
+    ~met_august=true
     ->END
 
     
@@ -1224,6 +1425,22 @@ Hey! You, there!
     
 + Keep Walking
     -> END
+    
+===stevie_score_check===
+{stevieSales >= 2:
+    ->stevie_friendship
+-else:
+    ->END
+}
+
+===stevie_friendship===
+#speaker: Stevie
+Hello, there!
+Just wanted to say thanks for supporting my business these past few days.
+Any time you need a business partner, you just let me know.
+~stevie_friend=true
+->END
+
 === stevie_quest_convo ===
 #speaker: Stevie
 Hello, there! What can I do ya for?
@@ -1269,7 +1486,7 @@ Hello, there! What can I do ya for?
 + Nothing right now, thanks.
     #speaker: Stevie
     Well, come back if you need anything!
-    ->END
+    ->stevie_score_check
 
 ===walkies===
 + ...game map?
@@ -1282,13 +1499,15 @@ Hello, there! What can I do ya for?
     ~has_walkies=true
     ~emily_charlie_step=2
     ~stevie+=3
+    ~stevieSales+=1
     #speaker: Stevie
     Just remember to come back to me if you need anything else!
     You won't get a better deal anywhere else.
     #speaker: Narrator
     Quest: Emily and Charlie
     Next Objective: Give Walkie-Talkies to Emily
-    ->END
+    ->stevie_score_check
+
 + ha! That's perfect!
     ~funny+=medChange
     #speaker: Stevie
@@ -1300,13 +1519,14 @@ Hello, there! What can I do ya for?
     ~has_walkies=true
     ~emily_charlie_step=2
     ~stevie+=3
+    ~stevieSales+=1
     #speaker: Stevie
     Just remember to come back to me if you need anything else!
     You won't get a better deal anywhere else.
     #speaker: Narrator
     Quest: Emily and Charlie
     Next Objective: Give Walkie-Talkies to Emily
-    ->END
+    ->stevie_score_check
 
 ->END
 ===gift===
@@ -1327,8 +1547,10 @@ Hello, there! What can I do ya for?
     ~lino_step=3
     ~friendly+=smallChange
     ~thoughtful+=smallChange
+    ~stevieSales+=1
     ~stevie+=3
-    ->END
+    ->stevie_score_check
+    
 + The Fountain Pen.
     #speaker: Stevie
     Aha, an intelligential gift for an intelligential folk!
@@ -1346,7 +1568,9 @@ Hello, there! What can I do ya for?
     ~pragmatic+=smallChange
     ~friendly+=smallChange
     ~stevie+=3
-    ->END
+    ~stevieSales+=1
+    ->stevie_score_check
+    
 + The Chili Dog!
     #speaker: Stevie
     Excellent choice, my good lady!
@@ -1367,12 +1591,14 @@ Hello, there! What can I do ya for?
     ~funny+=medChange
     ~friendly+=smallChange
     ~stevie +=10
-    ->END
+        ~stevieSales+=1
+    ->stevie_score_check
+    
 + I'm not sure. I'll think about it and get back to you later.
     #speaker: Stevie
     Understood, understood.
     But don't take too long; these gifts go fast!
-    ->END
+    ->stevie_score_check
 ===bus_pass===
 + One thousand?! That's egregious!
     ->bus_pass_continue
@@ -1389,32 +1615,187 @@ Hello, there! What can I do ya for?
         #speaker: Stevie
         A wise decision! Here you are, good madame. 
         #speaker: Narrator
-        Stevie hands you the bus pass.
+        Stevie hands you the bus guide.
         #speaker: Stevie
         Best wishes!
         ~have_new_info_annika=true
         ~funny+=1
-        ->END
+        ~stevieSales+=1
+        ->stevie_score_check
     + Umm, I suppose that's alright? (Maybe Annika will pay me back...)
         #speaker: Stevie
         A wise decision! Here you are, good madame. 
         #speaker: Narrator
-        Stevie hands you the bus pass.
+        Stevie hands you the bus guide.
         #speaker: Stevie
         Best wishes!
         ~have_new_info_annika=true
         ~pragmatic+=1
-        ->END
+        ~stevieSales+=1
+        ->stevie_score_check
     + That's too much. Sorry, Stevie, maybe next time.
         #speaker: Stevie
         Alright, well, come back if you change your  mind!
         I can't guarantee I'll still have it on hand the next time you need it.
-        ->END
-        
-EXTERNAL addFriend(name)
-
-=== function addFriend(friend_name) ===
-// defined function to avoid compile time errors in INK
-~ return
-
+        ->stevie_score_check
     
+===talk_to_jojo===
+{met_jojo:
+    ->jojo_chat
+-else:
+    ->jojo_meet_convo
+}
+    
+===jojo_meet_convo===
+#speaker: Unknown
+Hey! You're new!
++ Yes, I'm new to town! It's nice to meet you.
+    #speaker: Unknown
+    Oh, okay. I'm Jojo.
+    ~met_jojo=true
+    ->jojo_chat
++ Umm. Shouldn't you be in school? Or something?
+    #speaker: Unknown
+    It's summer break. Don't you know that?
+    Adults these days don't know anything...
+    I'm Jojo. I'll help you get used to this town in no time.
+    ~met_jojo=true
+    ->jojo_chat
++ And you're weird.
+    #speaker: Unknown
+    That's mean. You're not supposed to say stuff like that.
+    ->END
+    
+===jojo_chat===
+#speaker: Jojo
+Hey, lady.
+{paint and gum and handshake:
+~jojo_friend=true
+}
+{dayCount==1 and handshake==false:
+    ->jojo_day1
+-else:
+    {dayCount==2 and paint==false:
+        ->jojo_day2
+    -else:
+        {dayCount==3 and gum==false :
+            ->jojo_day3
+        -else:
+            ->jojo_base
+        }
+    }
+}
+
+===jojo_base===
++ Hey, Jojo!
+    #speaker: Jojo
+    Hi! I'm busy but I'll see you tomorrow.
+    ->END
++ I've got to go, see you later.
+    #speaker: Jojo
+    Okay, see ya!
+    ->END
+
+===jojo_day1===
+#speaker: Jojo
+Oh hey, since we're neighbors now...
+Can I show you my secret handshake?
+->jojo_handshake
+
+===jojo_handshake===
+#speaker: Narraator
+Jojo doesn't wait for your response, instead holding up his hands. He bounces impatiently, waiting for you to do the same.
+#speaker: Jojo
+Okay. Up High...
+#speaker: Narrator
+You've definitely seen this game before. You decide to play along.
+You give Jojo a high-five up high.
+#speaker: Jojo
+Now down low...
+#speaker: Narrator
+You give Jojo a high-five down low.
+#speaker: Jojo
+Up in space...
++ Play along and high-five Jojo again
+    #speaker: Narrator
+    You high-five Jojo again.
+    #speaker: Jojo
+    IN YOUR FACE!
+    #speaker: Narrator
+    Jojo gets on his tippy-toes to high-five your face. He misses by about a foot.
+    #speaker: Jojo
+    Ha! You totally fell for it!
+    That was really fun. Thank you for playing with me.
+    ~handshake=true
+    ~jojo +=1
+    ->END
++ In your face!
+    #speaker: Narrator
+    Beating Jojo to the punchline, you bop him on the forehead while his arams are way up in the air.
+    You didn't bop him that hard, but he starts to tear up.
+    #speaker: Jojo
+    Hey, that's not... that's not fair.
+    You skipped ahead. You cheated.
+    #sspeaker: Narrator
+    Jojo turns away from you in a pout.
+    ->END
++ ...Up in space?
+    #speaker: Jojo
+    Ugh. It's part of the handshake. We have to restart it now.
+    ->jojo_handshake
+
+
+===jojo_day2===
+#speaker: Jojo
+Hi, {name}! Can you do me a big favor?
+I'm doing an art project but I need something from the store.
+Can you buy me striped paint?
++ Horizontal or vertical stripes?
+    #speaker: Jojo
+    Gotcha!
+    Striped paint isn't real.
+    You'd need to get two different colors and paint the stripes yourself, silly.
+    I was just messing with you. You're so gullible!
+    ~jojo+=1
+    ~paint=true
+    ->END
++ I think you'd need to get two different colors and make the stripes yourself.
+    #speaker: Jojo
+    Ugh, you're no fun. I guess you've heard that one before...
+    ->END
+
+===jojo_day3===
+#speaker: Jojo
+Hi {name}, thanks for hanging out with me so much.
+As a thank you, can I give you a piece of gum?
+#speaker: Narrator
+Jojo holds out a pack of gum. It's no brand of gum you've ever seen before, and one piece is clearly sticking out.
+You think you know what's happening here.
++ Thanks, Jojo! I'll take a piece.
+    #speaker: Narrator
+    You take a piece, bracing yourself for the electric shock.
+    ZZZAAAAAAAAP!
+    #speaker: Jojo
+    Haha, you totally fell for it!
+    Uh, sorry to trick you. I have some real gum in my pocket.
+    #speaker: Narrator
+    Jojo apologetically hands you a piece of gum. It's real this time.
+    #speaker: Jojo
+    Thanks for playing with me. My friends don't let me use that one anymore.
+    ~jojo +=1
+    ~gum=true
+    {paint and gum and handshake:
+    ~jojo_friend=true
+    }
+    ->END
++ Thanks for the offer, but I'm alright for now.
+    #speaker: Jojo
+    Oh! Well, maybe you can take a piece for later?
+    Or, I guess we can just talk later...
+    ->END
++ You're just trying to shock me! I'm not falling for it.
+    #speaker: Jojo
+    Oh. Uh, no! That's silly.
+    This is real gum, honest!
+    Um, maybe later, I guess...
+    ->END
