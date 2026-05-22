@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour, IGameManager {
 
     [Inject] ISceneDataService sceneDataService;
     [Inject] IUiService uiService;
+    [Inject] private InputManager inputManager;
 
     private void Awake() {
         _stateMachine = new ContextStateMachine<GameManager>(this, stateFactory);
@@ -46,6 +47,21 @@ public class GameManager : MonoBehaviour, IGameManager {
         SceneReference menuSceneRef = sceneDataService.GetSceneReference(SceneTypes.MainMenu);
         LoadScene(menuSceneRef);
         _stateMachine?.ChangeState<MainMenuState>();
+    }
+
+    public void HandleCancel() {
+        if (sceneDataService.IsMainMenu()) {
+            uiService.ToggleSettings();
+            return;
+        } else {
+            // toggle pause state
+            bool isPaused = _stateMachine.CurrentState is PauseState pause;
+            if (isPaused) {
+                _stateMachine.ChangeState<GameLoopState>();
+            } else {
+                _stateMachine.ChangeState<PauseState>();
+            }
+        }
     }
 }
 
@@ -97,13 +113,16 @@ public class BootstrapState : State<GameManager> {
 
 public class MainMenuState : State<GameManager> {
     private readonly IAudioService _audioService;
+    private readonly InputManager _inputManager;
 
-    public MainMenuState(IAudioService audioService) {
+    public MainMenuState(IAudioService audioService, InputManager inputManager) {
         _audioService = audioService;
+        _inputManager = inputManager;
     }
 
     public override void Enter() {
         _audioService?.StartMusicPlaylist(MusicPlaylist.MainMenu);
+        _inputManager.SwitchToUIMap();
     }
 
     public override void Exit() {
@@ -113,17 +132,61 @@ public class MainMenuState : State<GameManager> {
 
 public class GameLoopState : State<GameManager> {
     private readonly IAudioService _audioService;
+    private readonly InputManager _inputManager;
 
-    public GameLoopState([InjectOptional] IAudioService audioService) {
+    public GameLoopState(IAudioService audioService, InputManager inputManager) {
         _audioService = audioService;
+        _inputManager = inputManager;
     }
 
     public override void Enter() {
         _audioService?.StartMusicPlaylist(MusicPlaylist.GameLoop);
+        _inputManager.SwitchToPlayerMap();
     }
 
 
     public override void Exit() {
         _audioService?.StopCurrentMusic();
+    }
+}
+
+public class PauseState : State<GameManager> {
+    private readonly IUiService _uiService;
+    private readonly InputManager _inputManager;
+
+    public PauseState(IUiService uiService, InputManager inputManager) {
+        _uiService = uiService;
+        _inputManager = inputManager;
+    }
+
+    public override void Enter() {
+        Time.timeScale = 0f;
+        _uiService.ShowPause();
+        _inputManager.SwitchToUIMap();
+    }
+
+    public override void Exit() {
+        Time.timeScale = 1f;
+        _uiService.HidePause();
+    }
+}
+
+public class DialogueState : State<GameManager> {
+    private readonly IUiService _uiService;
+    private readonly InputManager _inputManager;
+    private readonly DialogueManager _dialogueService;
+
+    public DialogueState(IUiService ui, InputManager input, DialogueManager dialogue) {
+        _uiService = ui;
+        _inputManager = input;
+        _dialogueService = dialogue;
+    }
+
+    public override void Enter() {
+        _inputManager.SwitchToDialogMap();
+    }
+
+    public override void Exit() {
+        _inputManager.SwitchToPlayerMap();
     }
 }

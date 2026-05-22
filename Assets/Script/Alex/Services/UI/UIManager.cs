@@ -8,32 +8,35 @@ using Zenject;
 public interface IUiService {
     void HideAll();
     void ShowSettings();
+    void ToggleSettings();
     void TogglePanel(UIPanel panel);
     void ShowPanel(UIPanel panel);
     void HidePanel(UIPanel panel);
     bool IsPanelOpen(UIPanel panel);
     GameObject InstantiateUIElement(GameObject uiPrefab, Transform parent = null);
     T InstantiateUIElement<T>(T uiPrefab, Transform parent = null) where T : Component;
+    void ShowPause();
+    void HidePause();
 }
 
 public class UIManager : MonoBehaviour, IUiService {
     [Header("UI Panels")]
-    [SerializeField] private UIPanel _pauseUI;
+    [SerializeField] private UIPanel _pausePanel;
     [SerializeField] private UIPanel _settingsPanel;
-
-    [Header("References")]
-    [SerializeField] private EventSystem _eventSystemPrefab;
-
+   
     [Header("Settings")]
     [SerializeField] private bool _autoCreateEventSystem = true;
     [SerializeField] private bool _logWarnings = true;
 
-    [InjectOptional] private ISceneDataService _sceneDataService;
-    [Inject] private DiContainer _diContainer;
 
     [SerializeField] private Canvas _canvas;
+
+    [Header("References")]
+    [SerializeField] private EventSystem _eventSystemPrefab;
     private EventSystem _currentEventSystem;
     private readonly Dictionary<Type, UIPanel> _panelCache = new Dictionary<Type, UIPanel>();
+
+    [Inject] private DiContainer _diContainer;
 
     private void Awake() {
         InitializeCanvas();
@@ -64,7 +67,7 @@ public class UIManager : MonoBehaviour, IUiService {
     }
 
     private void CachePanels() {
-        CachePanel(_pauseUI);
+        CachePanel(_pausePanel);
         CachePanel(_settingsPanel);
     }
 
@@ -78,7 +81,7 @@ public class UIManager : MonoBehaviour, IUiService {
     }
 
     private void ValidateReferences() {
-        if (_pauseUI == null && _logWarnings)
+        if (_pausePanel == null && _logWarnings)
             Debug.LogWarning($"[UIManager] Pause UI panel is not assigned on {gameObject.name}");
 
         if (_settingsPanel == null && _logWarnings)
@@ -144,28 +147,14 @@ public class UIManager : MonoBehaviour, IUiService {
         return _panelCache.TryGetValue(type, out var panel) ? panel as T : null;
     }
 
-    public void HandleCancel() {
-        UIPanel targetPanel = DetermineTargetPanel();
-
-        if (targetPanel != null)
-            TogglePanel(targetPanel);
-        else if (_logWarnings)
-            Debug.LogWarning("[UIManager] No target panel available for cancel action.");
-    }
-
-    private UIPanel DetermineTargetPanel() {
-        if (_sceneDataService != null && _sceneDataService.IsMainMenu())
-            return _settingsPanel;
-
-        return _pauseUI;
-    }
-
     public void HideAll() {
-        HidePanel(_pauseUI);
+        HidePanel(_pausePanel);
         HidePanel(_settingsPanel);
     }
 
-    public void ShowSettings() => HandleCancel();
+    public void ShowSettings() {
+        _settingsPanel.Show();
+    }
 
     public GameObject InstantiateUIElement(GameObject uiPrefab, Transform parent = null) {
         if (uiPrefab == null) {
@@ -243,5 +232,17 @@ public class UIManager : MonoBehaviour, IUiService {
     private void LogError(string message) {
         if (_logWarnings)
             Debug.LogError($"[UIManager] {message}");
+    }
+
+    public void ToggleSettings() {
+        TogglePanel(_settingsPanel);
+    }
+
+    public void ShowPause() {
+        _pausePanel.Show();
+    }
+
+    public void HidePause() {
+        _pausePanel.Hide();
     }
 }

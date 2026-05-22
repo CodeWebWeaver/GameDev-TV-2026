@@ -4,21 +4,24 @@ using Zenject;
 
 public class GameController : MonoBehaviour
 {
-    [InjectOptional] private UIManager uiManager;
     [InjectOptional] private InputManager inputManager;
 
     private InputSystem_Actions.UIActions uIMap;
+    private InputSystem_Actions.PlayerActions playerMap;
     [InjectOptional] GameManager gameManager;
 
     private void OnEnable() {
         if (inputManager == null) return;
 
+        playerMap = inputManager.InputActions.Player;
         uIMap = inputManager.InputActions.UI;
+
+        playerMap.Cancel.performed += TogglePause;
         uIMap.Cancel.performed += TogglePause;
     }
 
     private void TogglePause(UnityEngine.InputSystem.InputAction.CallbackContext context) {
-        uiManager?.HandleCancel();
+        gameManager.HandleCancel();
     }
 
     public void HandleMenuRequest() {
@@ -27,6 +30,7 @@ public class GameController : MonoBehaviour
 
     
     private void OnDisable() {
+        playerMap.Cancel.performed -= TogglePause;
         uIMap.Cancel.performed -= TogglePause;
     }
 }

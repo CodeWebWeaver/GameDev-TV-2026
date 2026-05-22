@@ -49,12 +49,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ad830354e9985f49b243ed7236d5d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
-  _pauseUI: {fileID: 1433502774207422999}
+  _pausePanel: {fileID: 1433502774207422999}
   _settingsPanel: {fileID: 9168468826837347544}
-  _eventSystemPrefab: {fileID: 5497479841562953126, guid: dbccfe67d27250b4c98d9195f36662d2, type: 3}
   _autoCreateEventSystem: 1
   _logWarnings: 1
   _canvas: {fileID: 5336196413156756372}
+  _eventSystemPrefab: {fileID: 5497479841562953126, guid: dbccfe67d27250b4c98d9195f36662d2, type: 3}
 --- !u!1 &2385519479585266370
 GameObject:
   m_ObjectHideFlags: 0
