@@ -92,15 +92,27 @@ public class DialogueManager : MonoBehaviour {
         ExitDialogueMode();
 
         _choiceSelector.OnChoiceSelected += OnChoiceSelected;
+    }
 
+    private void Subscribe() {
         dialogInputs.OnSubmitRequest += HandleSubmit;
         dialogInputs.OnNavigate += HandleNavigation;
     }
 
-    protected void OnDestroy() {
+    private void Unsubscribe() {
         dialogInputs.OnSubmitRequest -= HandleSubmit;
         dialogInputs.OnNavigate -= HandleNavigation;
+    }
 
+    private void OnEnable() {
+        Subscribe();
+    }
+
+    private void OnDisable() {
+        Unsubscribe();
+    }
+
+    protected void OnDestroy() {
         if (_choiceSelector != null)
             _choiceSelector.OnChoiceSelected -= OnChoiceSelected;
     }
