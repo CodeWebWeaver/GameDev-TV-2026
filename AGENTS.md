@@ -2,7 +2,7 @@
 - Project name: GameDev TV 2026
 - Unity version: Unity 6000.4.6f1
 - Active game object:
-  - Name: Last street
+  - Name: Charlie NPC
   - Tag: Untagged
-  - Layer: Default
+  - Layer: NPC
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

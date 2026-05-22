@@ -29,6 +29,9 @@ public class GameInstaller : MonoInstaller {
         Container.BindInterfacesAndSelfTo<InputManager>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<PlayerInputService>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<DialogInputService>().AsSingle().NonLazy();
+
+        SignalBusInstaller.Install(Container);
+        Container.DeclareSignal<FriendAddedSignal>();
     }
 
     private void StateMachineInstall() {
@@ -46,5 +49,15 @@ public class GameInstaller : MonoInstaller {
         Container.Bind<GameLoopState>().AsSingle();
         Container.Bind<PauseState>().AsSingle();
         Container.Bind<ExitState>().AsSingle();
+    }
+}
+
+public class FriendAddedSignal {
+    public Human FriendAddedBy; 
+    public Human FriendAddedOn;
+
+    public FriendAddedSignal(Human friendAddedBy, Human friendAddedOn) {
+        FriendAddedBy = friendAddedBy;
+        FriendAddedOn = friendAddedOn;
     }
 }

@@ -156,13 +156,18 @@ public class DialogueManager : MonoBehaviour {
 
         _story.BindExternalFunction("addFriend", (string name) => {
             if (_npc == null || _player == null) return;
-            if (name != _npc.Name) return;
-
-            _npc.AddFriend(_player);
-            _player.AddFriend(_npc);
+            if (!EqualStringsInvriant(name, _npc.Name)) return;
+            
+            _npc.FriendSystem.AddFriend(_player);
+            _player.FriendSystem.AddFriend(_npc);
         });
 
         _story.variablesState.variableChangedEvent += OnInkVariableChanged;
+    }
+
+    private bool EqualStringsInvriant(string value1, string value2) {
+        if (value1 == null || value2 == null) return false;
+        return value1.ToLowerInvariant().Equals(value2.ToLowerInvariant());
     }
 
     // ── Ink variable listener ─────────────────────────────────────────────
@@ -193,7 +198,7 @@ public class DialogueManager : MonoBehaviour {
 
         _story.ChoosePathString(dialogueNodeSO.InkKnotName);
         _story.variablesState["player_name"] = player.Name;
-        _story.variablesState["player_friends_count"] = player.GetFriendCount();
+        _story.variablesState["player_friends_count"] = player.FriendSystem.Friends.Count;
 
         CacheSpeaker(player);
         CacheSpeaker(npc);
@@ -306,9 +311,8 @@ public class DialogueManager : MonoBehaviour {
     private Sprite GetSpeakerPortrait(string speakerName) {
         if (string.IsNullOrWhiteSpace(speakerName)) return null;
 
-        if (_speakers.TryGetValue(speakerName, out Human human) &&
-            human?.personDataSO != null)
-            return human.personDataSO.Portrait;
+        if (_speakers.TryGetValue(speakerName, out Human human))
+            return human.Portrait;
 
         return null;
     }
@@ -357,7 +361,7 @@ public class DialogueManager : MonoBehaviour {
 
     // ── Helpers ───────────────────────────────────────────────────────────
     private void CacheSpeaker(Human human) {
-        if (human?.personDataSO != null)
+        if (human != null)
             _speakers[human.Name] = human;
     }
 

@@ -7,19 +7,25 @@ public class DialogueNPC : Human {
     [SerializeField] private DialogueNodeSO dialogueData;
     [SerializeField] private BodyView bodyView;
     [SerializeField] private Color lonelyColor, happyColor, questionColor;
-    [SerializeField] public bool CanSpeak = true;
+    [SerializeField] private bool CanSpeakAgain = true;
+    private bool isSpoken = false;
+    public bool CanSpeak => CanSpeakAgain ? true : !isSpoken;
 
     private DialogueTrigger _dTrigger;
     [Inject] DialogueManager dialogueManager;
 
-    private void Awake() {
+    protected void Awake() {
         _dTrigger = GetComponentInChildren<DialogueTrigger>();
         if (_dTrigger) _dTrigger.OnDialoguePossible += HandlePossibleDialog;
         bodyView?.ToggleVisualCue(false);
     }
 
     private void HandlePossibleDialog(bool isPossible) {
-        if (CanSpeak) bodyView.ToggleVisualCue(isPossible);
+        if (CanSpeakAgain && !isSpoken) {
+            bodyView.ToggleVisualCue(true);
+        } else {
+            bodyView.ToggleVisualCue(false);
+        }
     }
 
     public DialogueNodeSO BeginDialogue() => dialogueData;
@@ -27,14 +33,14 @@ public class DialogueNPC : Human {
     // Called by DialogueManager subscriber (set up in Player.HandleInteraction)
     public void OnDialogueBegin() {
         bodyView?.ToggleVisualCue(false);
-        CanSpeak = false;
+        isSpoken = true;
         // Subscribe to events only for the duration of THIS dialogue
         DialogueEvents.OnAnimationTag += HandleAnimationTag;
         dialogueManager.OnDialogueEnd += OnDialogueEnd;
     }
 
     private void OnDialogueEnd() {
-        CanSpeak = false; // stays false after talking — change if you want repeat dialogue
+        isSpoken = true; // stays false after talking — change if you want repeat dialogue
         DialogueEvents.OnAnimationTag -= HandleAnimationTag;
         dialogueManager.OnDialogueEnd -= OnDialogueEnd;
     }
@@ -58,4 +64,6 @@ public class DialogueNPC : Human {
 
         bodyView?.SetColor(target);
     }
+
+    
 }

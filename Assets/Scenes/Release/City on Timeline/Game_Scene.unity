@@ -11474,6 +11474,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7473544977898623128, guid: 5c886d19ee5c3fe46b94bb3bd30eb777, type: 3}
   m_PrefabInstance: {fileID: 685936466895605945}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &812266727 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8824428893701682895, guid: 5c886d19ee5c3fe46b94bb3bd30eb777, type: 3}
+  m_PrefabInstance: {fileID: 685936466895605945}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a765236b666fba7408b0dc0e0cfa0059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FriendUI
 --- !u!1001 &817514230
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15827,6 +15838,56 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0912617fbeea7cc48bd07bc266eed7c6, type: 3}
   m_PrefabInstance: {fileID: 1148523424}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1155875294
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1155875295}
+  - component: {fileID: 1155875296}
+  m_Layer: 5
+  m_Name: Friend UI Service
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1155875295
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155875294}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 812266726}
+  m_Father: {fileID: 2071029488}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1155875296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155875294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a88798068c6bf22419d41fc628c7bbea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FriendService
+  friendUI: {fileID: 812266727}
 --- !u!1001 &1159317711
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24306,6 +24367,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1754452958}
   - component: {fileID: 1754452957}
+  - component: {fileID: 1754452959}
   m_Layer: 0
   m_Name: SceneContext
   m_TagString: Untagged
@@ -24326,7 +24388,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Zenject::Zenject.SceneContext
   _scriptableObjectInstallers: []
-  _monoInstallers: []
+  _monoInstallers:
+  - {fileID: 1754452959}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -24359,6 +24422,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1754452959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1754452956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073b673e8afa34e48993a31484e947e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UntitledInstaller
 --- !u!1001 &1756860036
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29418,7 +29493,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 338587262}
-  - {fileID: 812266726}
+  - {fileID: 1155875295}
   - {fileID: 279107785}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -30325,11 +30400,15 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 2071029488}
+    m_TransformParent: {fileID: 1155875295}
     m_Modifications:
+    - target: {fileID: 175558705979946643, guid: 5c886d19ee5c3fe46b94bb3bd30eb777, type: 3}
+      propertyPath: m_text
+      value: 'Friend added: John Doe'
+      objectReference: {fileID: 0}
     - target: {fileID: 2624013257872112497, guid: 5c886d19ee5c3fe46b94bb3bd30eb777, type: 3}
       propertyPath: m_Name
-      value: Friend Added
+      value: FriednUI PopUp
       objectReference: {fileID: 0}
     - target: {fileID: 2624013257872112497, guid: 5c886d19ee5c3fe46b94bb3bd30eb777, type: 3}
       propertyPath: m_IsActive
@@ -30385,23 +30464,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7473544977898623128, guid: 5c886d19ee5c3fe46b94bb3bd30eb777, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7473544977898623128, guid: 5c886d19ee5c3fe46b94bb3bd30eb777, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7473544977898623128, guid: 5c886d19ee5c3fe46b94bb3bd30eb777, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7473544977898623128, guid: 5c886d19ee5c3fe46b94bb3bd30eb777, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 651.07935
+      value: 637
       objectReference: {fileID: 0}
     - target: {fileID: 7473544977898623128, guid: 5c886d19ee5c3fe46b94bb3bd30eb777, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -425.15118
+      value: 390
       objectReference: {fileID: 0}
     - target: {fileID: 7473544977898623128, guid: 5c886d19ee5c3fe46b94bb3bd30eb777, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

@@ -12,7 +12,7 @@ public class StateMachine {
             Debug.Log($"Already in state {newState?.GetType().Name ?? "null"}");
             return;
         }
-        Debug.Log($"Changed to state {newState}");
+        //Debug.Log($"Changed to state {newState}");
         _currentState?.Exit();
 
         _currentState = newState;
