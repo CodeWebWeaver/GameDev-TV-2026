@@ -2,7 +2,7 @@
 //When using in unity, you should be able to just call the "talk_to_name" knots - those will branch out to relevant knots based on the global flags.
 VAR player_name = "Player"
 VAR player_friends_count = 0
-\
+
 VAR dayCount = 0
 
 //player attributes
@@ -32,6 +32,21 @@ VAR met_annika = false
 VAR met_lino = false
 VAR met_coco = false
 VAR met_korra = false
+VAR met_august = false
+VAR met_jojo = false
+
+//people friend identifiers
+VAR charlie_friend = false
+VAR emily_friend = false
+VAR beverly_friend = false
+VAR stevie_friend = false
+VAR annika_friend = false
+VAR lino_friend = false
+VAR coco_friend = false
+VAR korra_friend = false
+VAR august_friend = false
+VAR jojo_friend = false
+
 
 //dog quest
 //step 0: talk to beverly for a description of where the dog might be
@@ -41,6 +56,7 @@ VAR met_korra = false
 VAR dog_quest = false
 VAR dog_step = 0 //0-3
 VAR from_charlie=false
+VAR char_convo = false
 
 
 //emily-charlie quest
@@ -77,6 +93,11 @@ VAR have_new_info_annika = false
 VAR four_gophers = false
 VAR gophers_step = 0
 
+//summer mural
+VAR mural_quest = false
+VAR mural_step = 0
+VAR mural_loc = ""
+
 //friendship scores
 VAR emily = 0
 VAR charlie = 0
@@ -86,6 +107,8 @@ VAR lino = 0
 VAR coco = 0
 VAR annika = 0
 VAR korra = 0
+VAR august = 0
+VAR jojo = 0
 
 -> talk_to_someone
 
@@ -102,6 +125,8 @@ VAR korra = 0
     ->talk_to_coco
 + Lino
     ->talk_to_lino
++ August
+    ->talk_to_august
 
 
 /////////////////////////////////////////
@@ -128,7 +153,7 @@ VAR korra = 0
         {emily_charlie_step==3:
         ->charlie_post_walkies
         -else:
-        ->charlie_day_one
+        ->charlie_general_chat
         }
         }
     }
@@ -310,6 +335,19 @@ Oh, dear. Coco, Coco, please come back!
 #speaker: Beverly
 Ah, ~name, it's lovely to see you, dear!
 Do you need help with anything?
+* {mural_step==1}[Actually, yes! Do you know anywhere in town where August could paint their next mural?]
+    #speaker: Beverly
+    August is looking for somewhere to paint their next mural?
+    That's excellent news! Perhaps they could paint something on this free wall here? It would certainly liven up this street.
+    And, of course, I would love the chance to catch up with August.
+    We used to be schoolmates, you know. They were not always the best at arithmetic or spelling, but their art has always been astonishing.
+    I look forward to seeing what they'll paint next!
+    #speaker: Narrator
+    Quest: A Summer Mural
+    Next Objective: Tell August where they can paint their next mural.
+    ~mural_step=2
+    ~mural_loc="empty wall"
+    ->END
 + No, thank you!
     #speaker: Beverly
     Well, you know where to find me if you need anything, dear!
@@ -407,7 +445,7 @@ Oh... dear me...
 
 { met_charlie:
 
--> charlie_first_convo
+-> talk_to_charlie
 
 -else: 
 
@@ -428,9 +466,20 @@ Took you long enough. My name is Charlie!
 Oh, hi, Charlie.
 ~ met_charlie = true
 -> charlie_first_convo
+
+
+===charlie_general_chat===
+#speaker: Charlie
+Hey there! Back so soon?
+* {dog_quest==false and emily_charlie_quest==false and dog_step==0 and emily_charlie_step==0}[You said you needed help with something?]
+    ->lost_dog_overview
++ Just stopping by, we can talk later.
+    ->END
+
 === charlie_first_convo ===
 
 + What are you doing up there?
+~char_convo=true
 
 ->lost_dog_overview
 
@@ -504,7 +553,19 @@ She wouldn’t even listen to my reason for staying out!
     -> END
 ===charlie_post_dog===
 #speaker: Charlie
-Hey! What are you up to?
+Hey! What are you up to
+* {mural_step==1}[I'm trying to find somewhere for August to paint their next mural. Any ideas?]
+    #speaker: Charlie
+    Oh, that's an easy one!
+    The school has been looking for some new art for ages. 
+    Mom's on the school board so I hear all the drama. 
+    But, yeah, they should be good to paint there.
+    #speaker: Narrator
+    Quest: A Summer Mural
+    Next Objective: Tell August where they can paint their next mural.
+    ~mural_step=2
+    ~mural_loc="school"
+    ->END
 + Not much, still grounded?
     #speaker: Charlie
     Ugh. Yes, another 6 days, I think.
@@ -519,7 +580,19 @@ Hey! What are you up to?
 ===charlie_post_walkies===
 #speaker: Charlie
 Hey! I'm not grounded anymore!
-+ Excellent!
+* {mural_step == 1} [That's great news! Any chance you can help me find where August can paint a mural?]
+    #speaker: Charlie
+    Oh, that's an easy one!
+    The school has been looking for some new art for ages. 
+    Mom's on the school board so I hear all the drama. 
+    But, yeah, they should be good to paint there.
+    #speaker: Narrator
+    Quest: A Summer Mural
+    Next Objective: Tell August where they can paint their next mural.
+    ~mural_step=2
+    ~mural_loc="school"
+    ->END
+* {mural_step != 1} [Excellent!]
     #speaker: Charlie
     Thanks for talking to my mom.
     I'm allowed to explore even more now that I've got this walkie-talkie!
@@ -1118,6 +1191,20 @@ Would you believe they've already offered me a job?
 ===korra_chat===
 #speaker: Korra
 Howdy there, friend!
+* {mural_step==1}[Any chance you're interested in a mural?]
+    #speaker: Korra
+    A mural? I can't say I'm a fan of mushrooms.
+    ...Oh! You said mural!
+    Oooooooh, let me think. Yes, I think that would be perfect!
+    We've got a stage back in the park where we like to perform, and it's been seeming pretty bare lately.
+    Yeah, yeah, that would be a great way to liven things up.
+    Please let August know we're in!
+    ~mural_step=2
+    ~mural_loc="park"
+    #speaker: Narrator
+    Quest: A Summer Mural
+    Next Objective: Tell August where they can paint their mural
+    ->END
 * {gophers_step==0}[I'm still looking for a fourth gopher!]
     #speaker: Korra
     Thanks for doing that!
@@ -1176,7 +1263,7 @@ Anyways. I'm part of a 3-person alt-folk-punk-rock group. We're the Four Gophers
     They don't have to do anything crazy, or anything. We just need someone on tambourine.
     It really gives the whole thing another layer.
     Do you think you could find us a fourth member?
-    #speaker Narrator
+    #speaker: Narrator
     Quest: The Four Gophers
     Next Objective: Find a Fourth Member for the Four Gophers
     ~four_gophers=true
@@ -1192,12 +1279,105 @@ Anyways. I'm part of a 3-person alt-folk-punk-rock group. We're the Four Gophers
     It really gives the whole thing another layer.
     Do you think you could find us a fourth member?
     Here's a poster you can use.
-    #speaker Narrator
+    #speaker: Narrator
     Korra gives you a poster with four gophers holding musical instruments.
     Quest: The Four Gophers
     Next Objective: Find a Fourth Member for the Four Gophers
     ~four_gophers=true
     ~gophers_step=0
+    ->END
+    
+===talk_to_august===
+{met_august:
+    ->august_chat
+-else:
+    ->august_meet_convo
+}
+
+===august_chat===
+#speaker: August
+Hello, there!
+* {mural_quest==false and mural_step==0}[Is there anything I can help you with?]
+    #speaker: August
+    As a matter of fact, there is something I could use a hand with.
+    ->august_quest_offer
+* {mural_quest==true and mural_step==0}[Can you give me some ideas for where to ask about the mural?]
+    #speaker: August
+    Hmm. I think a stage, a school, or a somewhere in town would be a perfect location.
+    Maybe ask around town. I suspect you have a friend who might be interested in a mural.
+    ->END
+* {mural_quest==true and mural_step==1}[Good news! I found a spot for your mural!]
+    ->share_mural
+* {mural_quest==false and mural_step==2}[How is the mural coming along?]
+    #speaker: August
+    Oh, it's coming along quite nicely. I'd rather not spoil it, but I look forward to showing you once it's done.
+    ->END
++ Hello to you!
+    ->END
+
+
+===share_mural===
+#speaker: August
+The {mural_loc}, you say? That sounds... perfect!
+I'll get started on it right away.
+Thank you kindly for helping me with this. I'd rather not spoil my idea, but I know exactly what I'll be painting.
+I hope to catch up with you soon!
+#speaker: Narrator
+Quest: A Summer Mural
+Quest Complete!
+~august_friend=true
+~mural_quest=false
+~mural_step=2
+->END
+
+===august_quest_offer===
+#speaker: August
+You see, I'm planning my next artwork. It will be a mural illustrating the instrumental connection between community and nature.
+However, I haven't the foggiest idea of where to paint it.
+I have some ideas, but I've been here so long that I'm used to everything.
+You have a fresh pair of eyes. Maybe you'd be willing to ask around for me?
++ Of course! I'd be happy to help.
+    #speaker: August
+    Excellent!
+    I'm sure there are plenty of spots around town.
+    Maybe ask some of the neighbors? I think a stage, a school, or a somewhere in town would be a perfect location.
+    #speaker: Narrator
+    Quest: A Summer Mural
+    Next Objective: Find a new Art Site for August
+    ~mural_quest=true
+    ->END
++ That's not really my thing.
+    #speaker: August
+    I see. Well, I suppose I'll make do.
+    ->END
+
+===august_meet_convo===
+#speaker: Unknown
+Hmm.
+Ah - no, that's not it.
+But perhaps...? No, not that, either.
++ Hello there, do you need something?
+    #speaker: Unknown
+    Hmm, what's that?
+    Ah! You're new here, aren't you?
+    ...yes, I suppose I do need help. But we should be introduced first, shouldn't we?
+    My name is August. I'm the local painter here.
+    As for what Im looking for a hand with...
+    ->august_quest_offer
++ You look like a friendly face. What's your name?
+    #speaker: Unknown
+    Well aren't you polite.
+     I'm August, the local painter.
+    I'm fairly well known around these parts. And, by extension, I know most of the folks here. You're new to the area, aren't you?
+     Well, no matter, it is a pleasure to meet you. You're going to love it here.
+    ~met_august=true
+    ->END
++ You're talking to yourself awfully loudly.
+    #speaker: Unknown
+    Ah, my apologies. I let my mind get away from me.
+    Then again, that tends to happen. You're new around here, so I imagine you're not used to it yet. I'm August, the local painter, and this sort of thing will happen a lot.
+    So, if you'll excuse me.
+    ~met_august=true
     ->END
 
     
@@ -1388,7 +1568,7 @@ Hello, there! What can I do ya for?
         #speaker: Stevie
         A wise decision! Here you are, good madame. 
         #speaker: Narrator
-        Stevie hands you the bus pass.
+        Stevie hands you the bus guide.
         #speaker: Stevie
         Best wishes!
         ~have_new_info_annika=true
@@ -1398,7 +1578,7 @@ Hello, there! What can I do ya for?
         #speaker: Stevie
         A wise decision! Here you are, good madame. 
         #speaker: Narrator
-        Stevie hands you the bus pass.
+        Stevie hands you the bus guide.
         #speaker: Stevie
         Best wishes!
         ~have_new_info_annika=true
