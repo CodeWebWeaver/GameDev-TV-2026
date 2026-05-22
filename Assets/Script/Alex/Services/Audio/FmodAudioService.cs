@@ -23,6 +23,7 @@ public class FmodAudioService : IAudioService {
     private AudioStateConfig _config;
     private EventInstance _currentMusic;
     private EventReference _currentMusicRef;
+    private MusicPlaylist currentMusic = MusicPlaylist.MainMenu;
 
     public FmodAudioService(AudioStateConfig config) {
         InitDictionary();
@@ -65,7 +66,17 @@ public class FmodAudioService : IAudioService {
         }
     }
 
-    public void StartMusicPlaylist(MusicPlaylist playlist) {
+    public void ChangeMusicPlaylist(MusicPlaylist playlist) {
+        
+
+        if (currentMusic == playlist) {
+            bool isPlaying = _currentMusic.isValid();
+            if (isPlaying) {
+                return;
+            }
+        }
+
+        currentMusic = playlist;
         var eventRef = _config.GetMusicEvent(playlist);
         if (!eventRef.IsNull) {
             PlayMusic(eventRef);
@@ -74,6 +85,12 @@ public class FmodAudioService : IAudioService {
 
     public void PlayMusic(EventReference musicEvent) {
         if (IsSameEvent(musicEvent, _currentMusicRef)) {
+            if (_currentMusic.isValid()) {
+                _currentMusic.start();
+                return;
+            }
+            _currentMusic = RuntimeManager.CreateInstance(musicEvent);
+            _currentMusic.start();
             return;
         }
 
