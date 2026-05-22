@@ -74,6 +74,11 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+# AI/Editor Assistants
+    # AI/Editor Assistants
+    AGENTS.md
+    AGENTS.md
+
 # FMOD
 # Never ignore DLLs in the FMOD subfolder.
 !/[Aa]ssets/Plugins/FMOD/**/lib/*
