@@ -98,11 +98,17 @@ VAR mural_quest = false
 VAR mural_step = 0
 VAR mural_loc = ""
 
+//chrlie's pranks
+VAR paint = false
+VAR gum = false
+VAR handshake = false
+
 //friendship scores
 VAR emily = 0
 VAR charlie = 0
 VAR beverly = 0
 VAR stevie = 0
+VAR stevieSales=0
 VAR lino = 0
 VAR coco = 0
 VAR annika = 0
@@ -127,6 +133,8 @@ VAR jojo = 0
     ->talk_to_lino
 + August
     ->talk_to_august
++ Jojo 
+    ->talk_to_jojo
 
 
 /////////////////////////////////////////
@@ -178,6 +186,7 @@ Hey! You came back!
     #speaker: Narrator
     Quest: The Lost Dog
     Quest Complete!
+    ~charlie_friend=true
     ~charlie+=5
     ~dog_step=4
     ~dog_quest=false
@@ -194,6 +203,7 @@ Hey! You came back!
     #speaker: Narrator
     Quest: The Lost Dog
     Quest Complete!
+    ~charlie_friend=true
     ~charlie+=5
     ~dog_step=4
     ~dog_quest=false
@@ -324,6 +334,7 @@ Oh, dear. Coco, Coco, please come back!
     #speaker: Narrator
     Quest: The Lost Dog
     Next Objective: Check in with Charlie
+    ~beverly_friend=true
     ~dog_step=3
     ~helpful+=medChange
     ~adventurous+=smallChange
@@ -393,6 +404,7 @@ Maybe you can tell him to come home?
     You should probably see if he made it back okay.
     Quest: The Lost Dog
     Next Objective: Check in with Beverly
+    ~coco_friend=true
     ~friendly+=smallChange
     ~adventurous+=smallChange
     ~coco+=5
@@ -734,6 +746,10 @@ Any news to share?
     Oh, these will be so much fun!
     Charlie and I might even search the neighborhood together with these.
     Thank you, {name}, I can't tell you how much I appreciate your help!
+    #speaker: Narrator
+    Quest: Emily and Charlie
+    Quest Complete!
+    ~emily_friend=true
     ~emily_charlie_step=3
     ~emily_charlie_quest=false
     ~has_walkies=false
@@ -824,6 +840,7 @@ Did you find something?
     #speaker: Narrator
     Quest: A Gift for Annika
     Quest Complete!
+    ~lino_friend=true
     ->END
 * {lino_gift=="shawl"}[Give Lino the shawl]
     #speaker: Lino
@@ -833,6 +850,7 @@ Did you find something?
     #speaker: Lino
     It's so soft and warm. And it looks just like something she used to wear at home.
     Thank you, truly. She is going to love this.
+    ~lino_friend=true
     ~lino+=5
     ~helpful+=bigChange
     ~thoughtful+=bigChange
@@ -980,8 +998,9 @@ The young woman looks a bit frazzled and unfamiliar with the area.
     I don't even know why I came here in the first place.
     #speaker: Narrator
     The woman sighs.
-    ???: Sorry, I know you were just trying to be helpful.
-    ???: My name is Annika. 
+    #speaker: Unknown
+    Sorry, I know you were just trying to be helpful.
+    My name is Annika. 
     ~met_annika=true
     ->annika_ask_qs
 + She seems busy, best to not bother her...
@@ -1140,6 +1159,7 @@ Would you believe they've already offered me a job?
     ~annika+=smallChange
     ~have_new_info_annika=false
     ~annika_step=2
+    ~annika_friend=true
     #speaker Narrator
     Quest: Annika's New Job
     Next Objective: Find an advertisement for an upcoming event.
@@ -1221,6 +1241,7 @@ Howdy there, friend!
     ~creative+=bigChange
     ~gophers_step=2
     ~four_gophers=false
+    ~korra_friend=true
     #speaker Narrator
     Quest: The Four Gophers
     Next Objective: Quest Complete!
@@ -1403,6 +1424,22 @@ Hey! You, there!
     
 + Keep Walking
     -> END
+    
+===stevie_score_check===
+{stevieSales >= 2:
+    ->stevie_friendship
+-else:
+    ->END
+}
+
+===stevie_friendship===
+#speaker: Stevie
+Hello, there!
+Just wanted to say thanks for supporting my business these past few days.
+Any time you need a business partner, you just let me know.
+~stevie_friend=true
+->END
+
 === stevie_quest_convo ===
 #speaker: Stevie
 Hello, there! What can I do ya for?
@@ -1448,7 +1485,7 @@ Hello, there! What can I do ya for?
 + Nothing right now, thanks.
     #speaker: Stevie
     Well, come back if you need anything!
-    ->END
+    ->stevie_score_check
 
 ===walkies===
 + ...game map?
@@ -1461,13 +1498,15 @@ Hello, there! What can I do ya for?
     ~has_walkies=true
     ~emily_charlie_step=2
     ~stevie+=3
+    ~stevieSales+=1
     #speaker: Stevie
     Just remember to come back to me if you need anything else!
     You won't get a better deal anywhere else.
     #speaker: Narrator
     Quest: Emily and Charlie
     Next Objective: Give Walkie-Talkies to Emily
-    ->END
+    ->stevie_score_check
+
 + ha! That's perfect!
     ~funny+=medChange
     #speaker: Stevie
@@ -1479,13 +1518,14 @@ Hello, there! What can I do ya for?
     ~has_walkies=true
     ~emily_charlie_step=2
     ~stevie+=3
+    ~stevieSales+=1
     #speaker: Stevie
     Just remember to come back to me if you need anything else!
     You won't get a better deal anywhere else.
     #speaker: Narrator
     Quest: Emily and Charlie
     Next Objective: Give Walkie-Talkies to Emily
-    ->END
+    ->stevie_score_check
 
 ->END
 ===gift===
@@ -1506,8 +1546,10 @@ Hello, there! What can I do ya for?
     ~lino_step=3
     ~friendly+=smallChange
     ~thoughtful+=smallChange
+    ~stevieSales+=1
     ~stevie+=3
-    ->END
+    ->stevie_score_check
+    
 + The Fountain Pen.
     #speaker: Stevie
     Aha, an intelligential gift for an intelligential folk!
@@ -1525,7 +1567,9 @@ Hello, there! What can I do ya for?
     ~pragmatic+=smallChange
     ~friendly+=smallChange
     ~stevie+=3
-    ->END
+    ~stevieSales+=1
+    ->stevie_score_check
+    
 + The Chili Dog!
     #speaker: Stevie
     Excellent choice, my good lady!
@@ -1546,12 +1590,14 @@ Hello, there! What can I do ya for?
     ~funny+=medChange
     ~friendly+=smallChange
     ~stevie +=10
-    ->END
+        ~stevieSales+=1
+    ->stevie_score_check
+    
 + I'm not sure. I'll think about it and get back to you later.
     #speaker: Stevie
     Understood, understood.
     But don't take too long; these gifts go fast!
-    ->END
+    ->stevie_score_check
 ===bus_pass===
 + One thousand?! That's egregious!
     ->bus_pass_continue
@@ -1573,7 +1619,8 @@ Hello, there! What can I do ya for?
         Best wishes!
         ~have_new_info_annika=true
         ~funny+=1
-        ->END
+        ~stevieSales+=1
+        ->stevie_score_check
     + Umm, I suppose that's alright? (Maybe Annika will pay me back...)
         #speaker: Stevie
         A wise decision! Here you are, good madame. 
@@ -1583,10 +1630,171 @@ Hello, there! What can I do ya for?
         Best wishes!
         ~have_new_info_annika=true
         ~pragmatic+=1
-        ->END
+        ~stevieSales+=1
+        ->stevie_score_check
     + That's too much. Sorry, Stevie, maybe next time.
         #speaker: Stevie
         Alright, well, come back if you change your  mind!
         I can't guarantee I'll still have it on hand the next time you need it.
-        ->END
+        ->stevie_score_check
     
+===talk_to_jojo===
+{met_jojo:
+    ->jojo_chat
+-else:
+    ->jojo_meet_convo
+}
+    
+===jojo_meet_convo===
+#speaker: Unknown
+Hey! You're new!
++ Yes, I'm new to town! It's nice to meet you.
+    #speaker: Unknown
+    Oh, okay. I'm Jojo.
+    ~met_jojo=true
+    ->jojo_chat
++ Umm. Shouldn't you be in school? Or something?
+    #speaker: Unknown
+    It's summer break. Don't you know that?
+    Adults these days don't know anything...
+    I'm Jojo. I'll help you get used to this town in no time.
+    ~met_jojo=true
+    ->jojo_chat
++ And you're weird.
+    #speaker: Unknown
+    That's mean. You're not supposed to say stuff like that.
+    ->END
+    
+===jojo_chat===
+#speaker: Jojo
+Hey, lady.
+{paint and gum and handshake:
+~jojo_friend=true
+}
+{dayCount==1 and handshake==false:
+    ->jojo_day1
+-else:
+    {dayCount==2 and paint==false:
+        ->jojo_day2
+    -else:
+        {dayCount==3 and gum==false :
+            ->jojo_day3
+        -else:
+            ->jojo_base
+        }
+    }
+}
+
+===jojo_base===
++ Hey, Jojo!
+    #speaker: Jojo
+    Hi! I'm busy but I'll see you tomorrow.
+    ->END
++ I've got to go, see you later.
+    #speaker: Jojo
+    Okay, see ya!
+    ->END
+
+===jojo_day1===
+#speaker: Jojo
+Oh hey, since we're neighbors now...
+Can I show you my secret handshake?
+->jojo_handshake
+
+===jojo_handshake===
+#speaker: Narraator
+Jojo doesn't wait for your response, instead holding up his hands. He bounces impatiently, waiting for you to do the same.
+#speaker: Jojo
+Okay. Up High...
+#speaker: Narrator
+You've definitely seen this game before. You decide to play along.
+You give Jojo a high-five up high.
+#speaker: Jojo
+Now down low...
+#speaker: Narrator
+You give Jojo a high-five down low.
+#speaker: Jojo
+Up in space...
++ Play along and high-five Jojo again
+    #speaker: Narrator
+    You high-five Jojo again.
+    #speaker: Jojo
+    IN YOUR FACE!
+    #speaker: Narrator
+    Jojo gets on his tippy-toes to high-five your face. He misses by about a foot.
+    #speaker: Jojo
+    Ha! You totally fell for it!
+    That was really fun. Thank you for playing with me.
+    ~handshake=true
+    ~jojo +=1
+    ->END
++ In your face!
+    #speaker: Narrator
+    Beating Jojo to the punchline, you bop him on the forehead while his arams are way up in the air.
+    You didn't bop him that hard, but he starts to tear up.
+    #speaker: Jojo
+    Hey, that's not... that's not fair.
+    You skipped ahead. You cheated.
+    #sspeaker: Narrator
+    Jojo turns away from you in a pout.
+    ->END
++ ...Up in space?
+    #speaker: Jojo
+    Ugh. It's part of the handshake. We have to restart it now.
+    ->jojo_handshake
+
+
+===jojo_day2===
+#speaker: Jojo
+Hi, {name}! Can you do me a big favor?
+I'm doing an art project but I need something from the store.
+Can you buy me striped paint?
++ Horizontal or vertical stripes?
+    #speaker: Jojo
+    Gotcha!
+    Striped paint isn't real.
+    You'd need to get two different colors and paint the stripes yourself, silly.
+    I was just messing with you. You're so gullible!
+    ~jojo+=1
+    ~paint=true
+    ->END
++ I think you'd need to get two different colors and make the stripes yourself.
+    #speaker: Jojo
+    Ugh, you're no fun. I guess you've heard that one before...
+    ->END
+
+===jojo_day3===
+#speaker: Jojo
+Hi {name}, thanks for hanging out with me so much.
+As a thank you, can I give you a piece of gum?
+#speaker: Narrator
+Jojo holds out a pack of gum. It's no brand of gum you've ever seen before, and one piece is clearly sticking out.
+You think you know what's happening here.
++ Thanks, Jojo! I'll take a piece.
+    #speaker: Narrator
+    You take a piece, bracing yourself for the electric shock.
+    ZZZAAAAAAAAP!
+    #speaker: Jojo
+    Haha, you totally fell for it!
+    Uh, sorry to trick you. I have some real gum in my pocket.
+    #speaker: Narrator
+    Jojo apologetically hands you a piece of gum. It's real this time.
+    #speaker: Jojo
+    Thanks for playing with me. My friends don't let me use that one anymore.
+    ~jojo +=1
+    ~gum=true
+    {paint and gum and handshake:
+    ~jojo_friend=true
+    }
+    ->END
++ Thanks for the offer, but I'm alright for now.
+    #speaker: Jojo
+    Oh! Well, maybe you can take a piece for later?
+    Or, I guess we can just talk later...
+    ->END
++ You're just trying to shock me! I'm not falling for it.
+    #speaker: Jojo
+    Oh. Uh, no! That's silly.
+    This is real gum, honest!
+    Um, maybe later, I guess...
+    ->END
