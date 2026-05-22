@@ -1,9 +1,51 @@
-﻿using Ink.Runtime;
+﻿using DG.Tweening.Core.Easing;
+using Ink.Runtime;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
+
+
+public interface IDialogInputManager {
+    public event Action OnSubmitRequest;
+    public event Action<Vector2> OnNavigate;
+}
+
+public class DialogInputService : IDialogInputManager, IDisposable {
+    private readonly InputSystem_Actions.DialogActions _uiActions;
+    public event Action OnSubmitRequest;
+    public event Action<Vector2> OnNavigate;
+
+    public DialogInputService(InputManager inputManager) {
+        _uiActions = inputManager.InputActions.Dialog;
+        Subscribe();
+    }
+
+    private void Subscribe() {
+        _uiActions.Submit.performed += HandleSubmit;
+        _uiActions.Click.performed += HandleSubmit;
+        _uiActions.Navigate.performed += HandleNavigation;
+    }
+
+    private void Unsubscribe() {
+        _uiActions.Submit.performed -= HandleSubmit;
+        _uiActions.Click.performed -= HandleSubmit;
+        _uiActions.Navigate.performed -= HandleNavigation;
+    }
+
+    private void HandleSubmit(InputAction.CallbackContext context) {
+        OnSubmitRequest?.Invoke();
+    }
+
+    private void HandleNavigation(InputAction.CallbackContext context) {
+        OnNavigate?.Invoke(context.ReadValue<Vector2>());
+    }
+
+    public void Dispose() {
+        Unsubscribe();
+    }
+}
 
 /// <summary>
 /// Drives an Ink story and routes input.
@@ -15,7 +57,8 @@ using Zenject;
 public class DialogueManager : MonoBehaviour {
     // ── Dependencies ──────────────────────────────────────────────────────
     [Inject] private UIManager uIManager;
-    [InjectOptional] private InputManager inputManager;
+    [Inject] private GameManager gameManager;
+    [Inject] IDialogInputManager dialogInputs;
 
     [SerializeField] private GameObject dialogWindowPrefab;
     [SerializeField] private TextAsset inkJsonAsset;
@@ -26,8 +69,6 @@ public class DialogueManager : MonoBehaviour {
 
     private Story _story;
     private bool _waitingForInput;
-
-    private InputSystem_Actions.UIActions _uiMap;
 
     private Player _player;
     private DialogueNPC _npc;
@@ -52,18 +93,13 @@ public class DialogueManager : MonoBehaviour {
 
         _choiceSelector.OnChoiceSelected += OnChoiceSelected;
 
-        if (inputManager != null) {
-            _uiMap = inputManager.InputActions.UI;
-            _uiMap.Submit.performed += HandleSubmit;
-            _uiMap.Navigate.performed += HandleNavigation;
-        }
+        dialogInputs.OnSubmitRequest += HandleSubmit;
+        dialogInputs.OnNavigate += HandleNavigation;
     }
 
     protected void OnDestroy() {
-        if (inputManager != null) {
-            _uiMap.Submit.performed -= HandleSubmit;
-            _uiMap.Navigate.performed -= HandleNavigation;
-        }
+        dialogInputs.OnSubmitRequest -= HandleSubmit;
+        dialogInputs.OnNavigate -= HandleNavigation;
 
         if (_choiceSelector != null)
             _choiceSelector.OnChoiceSelected -= OnChoiceSelected;
@@ -122,6 +158,7 @@ public class DialogueManager : MonoBehaviour {
             return;
         }
 
+        gameManager?.StateMachine.ChangeState<DialogueState>();
         _player = player;
         _npc = npc;
 
@@ -140,7 +177,7 @@ public class DialogueManager : MonoBehaviour {
     }
 
     // ── Input handlers ────────────────────────────────────────────────────
-    private void HandleSubmit(InputAction.CallbackContext ctx) {
+    private void HandleSubmit() {
         if (!IsDialoguePlaying) return;
 
         // Choices take priority; let ChoiceSelector handle confirmation.
@@ -159,10 +196,10 @@ public class DialogueManager : MonoBehaviour {
         }
     }
 
-    private void HandleNavigation(InputAction.CallbackContext ctx) {
+    private void HandleNavigation(Vector2 navigation) {
         if (!IsDialoguePlaying || !_choiceSelector.IsShowingChoices) return;
 
-        float x = ctx.ReadValue<Vector2>().x;
+        float x = navigation.x;
         if (x > 0.5f) _choiceSelector.Navigate(+1);
         else if (x < -0.5f) _choiceSelector.Navigate(-1);
     }
@@ -283,6 +320,7 @@ public class DialogueManager : MonoBehaviour {
         _dialogWindow.HideDialoguePanel();
         _choiceSelector.Hide();
         OnDialogueEnd?.Invoke();
+        gameManager?.StateMachine.ChangeState<GameLoopState>();
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────

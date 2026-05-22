@@ -27,6 +27,8 @@ public class GameInstaller : MonoInstaller {
         Container.Bind<ISceneDataService>().To<SceneDataService>().FromComponentInNewPrefab(_sceneDataService).AsSingle().NonLazy();
 
         Container.BindInterfacesAndSelfTo<InputManager>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<PlayerInputService>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<DialogInputService>().AsSingle().NonLazy();
     }
 
     private void StateMachineInstall() {
@@ -42,6 +44,7 @@ public class GameInstaller : MonoInstaller {
         Container.Bind<BootstrapState>().AsSingle();
         Container.Bind<MainMenuState>().AsSingle();
         Container.Bind<GameLoopState>().AsSingle();
+        Container.Bind<PauseState>().AsSingle();
         Container.Bind<ExitState>().AsSingle();
     }
 }

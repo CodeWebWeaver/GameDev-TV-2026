@@ -1,3 +1,4 @@
+using DG.Tweening.Core.Easing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,15 +8,14 @@ using Zenject;
 
 public class Player : Human {
     private const string Personalities_Path = "PersonalityParams";
-    private InputSystem_Actions.PlayerActions player;
-    private InputAction _interactAction;
     [SerializeField] PlayerDialogSystem dialogSystem;
+
     [Header ("Personality Settings")]
     public PlayerPersonality Personality { get; } = new();
     [SerializeField] private PersonalitiesViewManager personalitiesUIManagerPrefab;
     private PersonalitiesViewManager personalitiesUIManager;
 
-    [Inject] private InputManager InputManager;
+    [Inject] private PlayerInputService playerInput;
     [Inject] private DialogueManager dialogueManager;
     [Inject] private UIManager uIManager;
 
@@ -30,18 +30,14 @@ public class Player : Human {
         List<PersonalityParamSO> personalityParamSOs = Resources.LoadAll<PersonalityParamSO>(Personalities_Path).ToList();
         Personality.Initialize(personalityParamSOs);
 
-        player = InputManager.InputActions.Player;
-
-        _interactAction = player.Interact;
-        _interactAction.performed += OnInteract;
+        playerInput.OnInteractEnded += OnInteract;
     }
 
     private void OnDestroy() {
-        if (_interactAction != null)
-        _interactAction.performed -= OnInteract;
+        playerInput.OnInteractEnded -= OnInteract;
     }
 
-    private void OnInteract(InputAction.CallbackContext ctx) {
+    private void OnInteract() {
         HandleInteraction();
     }
 
