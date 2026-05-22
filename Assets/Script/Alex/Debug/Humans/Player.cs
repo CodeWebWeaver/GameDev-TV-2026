@@ -19,7 +19,8 @@ public class Player : Human {
     [Inject] private DialogueManager dialogueManager;
     [Inject] private UIManager uIManager;
 
-    private void Awake() {
+    protected override void Awake() {
+        base.Awake();
         GameObject gameObject1 = uIManager.InstantiateUIElement(personalitiesUIManagerPrefab.gameObject);
         if (gameObject1 != null) {
             personalitiesUIManager = gameObject1.GetComponent<PersonalitiesViewManager>();

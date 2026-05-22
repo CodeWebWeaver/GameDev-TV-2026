@@ -2,7 +2,7 @@
 //When using in unity, you should be able to just call the "talk_to_name" knots - those will branch out to relevant knots based on the global flags.
 VAR player_name = "Player"
 VAR player_friends_count = 0
-\
+
 VAR dayCount = 0
 
 //player attributes
@@ -89,6 +89,7 @@ VAR korra = 0
 
 -> talk_to_someone
 
+
 === talk_to_someone ===
 + Charlie
     ->talk_to_charlie
@@ -118,6 +119,7 @@ VAR korra = 0
     }
 }
 === talk_to_charlie ===
+
 {met_charlie:
     {dog_step==3:
         ->charlie_dog_news
@@ -1409,4 +1411,11 @@ Hello, there! What can I do ya for?
         Alright, well, come back if you change your  mind!
         I can't guarantee I'll still have it on hand the next time you need it.
         ->END
+        
+EXTERNAL addFriend(name)
+
+=== function addFriend(friend_name) ===
+// defined function to avoid compile time errors in INK
+~ return
+
     
