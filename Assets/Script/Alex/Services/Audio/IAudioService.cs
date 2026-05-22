@@ -6,7 +6,7 @@ public interface IAudioService {
     float GetVolume(AudioChannelType channel);
     List<AudioChannelType> GetSupportedChannelsTypes();
     void StopCurrentMusic();
-    void StartMusicPlaylist(MusicPlaylist mainMenu);
+    void ChangeMusicPlaylist(MusicPlaylist mainMenu);
     void SetBusMute(AudioChannelType channel, bool arg0);
 }
 

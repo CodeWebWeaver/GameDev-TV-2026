@@ -63,6 +63,16 @@ public class GameManager : MonoBehaviour, IGameManager {
             }
         }
     }
+
+    public void ResetActiveState() {
+        bool inActiveLoop = _stateMachine.CurrentState is MainMenuState or GameLoopState;
+        if (inActiveLoop) return;
+        if (sceneDataService.IsMainMenu()) {
+            _stateMachine.ChangeState<MainMenuState>();
+        } else {
+            _stateMachine.ChangeState<GameLoopState>();
+        }
+    }
 }
 
 public class ExitState : State<GameManager> {
@@ -121,12 +131,12 @@ public class MainMenuState : State<GameManager> {
     }
 
     public override void Enter() {
-        _audioService?.StartMusicPlaylist(MusicPlaylist.MainMenu);
+        _audioService?.ChangeMusicPlaylist(MusicPlaylist.MainMenu);
         _inputManager.SwitchToUIMap();
     }
 
     public override void Exit() {
-        _audioService?.StopCurrentMusic();
+
     }
 }
 
@@ -140,13 +150,14 @@ public class GameLoopState : State<GameManager> {
     }
 
     public override void Enter() {
-        _audioService?.StartMusicPlaylist(MusicPlaylist.GameLoop);
+        _audioService?.ChangeMusicPlaylist(MusicPlaylist.GameLoop);
         _inputManager.SwitchToPlayerMap();
+        Cursor.visible = false;
     }
 
 
     public override void Exit() {
-        _audioService?.StopCurrentMusic();
+        Cursor.visible = true;
     }
 }
 
@@ -160,13 +171,12 @@ public class PauseState : State<GameManager> {
     }
 
     public override void Enter() {
-        Time.timeScale = 0f;
         _uiService.ShowPause();
         _inputManager.SwitchToUIMap();
+        Cursor.visible = true;
     }
 
     public override void Exit() {
-        Time.timeScale = 1f;
         _uiService.HidePause();
     }
 }
@@ -184,6 +194,7 @@ public class DialogueState : State<GameManager> {
 
     public override void Enter() {
         _inputManager.SwitchToDialogMap();
+        Cursor.visible = true;
     }
 
     public override void Exit() {

@@ -55,8 +55,6 @@ public class KinematicPlayerMovement : MonoBehaviour, ICharacterController {
         cameraPitch = 0f;
         targetCameraPitch = 0f;
         characterYaw = transform.eulerAngles.y;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     private void Update() {

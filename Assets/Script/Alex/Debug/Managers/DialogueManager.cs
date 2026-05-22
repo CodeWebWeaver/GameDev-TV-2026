@@ -320,7 +320,7 @@ public class DialogueManager : MonoBehaviour {
         _dialogWindow.HideDialoguePanel();
         _choiceSelector.Hide();
         OnDialogueEnd?.Invoke();
-        gameManager?.StateMachine.ChangeState<GameLoopState>();
+        gameManager.ResetActiveState();
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────
