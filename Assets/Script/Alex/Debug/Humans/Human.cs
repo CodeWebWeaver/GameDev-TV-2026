@@ -3,47 +3,40 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
-using static UnityEngine.Rendering.DebugUI;
 
 public class Human : MonoBehaviour {
     [SerializeField] private PersonDataSO personDataSO;
-    [Inject] SignalBus signalBus;
 
-    public string Name =>
-        personDataSO != null
-            ? personDataSO.Name
-            : string.Empty;
-
-    public Sprite Portrait => personDataSO != null
-            ? personDataSO.Portrait
-            : null;
-
+    public string Name => personDataSO != null ? personDataSO.Name : string.Empty;
+    public Sprite Portrait => personDataSO != null ? personDataSO.Portrait : null;
     public int Happiness { get; private set; } = 4;
-
-    protected virtual void Awake() {
-        friendSystem = new(signalBus);
-    }
 
     public FriendSystem FriendSystem => friendSystem;
     private FriendSystem friendSystem;
 
+    [Inject]
+    private void Construct(SignalBus signalBus) {
+        friendSystem = new FriendSystem(this, signalBus);
+    }
+
     public void ChangeHappiness(int delta) {
-        Happiness += delta;
-        Happiness = Mathf.Clamp(Happiness, 0, 10);
+        Happiness = Mathf.Clamp(Happiness + delta, 0, 10);
     }
 }
-
 
 [Serializable]
 public class FriendSystem {
     private readonly List<Human> friends = new();
+    private readonly Human owner;
+    private readonly SignalBus signalBus;
 
     public IReadOnlyList<Human> Friends => friends;
 
-    private readonly SignalBus _signalBus;
+    public event Action<Human> OnFriendAdded;
 
-    public FriendSystem(SignalBus signalBus) {
-        _signalBus = signalBus;
+    public FriendSystem(Human owner, SignalBus signalBus) {
+        this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
+        this.signalBus = signalBus ?? throw new ArgumentNullException(nameof(signalBus));
     }
 
     public bool AddFriend(Human friend) {
@@ -52,18 +45,16 @@ public class FriendSystem {
 
         friends.Add(friend);
 
-        _signalBus.Fire(new FriendAddedSignal(friend));
+        // Подія C# для локальних потреб
+        OnFriendAdded?.Invoke(friend);
+
+        // Глобальний сигнал Zenject надсилається ОДРАЗУ звідси!
+        signalBus.Fire(new FriendAddedSignal(owner, friend));
 
         return true;
     }
 
-    public bool RemoveFriend(Human human) {
-        return friends.Remove(human);
-    }
-
-    public bool IsFriend(Human human) {
-        return friends.Contains(human);
-    }
-
+    public bool RemoveFriend(Human human) => friends.Remove(human);
+    public bool IsFriend(Human human) => friends.Contains(human);
     public int Count => friends.Count;
 }

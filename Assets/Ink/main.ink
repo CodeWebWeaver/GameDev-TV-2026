@@ -119,7 +119,6 @@ VAR korra = 0
     }
 }
 === talk_to_charlie ===
-
 {met_charlie:
     {dog_step==3:
         ->charlie_dog_news

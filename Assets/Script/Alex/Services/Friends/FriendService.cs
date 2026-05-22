@@ -8,8 +8,8 @@ public class FriendService : MonoBehaviour
     [Inject] SignalBus signalBus;
 
     private void HandleFriendAdded(FriendAddedSignal signal) {
-        friendUI.SetFriendName(signal.Friend.Name);
-        friendUI.SetPortrait(signal.Friend.Portrait);
+        friendUI.SetFriendName(signal.FriendAddedOn.Name);
+        friendUI.SetPortrait(signal.FriendAddedOn.Portrait);
         friendUI.PopUp();
     }
 

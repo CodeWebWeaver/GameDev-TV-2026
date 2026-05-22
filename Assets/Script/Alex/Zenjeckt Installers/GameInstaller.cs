@@ -53,9 +53,11 @@ public class GameInstaller : MonoInstaller {
 }
 
 public class FriendAddedSignal {
-    public Human Friend;
+    public Human FriendAddedBy; 
+    public Human FriendAddedOn;
 
-    public FriendAddedSignal(Human friend) {
-        Friend = friend;
+    public FriendAddedSignal(Human friendAddedBy, Human friendAddedOn) {
+        FriendAddedBy = friendAddedBy;
+        FriendAddedOn = friendAddedOn;
     }
 }

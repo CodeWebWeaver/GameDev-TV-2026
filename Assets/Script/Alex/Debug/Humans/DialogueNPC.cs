@@ -14,8 +14,7 @@ public class DialogueNPC : Human {
     private DialogueTrigger _dTrigger;
     [Inject] DialogueManager dialogueManager;
 
-    protected override void Awake() {
-        base.Awake();
+    protected void Awake() {
         _dTrigger = GetComponentInChildren<DialogueTrigger>();
         if (_dTrigger) _dTrigger.OnDialoguePossible += HandlePossibleDialog;
         bodyView?.ToggleVisualCue(false);
