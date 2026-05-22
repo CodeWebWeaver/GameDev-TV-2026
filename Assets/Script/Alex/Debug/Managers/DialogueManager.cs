@@ -8,13 +8,17 @@ using Zenject;
 
 
 public interface IDialogInputManager {
+    public event Action OnContinueRequest;
     public event Action OnSubmitRequest;
     public event Action<Vector2> OnNavigate;
 }
 
 public class DialogInputService : IDialogInputManager, IDisposable {
     private readonly InputSystem_Actions.DialogActions _uiActions;
+
     public event Action OnSubmitRequest;
+    public event Action OnContinueRequest;
+
     public event Action<Vector2> OnNavigate;
 
     public DialogInputService(InputManager inputManager) {
@@ -24,14 +28,24 @@ public class DialogInputService : IDialogInputManager, IDisposable {
 
     private void Subscribe() {
         _uiActions.Submit.performed += HandleSubmit;
-        _uiActions.Click.performed += HandleSubmit;
+
+        _uiActions.Click.performed += HandleSkip;
+        _uiActions.Continue.performed += HandleSkip;
+
         _uiActions.Navigate.performed += HandleNavigation;
     }
 
     private void Unsubscribe() {
         _uiActions.Submit.performed -= HandleSubmit;
-        _uiActions.Click.performed -= HandleSubmit;
+
+        _uiActions.Click.performed -= HandleSkip;
+        _uiActions.Continue.performed -= HandleSkip;
+
         _uiActions.Navigate.performed -= HandleNavigation;
+    }
+
+    private void HandleSkip(InputAction.CallbackContext context) {
+        OnContinueRequest?.Invoke();
     }
 
     private void HandleSubmit(InputAction.CallbackContext context) {
@@ -41,6 +55,7 @@ public class DialogInputService : IDialogInputManager, IDisposable {
     private void HandleNavigation(InputAction.CallbackContext context) {
         OnNavigate?.Invoke(context.ReadValue<Vector2>());
     }
+
 
     public void Dispose() {
         Unsubscribe();
@@ -96,11 +111,13 @@ public class DialogueManager : MonoBehaviour {
 
     private void Subscribe() {
         dialogInputs.OnSubmitRequest += HandleSubmit;
+        dialogInputs.OnContinueRequest += HandleSkip;
         dialogInputs.OnNavigate += HandleNavigation;
     }
 
     private void Unsubscribe() {
         dialogInputs.OnSubmitRequest -= HandleSubmit;
+        dialogInputs.OnContinueRequest -= HandleSkip;
         dialogInputs.OnNavigate -= HandleNavigation;
     }
 
@@ -188,6 +205,18 @@ public class DialogueManager : MonoBehaviour {
         ContinueStory();
     }
 
+    private void HandleSkip() {
+        // If the typewriter is still running, skip it — do NOT advance yet.
+        if (_dialogWindow.TrySkipTypewriter()) return;
+
+        // Text is fully visible; advance on next Skip.
+        if (_waitingForInput) {
+            _waitingForInput = false;
+            ContinueStory();
+        }
+    }
+
+
     // ── Input handlers ────────────────────────────────────────────────────
     private void HandleSubmit() {
         if (!IsDialoguePlaying) return;
@@ -196,15 +225,6 @@ public class DialogueManager : MonoBehaviour {
         if (_choiceSelector.IsShowingChoices) {
             _choiceSelector.ConfirmSelection();
             return;
-        }
-
-        // If the typewriter is still running, skip it — do NOT advance yet.
-        if (_dialogWindow.TrySkipTypewriter()) return;
-
-        // Text is fully visible; advance on next Submit.
-        if (_waitingForInput) {
-            _waitingForInput = false;
-            ContinueStory();
         }
     }
 
