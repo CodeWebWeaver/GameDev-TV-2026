@@ -11,29 +11,26 @@ public class Player : Human {
     [SerializeField] PlayerDialogSystem dialogSystem;
 
     [Header ("Personality Settings")]
-    public PlayerPersonality Personality { get; } = new();
-    [SerializeField] private PersonalitiesViewManager personalitiesUIManagerPrefab;
-    private PersonalitiesViewManager personalitiesUIManager;
+    public PlayerPersonality Personality { get; private set; }
 
     [Inject] private PlayerInputService playerInput;
     [Inject] private DialogueManager dialogueManager;
     [Inject] private UIManager uIManager;
 
     protected void Awake() {
-        GameObject gameObject1 = uIManager.InstantiateUIElement(personalitiesUIManagerPrefab.gameObject);
-        if (gameObject1 != null) {
-            personalitiesUIManager = gameObject1.GetComponent<PersonalitiesViewManager>();
-        }
+        Personality = new PlayerPersonality(signalBus);
     }
+
     private void Start() {
-        personalitiesUIManager?.Observe(Personality);
         List<PersonalityParamSO> personalityParamSOs = Resources.LoadAll<PersonalityParamSO>(Personalities_Path).ToList();
         Personality.Initialize(personalityParamSOs);
+    }
 
+    private void OnEnable() {
         playerInput.OnInteractEnded += OnInteract;
     }
 
-    private void OnDestroy() {
+    private void OnDisable() {
         playerInput.OnInteractEnded -= OnInteract;
     }
 

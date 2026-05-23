@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{56659bee-eacd-4d1a-a1b9-fef24c9f05c6}">
 		<property name="assetPath">
-			<value>Music/Menu/starostin-soft-calm-background-music-376497.mp3</value>
+			<value>Music/Game/starostin-soft-calm-background-music-376497.mp3</value>
 		</property>
 		<property name="isStreaming">
 			<value>true</value>
