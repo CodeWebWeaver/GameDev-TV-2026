@@ -74,6 +74,7 @@ public class DialogueManager : MonoBehaviour {
     [Inject] private UIManager uIManager;
     [Inject] private GameManager gameManager;
     [Inject] IDialogInputManager dialogInputs;
+    [Inject] SignalBus signalBus;
 
     [SerializeField] private GameObject dialogWindowPrefab;
     [SerializeField] private TextAsset inkJsonAsset;
@@ -96,6 +97,10 @@ public class DialogueManager : MonoBehaviour {
     // ── Events ────────────────────────────────────────────────────────────
     public event Action OnDialogueBegin;
     public event Action OnDialogueEnd;
+
+    private const string PlayerNameVar = "player_name";
+    private const string PlayerFriendsCountVar = "player_friends_count";
+    private const string addFriendFunc = "add_friend";
 
     // ── Unity lifecycle ───────────────────────────────────────────────────
     protected void Awake() {
@@ -154,7 +159,7 @@ public class DialogueManager : MonoBehaviour {
 
         _story = new Story(inkJsonAsset.text);
 
-        _story.BindExternalFunction("addFriend", (string name) => {
+        _story.BindExternalFunction(addFriendFunc, (string name) => {
             if (_npc == null || _player == null) return;
             if (!EqualStringsInvriant(name, _npc.Name)) return;
             
@@ -182,23 +187,25 @@ public class DialogueManager : MonoBehaviour {
     }
 
     // ── Public entry point ────────────────────────────────────────────────
-    public void EnterDialogueMode(DialogueNodeSO dialogueNodeSO, Player player, DialogueNPC npc) {
+    public void EnterDialogueMode(string dialogueKnot, Player player, DialogueNPC npc) {
         if (IsDialoguePlaying) {
             Debug.LogWarning("[DialogueManager] Dialogue already playing — ignoring.");
             return;
         }
-        if (dialogueNodeSO == null) {
-            Debug.LogWarning("[DialogueManager] dialogueNodeSO is null — aborting.");
+        if (string.IsNullOrEmpty(dialogueKnot)) {
+            Debug.LogWarning("[DialogueManager] dialogueKnot is null or empty — aborting.");
             return;
         }
 
         gameManager?.StateMachine.ChangeState<DialogueState>();
+        signalBus.Fire(new DialogStartedSignal(player, npc));
+
         _player = player;
         _npc = npc;
 
-        _story.ChoosePathString(dialogueNodeSO.InkKnotName);
-        _story.variablesState["player_name"] = player.Name;
-        _story.variablesState["player_friends_count"] = player.FriendSystem.Friends.Count;
+        _story.ChoosePathString(dialogueKnot);
+        _story.variablesState[PlayerNameVar] = player.Name;
+        _story.variablesState[PlayerFriendsCountVar] = player.FriendSystem.Friends.Count;
 
         CacheSpeaker(player);
         CacheSpeaker(npc);
@@ -356,6 +363,7 @@ public class DialogueManager : MonoBehaviour {
         _dialogWindow.HideDialoguePanel();
         _choiceSelector.Hide();
         OnDialogueEnd?.Invoke();
+        signalBus.Fire(new DialogEndSignal(_player, _npc));
         gameManager.ResetActiveState();
     }
 

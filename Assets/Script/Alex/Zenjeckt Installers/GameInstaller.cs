@@ -34,6 +34,8 @@ public class GameInstaller : MonoInstaller {
         Container.DeclareSignal<FriendAddedSignal>();
         Container.DeclareSignal<PersonalityChangedSignal>();
         Container.DeclareSignal<PersonalityParamAddedSignal>();
+        Container.DeclareSignal<DialogStartedSignal>();
+        Container.DeclareSignal<DialogEndSignal>();
     }
 
     private void StateMachineInstall() {

@@ -5,10 +5,11 @@ using UnityEngine;
 using Zenject;
 
 public class Human : MonoBehaviour {
-    [SerializeField] private PersonDataSO personDataSO;
+    [SerializeField] protected PersonDataSO personDataSO;
 
     public string Name => personDataSO != null ? personDataSO.Name : string.Empty;
     public Sprite Portrait => personDataSO != null ? personDataSO.Portrait : null;
+
     public int Happiness { get; private set; } = 4;
 
     public FriendSystem FriendSystem => friendSystem;

@@ -515,3 +515,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PausePanel
   menuButton: {fileID: 5510560968191870167}
+  pausePanel: {fileID: 5270909235341513204}
+--- !u!114 &5270909235341513204 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2534135444015911405, guid: c6f9f0338b94d9e449e1ef3a41bd4eee, type: 3}
+  m_PrefabInstance: {fileID: 7641771596340838425}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1558060285002077152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26751ed6222534d4797d9c2435c0ebfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPanel

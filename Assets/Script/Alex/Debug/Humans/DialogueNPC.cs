@@ -4,31 +4,40 @@ using UnityEngine;
 using Zenject;
 
 public class DialogueNPC : Human {
-    [SerializeField] private DialogueNodeSO dialogueData;
     [SerializeField] private BodyView bodyView;
     [SerializeField] private Color lonelyColor, happyColor, questionColor;
     [SerializeField] private bool CanSpeakAgain = true;
     private bool isSpoken = false;
     public bool CanSpeak => CanSpeakAgain ? true : !isSpoken;
+    [SerializeField] bool forcedFirstDialogue = false; // if true, will trigger dialogue immediately on start (for testing)
 
     private DialogueTrigger _dTrigger;
     [Inject] DialogueManager dialogueManager;
 
     protected void Awake() {
         _dTrigger = GetComponentInChildren<DialogueTrigger>();
-        if (_dTrigger) _dTrigger.OnDialoguePossible += HandlePossibleDialog;
         bodyView?.ToggleVisualCue(false);
     }
 
-    private void HandlePossibleDialog(bool isPossible) {
+    private void OnEnable() {
+        if (_dTrigger) _dTrigger.OnDialoguePossible += HandlePossibleDialog;
+    }
+
+    private void OnDisable() {
+        if (_dTrigger) _dTrigger.OnDialoguePossible -= HandlePossibleDialog;
+    }
+
+    private void HandlePossibleDialog(bool isPossible, Player player) {
+        if (forcedFirstDialogue && isPossible && !isSpoken) {
+            dialogueManager.EnterDialogueMode(GetDialogKnot(), player, this);
+            return;
+        }
         if (CanSpeakAgain && !isSpoken) {
             bodyView.ToggleVisualCue(true);
         } else {
             bodyView.ToggleVisualCue(false);
         }
     }
-
-    public DialogueNodeSO BeginDialogue() => dialogueData;
 
     // Called by DialogueManager subscriber (set up in Player.HandleInteraction)
     public void OnDialogueBegin() {
@@ -65,5 +74,7 @@ public class DialogueNPC : Human {
         bodyView?.SetColor(target);
     }
 
-    
+    public string GetDialogKnot() {
+        return personDataSO != null ? personDataSO.InkKnotName : string.Empty;
+    }
 }

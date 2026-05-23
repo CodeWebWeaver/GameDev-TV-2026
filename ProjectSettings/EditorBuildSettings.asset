@@ -17,5 +17,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Release/City on Timeline/Game_Scene.unity
     guid: e240eba5169e5954bb312fc7033404c3
+  - enabled: 1
+    path: Assets/Scenes/Release/City on Timeline/Game.unity
+    guid: 3da9f12905e65134c9e876b3f6a86901
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
