@@ -10,27 +10,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_LocalScale.x
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_LocalScale.y
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_LocalScale.z
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 16.538612
+      value: 29
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.79
+      value: 0.07
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 37.82
+      value: 18.38
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_LocalRotation.w
@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 301f786e5c9776642bf8cc217ba615da, type: 2}
     - target: {fileID: 919132149155446097, guid: 27c5ad071761be84f89e167b5d7d1e52, type: 3}
       propertyPath: m_Name
       value: SkySkraperDressing
