@@ -10,8 +10,8 @@
   <Project Path="Zenject-IntegrationTests-Editor.csproj" />
   <Project Path="Unity.VisualScripting.Core.Editor.csproj" />
   <Project Path="Unity.PerformanceTesting.Editor.csproj" />
-  <Project Path="Unity.Splines.csproj" />
   <Project Path="Unity.RenderPipelines.HighDefinition.Editor.csproj" />
+  <Project Path="Unity.Splines.csproj" />
   <Project Path="Unity.Burst.csproj" />
   <Project Path="Unity.VisualScripting.Flow.Editor.csproj" />
   <Project Path="UniTask.csproj" />
@@ -40,9 +40,9 @@
   <Project Path="UniTask.Addressables.csproj" />
   <Project Path="Unity.Postprocessing.Runtime.csproj" />
   <Project Path="InkEditor.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Unity.AI.Navigation.Editor.csproj" />
   <Project Path="FMODUnityResonanceEditor.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="FMODUnityEditor.csproj" />
   <Project Path="FMODUnity.csproj" />
   <Project Path="Unity.InputSystem.ForUI.csproj" />
