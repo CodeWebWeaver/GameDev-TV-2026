@@ -21,10 +21,15 @@ public class DialogueNPC : Human {
 
     private void OnEnable() {
         if (_dTrigger) _dTrigger.OnDialoguePossible += HandlePossibleDialog;
+
+        signalBus.Subscribe<DialogStartedSignal>(HandleDialogueBegin);
     }
 
     private void OnDisable() {
         if (_dTrigger) _dTrigger.OnDialoguePossible -= HandlePossibleDialog;
+
+        signalBus.Unsubscribe<DialogStartedSignal>(HandleDialogueBegin);
+        signalBus.Unsubscribe<DialogEndSignal>(HandleDialogueEnd);
     }
 
     private void HandlePossibleDialog(bool isPossible, Player player) {
@@ -40,18 +45,22 @@ public class DialogueNPC : Human {
     }
 
     // Called by DialogueManager subscriber (set up in Player.HandleInteraction)
-    public void OnDialogueBegin() {
+    public void HandleDialogueBegin(DialogStartedSignal signal) {
         bodyView?.ToggleVisualCue(false);
+        if (signal.NPC != this) return;
+
         isSpoken = true;
         // Subscribe to events only for the duration of THIS dialogue
         DialogueEvents.OnAnimationTag += HandleAnimationTag;
-        dialogueManager.OnDialogueEnd += OnDialogueEnd;
+
+        signalBus.Subscribe<DialogEndSignal>(HandleDialogueEnd);
     }
 
-    private void OnDialogueEnd() {
-        isSpoken = true; // stays false after talking — change if you want repeat dialogue
+    private void HandleDialogueEnd() {
+        isSpoken = true;
         DialogueEvents.OnAnimationTag -= HandleAnimationTag;
-        dialogueManager.OnDialogueEnd -= OnDialogueEnd;
+
+        signalBus.Unsubscribe<DialogEndSignal>(HandleDialogueEnd);
     }
 
     // Handles only tags that start with this NPC's name

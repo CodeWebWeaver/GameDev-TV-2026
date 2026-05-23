@@ -131,7 +131,6 @@ public class Player : Human {
         if (npcs.Length == 0) return;
 
         DialogueNPC npc = npcs[0];
-        npc.OnDialogueBegin();
         dialogueManager.EnterDialogueMode(npc.GetDialogKnot(), this, npc);
     }
 }
