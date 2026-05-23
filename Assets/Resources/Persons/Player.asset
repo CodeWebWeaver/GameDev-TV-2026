@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c4da52da9321f6428348b82e7be142b, type: 3}
   m_Name: Player
   m_EditorClassIdentifier: Assembly-CSharp::PersonDataSO
-  personName: Player
-  portrait: {fileID: 21300000, guid: 459c85d7ea3f8304fa4368cfc7a4b00c, type: 3}
+  personName: Mimi
+  portrait: {fileID: 21300000, guid: ea5bee4d00e1e23478d8e8aa7dde4733, type: 3}
+  inkKnotName: 
