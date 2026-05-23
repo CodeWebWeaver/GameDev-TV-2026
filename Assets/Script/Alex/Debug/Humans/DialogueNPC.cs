@@ -28,8 +28,8 @@ public class DialogueNPC : Human {
     private void OnDisable() {
         if (_dTrigger) _dTrigger.OnDialoguePossible -= HandlePossibleDialog;
 
-        signalBus.Unsubscribe<DialogStartedSignal>(HandleDialogueBegin);
-        signalBus.Unsubscribe<DialogEndSignal>(HandleDialogueEnd);
+        signalBus.TryUnsubscribe<DialogStartedSignal>(HandleDialogueBegin);
+        signalBus.TryUnsubscribe<DialogEndSignal>(HandleDialogueEnd);
     }
 
     private void HandlePossibleDialog(bool isPossible, Player player) {
