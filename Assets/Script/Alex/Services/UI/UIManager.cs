@@ -46,10 +46,16 @@ public class UIManager : MonoBehaviour, IUiService {
 
     private void OnEnable() {
         SceneManager.sceneLoaded += OnSceneLoaded;
+        _settingsPanel.OnCloseButtonClicked += HandleCloseSettings;
     }
 
     private void OnDisable() {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        _settingsPanel.OnCloseButtonClicked -= HandleCloseSettings;
+    }
+
+    private void HandleCloseSettings() {
+        HidePanel(_settingsPanel);
     }
 
     private void InitializeCanvas() {
