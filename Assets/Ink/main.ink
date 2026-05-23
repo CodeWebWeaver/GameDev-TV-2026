@@ -6,7 +6,6 @@ VAR player_friends_count = 0
 VAR dayCount = 0
 
 //player attributes
-VAR name="placeholder"
 VAR pragmatic = 0
 VAR helpful = 0
 VAR easygoing = 0
@@ -34,19 +33,6 @@ VAR met_coco = false
 VAR met_korra = false
 VAR met_august = false
 VAR met_jojo = false
-
-//people friend identifiers
-VAR charlie_friend = false
-VAR emily_friend = false
-VAR beverly_friend = false
-VAR stevie_friend = false
-VAR annika_friend = false
-VAR lino_friend = false
-VAR coco_friend = false
-VAR korra_friend = false
-VAR august_friend = false
-VAR jojo_friend = false
-
 
 //dog quest
 //step 0: talk to beverly for a description of where the dog might be
@@ -115,6 +101,8 @@ VAR annika = 0
 VAR korra = 0
 VAR august = 0
 VAR jojo = 0
+
+EXTERNAL add_friend(name)
 
 -> talk_to_someone
 
@@ -187,7 +175,7 @@ Hey! You came back!
     #speaker: Narrator
     Quest: The Lost Dog
     Quest Complete!
-    ~charlie_friend=true
+    ~ add_friend("charlie")
     ~charlie+=5
     ~dog_step=4
     ~dog_quest=false
@@ -204,7 +192,7 @@ Hey! You came back!
     #speaker: Narrator
     Quest: The Lost Dog
     Quest Complete!
-    ~charlie_friend=true
+    ~ add_friend("charlie")
     ~charlie+=5
     ~dog_step=4
     ~dog_quest=false
@@ -335,7 +323,7 @@ Oh, dear. Coco, Coco, please come back!
     #speaker: Narrator
     Quest: The Lost Dog
     Next Objective: Check in with Charlie
-    ~beverly_friend=true
+    ~ add_friend("beverly")
     ~dog_step=3
     ~helpful+=medChange
     ~adventurous+=smallChange
@@ -345,7 +333,7 @@ Oh, dear. Coco, Coco, please come back!
     
 ===beverly_chat===
 #speaker: Beverly
-Ah, ~name, it's lovely to see you, dear!
+Ah, {player_name}, it's lovely to see you, dear!
 Do you need help with anything?
 * {mural_step==1}[Actually, yes! Do you know anywhere in town where August could paint their next mural?]
     #speaker: Beverly
@@ -405,7 +393,7 @@ Maybe you can tell him to come home?
     You should probably see if he made it back okay.
     Quest: The Lost Dog
     Next Objective: Check in with Beverly
-    ~coco_friend=true
+    ~ add_friend("coco")
     ~friendly+=smallChange
     ~adventurous+=smallChange
     ~coco+=5
@@ -663,7 +651,7 @@ Kids these days...
 Hmm?
 Oh! Yes, I'm Emily. And you are...?
 #speaker: Player
-I'm ~name.
+I'm {player_name}.
 ~met_emily = true
 ->emily_charlie_questintro
 
@@ -746,11 +734,11 @@ Any news to share?
     #speaker: Emily
     Oh, these will be so much fun!
     Charlie and I might even search the neighborhood together with these.
-    Thank you, {name}, I can't tell you how much I appreciate your help!
+    Thank you, {player_name}, I can't tell you how much I appreciate your help!
     #speaker: Narrator
     Quest: Emily and Charlie
     Quest Complete!
-    ~emily_friend=true
+    ~ add_friend("emily")
     ~emily_charlie_step=3
     ~emily_charlie_quest=false
     ~has_walkies=false
@@ -766,7 +754,7 @@ Any news to share?
     ->END
 ===emily_post_walkies===
 #speaker: Emily
-Hello, {name}!
+Hello, {player_name}!
 Thanks again for your help earlier; I'm having so much fun with these walkie-talkies.
 I think Charlie might be getting a little sick of them!
 #speaker: Charlie
@@ -826,7 +814,7 @@ I think Charlie might be getting a little sick of them!
     
 ===lino_give_base===
     #speaker: Lino
-Hello, {name}!
+Hello, {player_name}!
 Did you find something?
 * {lino_gift=="pen"}[Give Lino the fountain pen]
     #speaker: Lino
@@ -841,7 +829,7 @@ Did you find something?
     #speaker: Narrator
     Quest: A Gift for Annika
     Quest Complete!
-    ~lino_friend=true
+    ~ add_friend("lino")
     ->END
 * {lino_gift=="shawl"}[Give Lino the shawl]
     #speaker: Lino
@@ -851,7 +839,7 @@ Did you find something?
     #speaker: Lino
     It's so soft and warm. And it looks just like something she used to wear at home.
     Thank you, truly. She is going to love this.
-    ~lino_friend=true
+    ~ add_friend("lino")
     ~lino+=5
     ~helpful+=bigChange
     ~thoughtful+=bigChange
@@ -1026,7 +1014,7 @@ The young woman looks a bit frazzled and unfamiliar with the area.
 ->END
 ===annika_chat_base===
 #speaker: Annika
-Hey, {name}.
+Hey, {player_name}.
 {annika_quest==false:
     {lino_gift=="pen":
         ->annika_chat_pen
@@ -1160,7 +1148,7 @@ Would you believe they've already offered me a job?
     ~annika+=smallChange
     ~have_new_info_annika=false
     ~annika_step=2
-    ~annika_friend=true
+    ~ add_friend("annika")
     #speaker Narrator
     Quest: Annika's New Job
     Next Objective: Find an advertisement for an upcoming event.
@@ -1177,7 +1165,7 @@ Would you believe they've already offered me a job?
     #speaker: Annika
     Hmm. The Four Gophers?
     Strange name for a band. But... that sounds like a really nice time. 
-    Thank you, {name}, I think I'm starting to feel at home here.
+    Thank you, {player_name}, I think I'm starting to feel at home here.
     I'm really glad I was able to meet you!
     ~annika_quest=false
     ~annika_step = 3
@@ -1242,7 +1230,7 @@ Howdy there, friend!
     ~creative+=bigChange
     ~gophers_step=2
     ~four_gophers=false
-    ~korra_friend=true
+    ~ add_friend("korra")
     #speaker Narrator
     Quest: The Four Gophers
     Next Objective: Quest Complete!
@@ -1347,7 +1335,7 @@ I hope to catch up with you soon!
 #speaker: Narrator
 Quest: A Summer Mural
 Quest Complete!
-~august_friend=true
+~ add_friend("august")
 ~mural_quest=false
 ~mural_step=2
 ->END
@@ -1438,7 +1426,7 @@ Hey! You, there!
 Hello, there!
 Just wanted to say thanks for supporting my business these past few days.
 Any time you need a business partner, you just let me know.
-~stevie_friend=true
+~ add_friend("stevie")
 ->END
 
 === stevie_quest_convo ===
@@ -1670,7 +1658,7 @@ Hey! You're new!
 #speaker: Jojo
 Hey, lady.
 {paint and gum and handshake:
-~jojo_friend=true
+~ add_friend("jojo")
 }
 {dayCount==1 and handshake==false:
     ->jojo_day1
@@ -1747,7 +1735,7 @@ Up in space...
 
 ===jojo_day2===
 #speaker: Jojo
-Hi, {name}! Can you do me a big favor?
+Hi, {player_name}! Can you do me a big favor?
 I'm doing an art project but I need something from the store.
 Can you buy me striped paint?
 + Horizontal or vertical stripes?
@@ -1766,7 +1754,7 @@ Can you buy me striped paint?
 
 ===jojo_day3===
 #speaker: Jojo
-Hi {name}, thanks for hanging out with me so much.
+Hi {player_name}, thanks for hanging out with me so much.
 As a thank you, can I give you a piece of gum?
 #speaker: Narrator
 Jojo holds out a pack of gum. It's no brand of gum you've ever seen before, and one piece is clearly sticking out.
@@ -1785,7 +1773,7 @@ You think you know what's happening here.
     ~jojo +=1
     ~gum=true
     {paint and gum and handshake:
-    ~jojo_friend=true
+    ~ add_friend("jojo")
     }
     ->END
 + Thanks for the offer, but I'm alright for now.
@@ -1799,3 +1787,7 @@ You think you know what's happening here.
     This is real gum, honest!
     Um, maybe later, I guess...
     ->END
+    
+    ===function add_friend(friend_name)===
+    ~return
+    

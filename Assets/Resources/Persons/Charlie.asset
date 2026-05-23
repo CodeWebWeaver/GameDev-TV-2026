@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PersonDataSO
   personName: Charlie
   portrait: {fileID: 21300000, guid: bb82efc75f2a0fc469b157b18f3a0ff4, type: 3}
+  inkKnotName: talk_to_charlie

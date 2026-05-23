@@ -24,6 +24,10 @@ public class GameController : MonoBehaviour
         gameManager.HandleCancel();
     }
 
+    public void HandlePauseRequest() {
+        gameManager.HandleCancel();
+    }
+
     public void HandleMenuRequest() {
         gameManager.EnterMenu();
     }
