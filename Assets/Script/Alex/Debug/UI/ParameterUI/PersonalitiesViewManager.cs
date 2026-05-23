@@ -18,14 +18,31 @@ public class PersonalitiesViewManager : MonoBehaviour {
     private readonly Dictionary<string, PersonalityParamUI> _activeUI = new();
     private PlayerPersonality _personality;
 
+    private SignalBus _signalBus;
+
     [Header ("Audio")]
     [InjectOptional] FmodAudioService _audioService;
     [SerializeField] private EventReference aquiredEventReference;
+
+    [Inject]
+    private void Construct(SignalBus signalBus) {
+        _signalBus = signalBus;
+    }
 
     private void Awake() {
         if (usePooling) {
             InitializePool();
         }
+    }
+
+    private void OnEnable() {
+        _signalBus.Subscribe<PersonalityParamAddedSignal>(HandleParamAdded);
+        _signalBus.Subscribe<PersonalityChangedSignal>(HandleParamChanged);
+    }
+
+    private void OnDisable() {
+        _signalBus.Unsubscribe<PersonalityParamAddedSignal>(HandleParamAdded);
+        _signalBus.Unsubscribe<PersonalityChangedSignal>(HandleParamChanged);
     }
 
     private void InitializePool() {
@@ -40,23 +57,10 @@ public class PersonalitiesViewManager : MonoBehaviour {
         );
     }
 
-    public void Observe(PlayerPersonality personality) {
-        _personality = personality;
-
-        // Підписуємось на події
-        personality.OnParamAdded += HandleParamAdded;
-        personality.OnParamChanged += HandleParamChanged;
-
-        // Відображаємо всі існуючі параметри
-        foreach (var param in personality.GetAll()) {
-            HandleParamAdded(param);
-        }
-    }
-
-    private void HandleParamAdded(PersonalityParam param) {
+    private void HandleParamAdded(PersonalityParamAddedSignal signal) {
+        var param = signal.Param;
         if (_activeUI.ContainsKey(param.Name)) return;
 
-        // Обмежуємо кількість відображуваних параметрів
         if (_activeUI.Count >= maxVisibleParams) {
             Debug.LogWarning($"Max visible params reached ({maxVisibleParams})");
             return;
@@ -64,10 +68,16 @@ public class PersonalitiesViewManager : MonoBehaviour {
 
         var ui = usePooling ? _pool.Get() : InstantiateUI();
         _activeUI[param.Name] = ui;
-
-        // Пряма передача PersonalityParam
         ui.Setup(param);
     }
+
+    private void HandleParamChanged(PersonalityChangedSignal signal) {
+        if (_activeUI.TryGetValue(signal.ParamName, out var ui)) {
+        }
+
+        _audioService?.PlayOneShot(aquiredEventReference);
+    }
+
 
     private PersonalityParamUI InstantiateUI() {
         return Instantiate(personalityPrefab, container);
@@ -75,8 +85,6 @@ public class PersonalitiesViewManager : MonoBehaviour {
 
     private void HandleParamChanged(PersonalityParam param) {
         if (_activeUI.TryGetValue(param.Name, out var ui)) {
-            // UI оновиться автоматично через підписку всередині ui.Setup()
-            // Тому тут нічого не потрібно робити
         }
 
         _audioService?.PlayOneShot(aquiredEventReference);
@@ -97,18 +105,16 @@ public class PersonalitiesViewManager : MonoBehaviour {
     private PersonalityParamUI CreateItem() {
         return Instantiate(personalityPrefab, container);
     }
-
-    private void OnDestroy() {
-        if (_personality != null) {
-            _personality.OnParamAdded -= HandleParamAdded;
-            _personality.OnParamChanged -= HandleParamChanged;
-        }
-    }
 }
 
 public class PlayerPersonality {
     private readonly Dictionary<string, PersonalityParam> _params = new();
     private readonly Dictionary<string, PersonalityParamSO> _availableParams = new();
+    private SignalBus _signalBus;
+
+    public PlayerPersonality(SignalBus signalBus) {
+        this._signalBus = signalBus;
+    }
 
     public event System.Action<PersonalityParam> OnParamChanged;
     public event System.Action<PersonalityParam> OnParamAdded;
@@ -117,30 +123,37 @@ public class PlayerPersonality {
             string name = paramData.Name.ToLowerInvariant();
             _availableParams[name] = paramData;
 
-            // Створюємо всі параметри зі значенням за замовчуванням
             var param = new PersonalityParam(paramData, paramData.DefaultValue);
             _params[name] = param;
-            param.OnValueChanged += OnParamValueChanged;
-            OnParamAdded?.Invoke(param);
+            param.OnValueChanged += HandleParamValueChanged;
+            _signalBus.Fire(new PersonalityParamAddedSignal(param));
         }
     }
 
     public void ChangeParam(string name, int delta) {
         string loweredName = name.ToLowerInvariant();
         if (!_params.TryGetValue(loweredName, out var param)) {
-            // Якщо параметра немає - створюємо новий (тільки якщо є SO)
             if (_availableParams.TryGetValue(loweredName, out var paramData)) {
                 param = new PersonalityParam(paramData, 0);
                 _params[loweredName] = param;
-                param.OnValueChanged += OnParamValueChanged;
-                OnParamAdded?.Invoke(param);
+                param.OnValueChanged += HandleParamValueChanged;
+                _signalBus.Fire(new PersonalityParamAddedSignal(param));
             } else {
-                Debug.LogWarning($"Unknown personality param: {loweredName}. Create a PersonalityParamSO for it.");
+                Debug.LogWarning($"Unknown personality param: {loweredName}");
                 return;
             }
         }
 
-        param.ChangeValue(delta);
+        int oldValue = param.ChangeValue(delta);
+        _signalBus.Fire(new PersonalityChangedSignal(param.Name, param.CurrentValue, oldValue));
+    }
+
+    private void HandleParamValueChanged(PersonalityParam param) {
+        _signalBus.Fire(new PersonalityChangedSignal(
+            param.Name,
+            param.CurrentValue,
+            param.CurrentValue 
+        ));
     }
 
     private void OnParamValueChanged(PersonalityParam param) {
@@ -185,11 +198,14 @@ public class PersonalityParam {
         _currentValue = Mathf.Clamp(initialValue, data.MinValue, data.MaxValue);
     }
 
-    public void ChangeValue(int delta) {
+    public int ChangeValue(int delta) {
+        int oldValue = CurrentValue;
         CurrentValue += delta;
+        return oldValue;
     }
 
     public void SetValue(int newValue) {
         CurrentValue = newValue;
     }
 }
+

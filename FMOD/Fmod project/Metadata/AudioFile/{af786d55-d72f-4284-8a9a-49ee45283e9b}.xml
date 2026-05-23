@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{af786d55-d72f-4284-8a9a-49ee45283e9b}">
 		<property name="assetPath">
-			<value>658266__lilmati__retro-inspect-sound-ui-or-in-game-notification.wav</value>
+			<value>SFX/658266__lilmati__retro-inspect-sound-ui-or-in-game-notification.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>
