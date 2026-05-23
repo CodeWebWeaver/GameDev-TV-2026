@@ -14,8 +14,10 @@ public class Human : MonoBehaviour {
     public FriendSystem FriendSystem => friendSystem;
     private FriendSystem friendSystem;
 
+    protected SignalBus signalBus;
     [Inject]
     private void Construct(SignalBus signalBus) {
+        this.signalBus = signalBus;
         friendSystem = new FriendSystem(this, signalBus);
     }
 

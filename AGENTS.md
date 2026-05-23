@@ -2,7 +2,7 @@
 - Project name: GameDev TV 2026
 - Unity version: Unity 6000.4.6f1
 - Active game object:
-  - Name: Charlie NPC
+  - Name: Choice
   - Tag: Untagged
-  - Layer: NPC
+  - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

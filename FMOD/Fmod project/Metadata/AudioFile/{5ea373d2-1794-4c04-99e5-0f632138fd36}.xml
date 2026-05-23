@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{5ea373d2-1794-4c04-99e5-0f632138fd36}">
 		<property name="assetPath">
-			<value>Music/GameOver/eugenemyers-clear-sky-happy-ambient-motivational-188559.mp3</value>
+			<value>Music/Game/eugenemyers-clear-sky-happy-ambient-motivational-188559.mp3</value>
 		</property>
 		<property name="isStreaming">
 			<value>true</value>

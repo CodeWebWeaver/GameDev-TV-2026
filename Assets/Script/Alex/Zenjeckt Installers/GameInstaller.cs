@@ -32,6 +32,8 @@ public class GameInstaller : MonoInstaller {
 
         SignalBusInstaller.Install(Container);
         Container.DeclareSignal<FriendAddedSignal>();
+        Container.DeclareSignal<PersonalityChangedSignal>();
+        Container.DeclareSignal<PersonalityParamAddedSignal>();
     }
 
     private void StateMachineInstall() {
@@ -59,5 +61,24 @@ public class FriendAddedSignal {
     public FriendAddedSignal(Human friendAddedBy, Human friendAddedOn) {
         FriendAddedBy = friendAddedBy;
         FriendAddedOn = friendAddedOn;
+    }
+}
+
+public class PersonalityChangedSignal {
+    public string ParamName { get; }
+    public int NewValue { get; }
+    public int OldValue { get; }
+    public PersonalityChangedSignal(string paramName, int newValue, int oldValue) {
+        ParamName = paramName;
+        NewValue = newValue;
+        OldValue = oldValue;
+    }
+
+}
+
+public class PersonalityParamAddedSignal {
+    public PersonalityParam Param { get; }
+    public PersonalityParamAddedSignal(PersonalityParam param) {
+        Param = param;
     }
 }
