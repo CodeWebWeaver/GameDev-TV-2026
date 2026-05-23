@@ -10,7 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c4da52da9321f6428348b82e7be142b, type: 3}
-  m_Name: Narrative
+  m_Name: Stevie
   m_EditorClassIdentifier: Assembly-CSharp::PersonDataSO
-  personName: Narrator
-  portrait: {fileID: 21300000, guid: 86b3fd8e2c270684b9a543d73935e979, type: 3}
+  personName: Stevie
+  portrait: {fileID: 21300000, guid: e825d050feda3584d998449f01d9bd9e, type: 3}
+  inkKnotName: talk_to_shopkeeper

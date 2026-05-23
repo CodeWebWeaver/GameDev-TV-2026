@@ -10,7 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c4da52da9321f6428348b82e7be142b, type: 3}
-  m_Name: Narrative
+  m_Name: Lino
   m_EditorClassIdentifier: Assembly-CSharp::PersonDataSO
-  personName: Narrator
-  portrait: {fileID: 21300000, guid: 86b3fd8e2c270684b9a543d73935e979, type: 3}
+  personName: Lino
+  portrait: {fileID: 21300000, guid: cb553ca917251904286ad0d66bf2ade6, type: 3}
+  inkKnotName: talk_to_lino

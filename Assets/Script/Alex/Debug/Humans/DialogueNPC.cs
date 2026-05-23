@@ -4,23 +4,39 @@ using UnityEngine;
 using Zenject;
 
 public class DialogueNPC : Human {
-    [SerializeField] private DialogueNodeSO dialogueData;
     [SerializeField] private BodyView bodyView;
     [SerializeField] private Color lonelyColor, happyColor, questionColor;
     [SerializeField] private bool CanSpeakAgain = true;
     private bool isSpoken = false;
     public bool CanSpeak => CanSpeakAgain ? true : !isSpoken;
+    [SerializeField] bool forcedFirstDialogue = false; // if true, will trigger dialogue immediately on start (for testing)
 
     private DialogueTrigger _dTrigger;
     [Inject] DialogueManager dialogueManager;
 
     protected void Awake() {
         _dTrigger = GetComponentInChildren<DialogueTrigger>();
-        if (_dTrigger) _dTrigger.OnDialoguePossible += HandlePossibleDialog;
         bodyView?.ToggleVisualCue(false);
     }
 
-    private void HandlePossibleDialog(bool isPossible) {
+    private void OnEnable() {
+        if (_dTrigger) _dTrigger.OnDialoguePossible += HandlePossibleDialog;
+
+        signalBus.Subscribe<DialogStartedSignal>(HandleDialogueBegin);
+    }
+
+    private void OnDisable() {
+        if (_dTrigger) _dTrigger.OnDialoguePossible -= HandlePossibleDialog;
+
+        signalBus.TryUnsubscribe<DialogStartedSignal>(HandleDialogueBegin);
+        signalBus.TryUnsubscribe<DialogEndSignal>(HandleDialogueEnd);
+    }
+
+    private void HandlePossibleDialog(bool isPossible, Player player) {
+        if (forcedFirstDialogue && isPossible && !isSpoken) {
+            dialogueManager.EnterDialogueMode(GetDialogKnot(), player, this);
+            return;
+        }
         if (CanSpeakAgain && !isSpoken) {
             bodyView.ToggleVisualCue(true);
         } else {
@@ -28,21 +44,23 @@ public class DialogueNPC : Human {
         }
     }
 
-    public DialogueNodeSO BeginDialogue() => dialogueData;
-
     // Called by DialogueManager subscriber (set up in Player.HandleInteraction)
-    public void OnDialogueBegin() {
+    public void HandleDialogueBegin(DialogStartedSignal signal) {
         bodyView?.ToggleVisualCue(false);
+        if (signal.NPC != this) return;
+
         isSpoken = true;
         // Subscribe to events only for the duration of THIS dialogue
         DialogueEvents.OnAnimationTag += HandleAnimationTag;
-        dialogueManager.OnDialogueEnd += OnDialogueEnd;
+
+        signalBus.Subscribe<DialogEndSignal>(HandleDialogueEnd);
     }
 
-    private void OnDialogueEnd() {
-        isSpoken = true; // stays false after talking — change if you want repeat dialogue
+    private void HandleDialogueEnd() {
+        isSpoken = true;
         DialogueEvents.OnAnimationTag -= HandleAnimationTag;
-        dialogueManager.OnDialogueEnd -= OnDialogueEnd;
+
+        signalBus.Unsubscribe<DialogEndSignal>(HandleDialogueEnd);
     }
 
     // Handles only tags that start with this NPC's name
@@ -65,5 +83,7 @@ public class DialogueNPC : Human {
         bodyView?.SetColor(target);
     }
 
-    
+    public string GetDialogKnot() {
+        return personDataSO != null ? personDataSO.InkKnotName : string.Empty;
+    }
 }

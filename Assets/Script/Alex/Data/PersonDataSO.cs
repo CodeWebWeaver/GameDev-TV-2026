@@ -7,4 +7,6 @@ public class PersonDataSO : ScriptableObject {
 
     [SerializeField] private Sprite portrait;
     public Sprite Portrait => portrait;
+    [SerializeField] private string inkKnotName;
+    public string InkKnotName => inkKnotName;
 }
