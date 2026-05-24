@@ -3,7 +3,7 @@
 VAR player_name = "Mimi"
 VAR player_friends_count = 0
 
-VAR dayCount = 0
+VAR dayCount = 1
 VAR actionCount = 0
 
 //player attributes
@@ -549,10 +549,10 @@ She wouldn’t even listen to my reason for staying out!
     You would do that for me?
     Hmm, maybe she *would* listen to another adult…
     Well, thanks! You should be able to find her on the street somewhere. 
-    I think her name is Beverly? I’m not supposed to call her that, though…
+    I think her name is Emily? I’m not supposed to call her that, though…
     #speaker: Narrator
-    Quest started: Unite Beverly and Charlie
-    Next Objective: Find Beverly
+    Quest started: Unite Emily and Charlie
+    Next Objective: Find Emily
     
     -> END
 
