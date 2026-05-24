@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 using static DayNightController;
 
 public class DayNightCycle : MonoBehaviour {
@@ -10,11 +11,13 @@ public class DayNightCycle : MonoBehaviour {
     [SerializeField] private Light sunLight;
 
     private float currentTimeOfDay;
+    private DayPhase _currentPhase;
     private bool isRunning;
 
     public float CurrentTimeOfDay => currentTimeOfDay;
     public bool IsRunning => isRunning;
 
+    [Inject] SignalBus signalBus;
     public event Action<float> OnTimeChanged;
 
     private void Awake() {
@@ -34,6 +37,9 @@ public class DayNightCycle : MonoBehaviour {
 
     private void Start() {
         currentTimeOfDay = settings.startTimeOfDay;
+
+        _currentPhase = GetDayPhase();
+
         ApplyTime();
 
         if (settings.autoStart) {
@@ -53,7 +59,20 @@ public class DayNightCycle : MonoBehaviour {
 
         ApplyTime();
 
+        CheckPhaseChange();
+
         OnTimeChanged?.Invoke(currentTimeOfDay);
+    }
+
+    private void CheckPhaseChange() {
+        DayPhase newPhase = GetDayPhase();
+
+        if (newPhase == _currentPhase)
+            return;
+
+        _currentPhase = newPhase;
+
+        signalBus.Fire(new DayCycleChangedSignal(newPhase));
     }
 
     private void ApplyTime() {
@@ -90,8 +109,7 @@ public class DayNightCycle : MonoBehaviour {
     }
 
     private static Light FindSunLight() {
-        foreach (var light in FindObjectsByType<Light>(
-                     FindObjectsSortMode.None)) {
+        foreach (var light in FindObjectsByType<Light>()) {
             if (light.type == LightType.Directional) {
                 return light;
             }
@@ -131,5 +149,13 @@ public class DayNightCycle : MonoBehaviour {
             < 0.75f => DayPhase.Dusk,
             _ => DayPhase.Night
         };
+    }
+}
+
+public class DayCycleChangedSignal {
+    public DayPhase DayPhase;
+
+    public DayCycleChangedSignal(DayPhase dayPhase) {
+        this.DayPhase = dayPhase;
     }
 }
