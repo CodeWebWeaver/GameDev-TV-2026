@@ -273,7 +273,7 @@ Hey! You came back!
         {dog_step==3:
             ->beverly_chat
         -else:
-            {dayCount==1:
+            {dayCount==1 and dog_step<=0:
                 ->beverly_quest_start
             -else:
                 ->beverly_chat
@@ -500,7 +500,7 @@ Oh... dear me...
     I'm a little busy at the moment.
     My name is Beverly, if you need anything.
     ~met_beverly=true
-    -> talk_to_beverly
+    -> END
 *{dog_quest} [Excuse me, are you Beverly?]
     #speaker: Unknown
     Hmm?
@@ -591,9 +591,7 @@ She wouldn’t even listen to my reason for staying out!
     #speaker: Narrator
     Quest started: Unite Emily and Charlie
     Next Objective: Find Emily
-    
     -> END
-
 +  Oh no, your neighbor’s dog is missing? I can help look for it.
     ~ adventurous +=1
     ~ helpful +=1
@@ -608,7 +606,7 @@ She wouldn’t even listen to my reason for staying out!
     
     #speaker: Narrator
     Quest started: The Lost Dog
-    Next Objective Find Emily
+    Next Objective Find Beverly
     -> END
 
 + That’s too bad. Good luck with that, I hope everything is okay.
@@ -711,9 +709,9 @@ Hey! I'm not grounded anymore!
 #speaker: Unknown
 Mph. 
 Kids these days...
-+ Are you Emily?
+*{emily_charlie_quest}[Are you Emily?]
     ->emily_charlie_overview
-+ Keep Walking.
++ She looks busy. Keep Walking.
     ->END
 
 ===emily_chat===
@@ -1011,7 +1009,7 @@ I think my sister is sick now...
     Her name is Annika. She is a strong, smart girl and she deserves the best!
     Please bring me whatever you find for her.
     ~lino_quest=true
-    ~lino_step=0
+    ~lino_step=1
     #speaker: Narrator
     Quest: A Gift for Annika
     Next Objective: Ask Annika what she likes
