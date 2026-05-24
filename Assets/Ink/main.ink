@@ -1,9 +1,10 @@
 //For reference:
 //When using in unity, you should be able to just call the "talk_to_name" knots - those will branch out to relevant knots based on the global flags.
-VAR player_name = "Player"
+VAR player_name = "Mimi"
 VAR player_friends_count = 0
 
 VAR dayCount = 0
+VAR actionCount = 0
 
 //player attributes
 VAR pragmatic = 0
@@ -129,6 +130,28 @@ EXTERNAL add_friend(name)
 /////////////////////////////////////////
 //dog quests////////////////////////////
 /////////////////////////////////////////
+===epilogue===
+->END
+===action_check===
+{dayCount==1 or dayCount==2:
+    {actionCount==2:
+        ~dayCount+=1
+        ~actionCount=0
+        ->END
+    -else:
+        ->END
+    }
+-else:
+    {dayCount==3:
+        ~dayCount+=1
+        ~actionCount=0
+        ->action_check
+    -else: //day is 4 - epilogue
+        ->epilogue
+    }
+}
+
+->END
 === talk_to_coco===
 {dog_step==0:
     ->coco_meet_convo
@@ -175,6 +198,7 @@ Hey! You came back!
     #speaker: Narrator
     Quest: The Lost Dog
     Quest Complete!
+    ~actionCount+=1
     ~ add_friend("charlie")
     ~charlie+=5
     ~dog_step=4
@@ -182,7 +206,7 @@ Hey! You came back!
     ~helpful+=medChange
     ~pragmatic+=medChange
     ~friendly+=medChange
-    ->END
+    ->action_check
     
 + I found Coco!
     #speaker: Charlie
@@ -192,6 +216,7 @@ Hey! You came back!
     #speaker: Narrator
     Quest: The Lost Dog
     Quest Complete!
+    ~actionCount+=1
     ~ add_friend("charlie")
     ~charlie+=5
     ~dog_step=4
@@ -199,7 +224,7 @@ Hey! You came back!
     ~helpful+=medChange
     ~adventurous+=medChange
     ~friendly+=medChange
-    ->END
+    ->action_check
 + Got to go, we'll talk soon.
     ->END
 ===talk_to_beverly===
@@ -738,6 +763,7 @@ Any news to share?
     #speaker: Narrator
     Quest: Emily and Charlie
     Quest Complete!
+    ~actionCount+=1
     ~ add_friend("emily")
     ~emily_charlie_step=3
     ~emily_charlie_quest=false
@@ -746,7 +772,7 @@ Any news to share?
     ~charlie+=5
     ~pragmatic+=medChange
     ~helpful+=bigChange
-    ->END
+    ->action_check
     
 + Not yet, I'll come back later.
     #speaker: Emily
@@ -830,6 +856,8 @@ Did you find something?
     Quest: A Gift for Annika
     Quest Complete!
     ~ add_friend("lino")
+    ~actionCount+=1
+    ->action_check
     ->END
 * {lino_gift=="shawl"}[Give Lino the shawl]
     #speaker: Lino
@@ -848,7 +876,8 @@ Did you find something?
     #speaker: Narrator
     Quest: A Gift for Annika
     Quest Complete!
-    ->END
+    ~actionCount+=1
+    ->action_check
 * {lino_gift=="chili"}[Give Lino the chili dog]
     #speaker: Lino
     Eh... what is that?
@@ -864,7 +893,8 @@ Did you find something?
     #speaker: Narrator
     Quest: A Gift for Annika
     Quest Complete!
-    ->END
+    ~actionCount+=1
+    ->action_check
 + Not yet. I'll let you know as soon as I do.
     ->END
     
@@ -1126,7 +1156,8 @@ Would you believe they've already offered me a job?
     #speaker Narrator
     Quest: Annika's New Job
     Next Objective: Ask Lino about his Neighborhood
-    ->END
+    ~actionCount+=1
+    ->action_check
 * {annika_step==1 and have_new_info_annika==false}[Can you remind me what you want me to find?]
     #speaker: Annika
     Please ask Lino what neighborhood he lives in.
@@ -1152,7 +1183,8 @@ Would you believe they've already offered me a job?
     #speaker Narrator
     Quest: Annika's New Job
     Next Objective: Find an advertisement for an upcoming event.
-    ->END
+    ~actionCount+=1
+    ->action_check
 * {annika_step==2 and have_new_info_annika==false}[Can you remind me what you want me to find?]
     #speaker: Annika
     I wish I knew of something fun happening downtown...
@@ -1180,7 +1212,8 @@ Would you believe they've already offered me a job?
     #speaker Narrator
     Quest: The Four Gophers
     Next Objective: Tell Korra the Good News
-    ->END
+    ~actionCount+=1
+    ->action_check
 * {annika_step==3}[Hi, Annika! Good to see you.]
     #speaker: Annika
     Likewise. I hope to see you at our concert on Friday!
@@ -1234,7 +1267,8 @@ Howdy there, friend!
     #speaker Narrator
     Quest: The Four Gophers
     Next Objective: Quest Complete!
-    ->END
+    ~actionCount+=1
+    ->action_check
 * {gophers_step==2}[Looiking forward to your concert this Friday!]
     You got it! It'll be a blast :-)
     ->END
@@ -1338,7 +1372,8 @@ Quest Complete!
 ~ add_friend("august")
 ~mural_quest=false
 ~mural_step=2
-->END
+~actionCount+=1
+->action_check
 
 ===august_quest_offer===
 #speaker: August
@@ -1791,3 +1826,5 @@ You think you know what's happening here.
     ===function add_friend(friend_name)===
     ~return
     
+===friend_wrapup===
+->END
