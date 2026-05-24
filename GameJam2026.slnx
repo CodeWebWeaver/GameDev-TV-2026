@@ -15,6 +15,7 @@
   <Project Path="Unity.Burst.csproj" />
   <Project Path="Unity.VisualScripting.Flow.Editor.csproj" />
   <Project Path="UniTask.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Unity.VisualStudio.Editor.csproj" />
   <Project Path="Unity.InputSystem.csproj" />
   <Project Path="Zenject-ReflectionBaking-Editor.csproj" />
@@ -40,7 +41,6 @@
   <Project Path="UniTask.Addressables.csproj" />
   <Project Path="Unity.Postprocessing.Runtime.csproj" />
   <Project Path="InkEditor.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Unity.AI.Navigation.Editor.csproj" />
   <Project Path="FMODUnityResonanceEditor.csproj" />
   <Project Path="FMODUnityEditor.csproj" />
