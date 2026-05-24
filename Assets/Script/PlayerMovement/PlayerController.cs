@@ -1,4 +1,6 @@
+using FMODUnity;
 using KinematicCharacterController;
+using System;
 using UnityEngine;
 using Zenject;
 
@@ -50,6 +52,8 @@ public class KinematicPlayerMovement : MonoBehaviour, ICharacterController {
     private float coyoteTimer = 0f;
     private bool wasGroundedLastFrame = false;
 
+    public Action OnJumped;
+
     private void Awake() {
         motor.CharacterController = this;
         cameraPitch = 0f;
@@ -60,7 +64,7 @@ public class KinematicPlayerMovement : MonoBehaviour, ICharacterController {
     private void Update() {
         // Оновлюємо таймери
         UpdateTimers();
-
+       
         // Обробка вводу стрибка
         if (playerInput.IsJumping) {
             jumpBufferTimer = jumpBufferTime;
@@ -114,6 +118,7 @@ public class KinematicPlayerMovement : MonoBehaviour, ICharacterController {
         }
     }
 
+    
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime) {
         // Обчислюємо вхідні дані руху
         CalculateMovementVectors();
@@ -151,6 +156,7 @@ public class KinematicPlayerMovement : MonoBehaviour, ICharacterController {
         }
     }
 
+    
     private void HandleGroundMovement(ref Vector3 currentVelocity, float deltaTime) {
         Vector3 effectiveGroundNormal = motor.GroundingStatus.GroundNormal;
         Vector3 targetMovementVelocity = cachedWorldMoveInput * maxStableMoveSpeed;
@@ -162,7 +168,7 @@ public class KinematicPlayerMovement : MonoBehaviour, ICharacterController {
         if (Vector3.Dot(targetMovementVelocity, effectiveGroundNormal) > 0f) {
             targetMovementVelocity = Vector3.ProjectOnPlane(targetMovementVelocity, effectiveGroundNormal);
         }
-
+        
         // Плавна інтерполяція до цільової швидкості
         currentVelocity = Vector3.Lerp(
             currentVelocity,
@@ -209,6 +215,8 @@ public class KinematicPlayerMovement : MonoBehaviour, ICharacterController {
     }
 
     private void ExecuteJump(ref Vector3 currentVelocity) {
+        OnJumped?.Invoke();
+        
         // Визначаємо напрямок стрибка
         Vector3 jumpDirection = motor.CharacterUp;
         if (motor.GroundingStatus.FoundAnyGround && !motor.GroundingStatus.IsStableOnGround) {

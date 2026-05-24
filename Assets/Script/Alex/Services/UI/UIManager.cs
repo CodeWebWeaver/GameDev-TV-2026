@@ -1,3 +1,4 @@
+using FMODUnity;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,6 +38,9 @@ public class UIManager : MonoBehaviour, IUiService {
     private readonly Dictionary<Type, UIPanel> _panelCache = new Dictionary<Type, UIPanel>();
 
     [Inject] private DiContainer _diContainer;
+    [Inject] private SignalBus _signalBus;
+    [SerializeField] EventReference buttonClicked;
+    [SerializeField] EventReference buttonSelected;
 
     private void Awake() {
         InitializeCanvas();
@@ -47,11 +51,23 @@ public class UIManager : MonoBehaviour, IUiService {
     private void OnEnable() {
         SceneManager.sceneLoaded += OnSceneLoaded;
         _settingsPanel.OnCloseButtonClicked += HandleCloseSettings;
+        _signalBus.Subscribe<ButtonClickedSignal>(HandleButtonClicked);
+        _signalBus.Subscribe<ButtonSelectedSignal>(HandleButtonSelected);
     }
 
     private void OnDisable() {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         _settingsPanel.OnCloseButtonClicked -= HandleCloseSettings;
+        _signalBus.Unsubscribe<ButtonClickedSignal>(HandleButtonClicked);
+        _signalBus.Unsubscribe<ButtonSelectedSignal>(HandleButtonSelected);
+    }
+
+    private void HandleButtonClicked(ButtonClickedSignal signal) {
+        RuntimeManager.PlayOneShot(buttonClicked);
+    }
+
+    private void HandleButtonSelected(ButtonSelectedSignal signal) {
+        RuntimeManager.PlayOneShot(buttonSelected);
     }
 
     private void HandleCloseSettings() {
