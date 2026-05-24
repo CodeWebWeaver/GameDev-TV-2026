@@ -23,7 +23,7 @@
 			<destination>{7badf963-a459-44c9-910a-28107c9e9a6d}</destination>
 		</relationship>
 		<relationship name="markerTracks">
-			<destination>{e40550eb-09c4-4f1f-b08d-0fc5013f8e53}</destination>
+			<destination>{e93bc875-f9b1-4af4-ae71-fdb4f14420ec}</destination>
 		</relationship>
 		<relationship name="groupTracks">
 			<destination>{caec5f97-e8b1-4675-9b0b-db724b08e45a}</destination>
@@ -57,7 +57,7 @@
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{7badf963-a459-44c9-910a-28107c9e9a6d}" />
-	<object class="MarkerTrack" id="{e40550eb-09c4-4f1f-b08d-0fc5013f8e53}" />
+	<object class="MarkerTrack" id="{e93bc875-f9b1-4af4-ae71-fdb4f14420ec}" />
 	<object class="GroupTrack" id="{caec5f97-e8b1-4675-9b0b-db724b08e45a}">
 		<relationship name="modules">
 			<destination>{1813f1dc-5527-43ce-8c6d-0d7a964f00ad}</destination>
@@ -118,16 +118,16 @@
 	</object>
 	<object class="LoopRegion" id="{f2e427e5-e412-48c2-9b12-741503b4633a}">
 		<property name="position">
-			<value>0</value>
+			<value>0.0050000000000000001</value>
 		</property>
 		<property name="length">
-			<value>0.17000000000000001</value>
+			<value>0.19725102301456982</value>
 		</property>
 		<relationship name="timeline">
 			<destination>{55410a95-9b41-4951-b496-323b6d1617c6}</destination>
 		</relationship>
 		<relationship name="markerTrack">
-			<destination>{e40550eb-09c4-4f1f-b08d-0fc5013f8e53}</destination>
+			<destination>{e93bc875-f9b1-4af4-ae71-fdb4f14420ec}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusEffectChain" id="{0f8d3a25-bdfe-4502-abde-675a3ff289c3}">
@@ -154,5 +154,9 @@
 	<object class="MixerBusPanner" id="{5a0c1aa5-5a8e-43d5-a389-46dc90271969}" />
 	<object class="MixerBusFader" id="{6bc1f6eb-240d-4bdd-8923-e3dd84cb4daa}" />
 	<object class="MixerBusFader" id="{69fb3aa7-9184-490f-a776-c698b5dfd519}" />
-	<object class="SFXReverbEffect" id="{831ac0be-e6c6-4765-afc0-40512194703c}" />
+	<object class="SFXReverbEffect" id="{831ac0be-e6c6-4765-afc0-40512194703c}">
+		<property name="decayTime">
+			<value>1800</value>
+		</property>
+	</object>
 </objects>

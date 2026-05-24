@@ -42,7 +42,11 @@ public class DayNightController : MonoBehaviour
 
     private Coroutine _currentTransition;
 
-    public enum DayPhase { Morning, Afternoon, Night }
+    public enum DayPhase { Morning, Afternoon, Night,
+        Dawn,
+        Day,
+        Dusk
+    }
 
     private void Awake()
     {

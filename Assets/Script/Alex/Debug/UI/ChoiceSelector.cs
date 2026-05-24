@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using Zenject;
 
 public class ChoiceSelector : MonoBehaviour {
     // ── Inspector ─────────────────────────────────────────────────────────────
@@ -23,6 +24,7 @@ public class ChoiceSelector : MonoBehaviour {
     private int _selectedIndex = -1;
 
     public bool IsShowingChoices => _activeButtons.Count > 0;
+    [Inject] DiContainer diContainer;
 
     // ── Unity lifecycle ───────────────────────────────────────────────────────
     private void Awake() {
@@ -103,7 +105,8 @@ public class ChoiceSelector : MonoBehaviour {
     }
 
     private ChoiceButton CreateButton() {
-        ChoiceButton btn = Instantiate(choicePrefab, choiceContainer);
+        
+        ChoiceButton btn = diContainer.InstantiatePrefabForComponent<ChoiceButton>(choicePrefab, choiceContainer);
         btn.gameObject.SetActive(false);
         return btn;
     }

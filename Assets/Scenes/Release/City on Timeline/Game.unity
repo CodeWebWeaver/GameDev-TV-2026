@@ -22627,13 +22627,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1852008148}
     m_Modifications:
+    - target: {fileID: 1799250923994078085, guid: 6a327f72599a8a24d94ce800a3f16380, type: 3}
+      propertyPath: personDataSO
+      value: 
+      objectReference: {fileID: 11400000, guid: c1273e31d9dac3540a8b26fb0eb35aff, type: 2}
     - target: {fileID: 2416293186572390122, guid: 6a327f72599a8a24d94ce800a3f16380, type: 3}
       propertyPath: m_Name
       value: Annika (without dialogue now)
       objectReference: {fileID: 0}
     - target: {fileID: 2416293186572390122, guid: 6a327f72599a8a24d94ce800a3f16380, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4591995828817378573, guid: 6a327f72599a8a24d94ce800a3f16380, type: 3}
       propertyPath: m_LocalPosition.x
@@ -24679,6 +24683,46 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2380085194527211214, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+      propertyPath: onJump.Path
+      value: event:/SFX/player/Jump
+      objectReference: {fileID: 0}
+    - target: {fileID: 2380085194527211214, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+      propertyPath: onWalkEvent.Path
+      value: event:/SFX/player/Street Walk
+      objectReference: {fileID: 0}
+    - target: {fileID: 2380085194527211214, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+      propertyPath: onJump.Guid.Data1
+      value: 88310907
+      objectReference: {fileID: 0}
+    - target: {fileID: 2380085194527211214, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+      propertyPath: onJump.Guid.Data2
+      value: 1337594563
+      objectReference: {fileID: 0}
+    - target: {fileID: 2380085194527211214, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+      propertyPath: onJump.Guid.Data3
+      value: 1411656344
+      objectReference: {fileID: 0}
+    - target: {fileID: 2380085194527211214, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+      propertyPath: onJump.Guid.Data4
+      value: -958985009
+      objectReference: {fileID: 0}
+    - target: {fileID: 2380085194527211214, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+      propertyPath: onWalkEvent.Guid.Data1
+      value: -514567987
+      objectReference: {fileID: 0}
+    - target: {fileID: 2380085194527211214, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+      propertyPath: onWalkEvent.Guid.Data2
+      value: 1280776111
+      objectReference: {fileID: 0}
+    - target: {fileID: 2380085194527211214, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+      propertyPath: onWalkEvent.Guid.Data3
+      value: 2143390122
+      objectReference: {fileID: 0}
+    - target: {fileID: 2380085194527211214, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+      propertyPath: onWalkEvent.Guid.Data4
+      value: -1294303152
+      objectReference: {fileID: 0}
     - target: {fileID: 8087598725594638364, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 330.08
@@ -24726,7 +24770,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8349452160577408547, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 1468543834}
   m_SourcePrefab: {fileID: 100100000, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
 --- !u!1001 &1165344240
 PrefabInstance:
@@ -29808,37 +29855,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1375895375}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1385081492
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1385081493}
-  m_Layer: 0
-  m_Name: 'Test '
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1385081493
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1385081492}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 306.3083, y: 0.49461, z: 59.2056}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1387109708
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32313,6 +32329,61 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1466664147}
   m_CullTransparentMesh: 1
+--- !u!1 &1468543826 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8349452160577408547, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+  m_PrefabInstance: {fileID: 1160852786}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1468543829 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3224401008848918389, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+  m_PrefabInstance: {fileID: 1160852786}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1468543826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe1c3633e7bcf1c4bbf8130bbd2ed6b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KinematicCharacterController.KinematicCharacterMotor
+--- !u!114 &1468543830 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2380085194527211214, guid: 270baa92f9ff2c848aa5899c080012b1, type: 3}
+  m_PrefabInstance: {fileID: 1160852786}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1468543826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68a31dd1e63fa834c801ac27192b97eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+--- !u!114 &1468543834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1468543826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdff333642af30642a899362f5e35bb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFootstepAudio
+  controller: {fileID: 1468543830}
+  motor: {fileID: 1468543829}
+  walkEvent:
+    Guid:
+      Data1: -514567987
+      Data2: 1280776111
+      Data3: 2143390122
+      Data4: -1294303152
+    Path: event:/SFX/player/Street Walk
+  onJump:
+    Guid:
+      Data1: 88310907
+      Data2: 1337594563
+      Data3: 1411656344
+      Data4: -958985009
+    Path: event:/SFX/player/Jump
 --- !u!1 &1475740539
 GameObject:
   m_ObjectHideFlags: 0
@@ -39443,6 +39514,52 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1804686610}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1805807711
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1805807712}
+  - component: {fileID: 1805807713}
+  m_Layer: 0
+  m_Name: DayChanger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1805807712
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805807711}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 304.42828, y: 0.95147, z: 46.4287}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1805807713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805807711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fe0ba748e575f748a4f4f71500396f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DayChanger
+  settings: {fileID: 11400000, guid: 75c5f15b8cf5a4244b080af59baf2eec, type: 2}
+  sunLight: {fileID: 2032664866}
 --- !u!1001 &1808224570
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46586,4 +46703,4 @@ SceneRoots:
   - {fileID: 513723325}
   - {fileID: 367959796}
   - {fileID: 1160852786}
-  - {fileID: 1385081493}
+  - {fileID: 1805807712}

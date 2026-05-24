@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.02.00">
-	<object class="AudioFile" id="{4035bcb5-9bb1-4b30-8b2a-9f389297dfb4}">
+	<object class="AudioFile" id="{becfcce7-913b-453a-80e5-96a47c81159a}">
 		<property name="assetPath">
-			<value>Music/Game/test_connectionjam.mp3</value>
-		</property>
-		<property name="isStreaming">
-			<value>true</value>
+			<value>SFX/UI_move.mp3</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>
@@ -14,7 +11,7 @@
 			<value>2</value>
 		</property>
 		<property name="length">
-			<value>162.50775510204082</value>
+			<value>0.15673469387755101</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{ee8b1d53-c29f-4ca0-a29d-54eaac272a33}</destination>
