@@ -26,68 +26,72 @@ public class DialogWindowView : MonoBehaviour {
     [SerializeField][Range(10f, 120f)] private float charsPerSecond = 40f;
 
     // ── Events ───────────────────────────────────────────────────────────
-    /// <summary>Fires when the typewriter finishes (or is skipped).</summary>
+    /// <summary>
+    /// Fires when the typewriter finishes naturally or via TrySkipTypewriter().
+    /// Does NOT fire when StopTypewriter() is called internally (e.g. on new text).
+    /// </summary>
     public event Action OnTypewriterFinished;
 
     // ── State ────────────────────────────────────────────────────────────
     public bool IsTyping { get; private set; }
 
     private Coroutine _typewriterCoroutine;
+    private string _currentFullText = string.Empty;
 
     [InjectOptional] FmodAudioService audioService;
     [SerializeField] EventReference typingEvent;
-    private string instance_key = "typing";
+    private const string InstanceKey = "typing"; 
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────
+    private void OnDestroy() {
+        StopTypewriter(fireEvent: false);
+    }
 
     // ── Dialogue ─────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Displays <paramref name="text"/>.
-    /// If the typewriter flag is on, reveals it character-by-character;
-    /// otherwise shows the full string immediately.
-    /// </summary>
     public void SetDialogueText(string text) {
-        StopTypewriter();
+        StopTypewriter(fireEvent: false);
 
-        if (useTypewriter && !string.IsNullOrEmpty(text)) {
-            _typewriterCoroutine = StartCoroutine(TypewriterRoutine(text));
+        _currentFullText = text ?? string.Empty;
+
+        if (useTypewriter && !string.IsNullOrEmpty(_currentFullText)) {
+            _typewriterCoroutine = StartCoroutine(TypewriterRoutine(_currentFullText));
         } else {
-            dialogueText.text = text;
+            dialogueText.text = _currentFullText;
+            dialogueText.maxVisibleCharacters = int.MaxValue;
             IsTyping = false;
             OnTypewriterFinished?.Invoke();
         }
     }
 
-    /// <summary>
-    /// If typing is still in progress — reveals the full text immediately.
-    /// Returns <c>true</c> when the text was completed this call (i.e. was
-    /// still typing), so the caller knows NOT to advance the dialogue yet.
-    /// Returns <c>false</c> when text was already fully shown.
-    /// </summary>
     public bool TrySkipTypewriter() {
         if (!IsTyping) return false;
+        Debug.Log("[DialogWindowView] Typewriter skipped by user input.");
 
-        StopTypewriter();
-        // dialogueText.text already contains the full string because the
-        // coroutine sets it character-by-character via maxVisibleCharacters,
-        // so we just reveal everything.
-        dialogueText.maxVisibleCharacters = dialogueText.text.Length;
+        StopTypewriter(fireEvent: false);
+
+        dialogueText.text = _currentFullText;
+        dialogueText.maxVisibleCharacters = int.MaxValue;
         IsTyping = false;
         OnTypewriterFinished?.Invoke();
         return true;
     }
 
     public void ClearDialogueText() {
-        StopTypewriter();
+        StopTypewriter(fireEvent: false);
+        _currentFullText = string.Empty;
         dialogueText.text = string.Empty;
     }
 
-    // ── Speaker Name ──────────────────────────────────────────────────────
     public void SetSpeakerName(string speakerName) => speakerNameText.text = speakerName;
     public void ShowSpeakerName() => nameObject.SetActive(true);
     public void HideSpeakerName() => nameObject.SetActive(false);
 
     // ── Portrait ──────────────────────────────────────────────────────────
-    public void SetPortrait(Sprite portrait) => speakerPortraitImage.sprite = portrait;
+    public void SetPortrait(Sprite portrait) {
+        if (speakerPortraitImage != null)
+        speakerPortraitImage.sprite = portrait;
+    }
     public void ShowPortrait() => portraitObject.SetActive(true);
     public void HidePortrait() => portraitObject.SetActive(false);
 
@@ -95,45 +99,43 @@ public class DialogWindowView : MonoBehaviour {
     public void ShowDialoguePanel() => dialoguePanel.SetActive(true);
 
     public void HideDialoguePanel() {
-        StopTypewriter();
+        StopTypewriter(fireEvent: false);
         dialoguePanel.SetActive(false);
     }
 
     // ── Typewriter internals ──────────────────────────────────────────────
     private IEnumerator TypewriterRoutine(string fullText) {
         IsTyping = true;
-        dialogueText.text = fullText;              // load full text into TMP
-        dialogueText.maxVisibleCharacters = 0;     // hide all characters
-        if (audioService != null) {
-            audioService.PlayLooped(instance_key, typingEvent);
-        }
+        dialogueText.text = fullText;
+        dialogueText.maxVisibleCharacters = 0;
 
+        audioService?.PlayLooped(InstanceKey, typingEvent);
+
+        // Кэшируем delay вне цикла
         float delay = 1f / charsPerSecond;
         int total = fullText.Length;
 
-        for (int i = 0; i <= total; i++) {
+        for (int i = 1; i <= total; i++) {
             dialogueText.maxVisibleCharacters = i;
-            if (i < total) yield return new WaitForSeconds(delay);
+            yield return new WaitForSeconds(delay);
         }
 
-        if (audioService != null) {
-            audioService.StopLooped(instance_key);
-        }
+        audioService?.StopLooped(InstanceKey);
         IsTyping = false;
         _typewriterCoroutine = null;
         OnTypewriterFinished?.Invoke();
     }
-
-    private void StopTypewriter() {
+    private void StopTypewriter(bool fireEvent) {
         if (_typewriterCoroutine != null) {
             StopCoroutine(_typewriterCoroutine);
             _typewriterCoroutine = null;
         }
-        if (audioService != null) {
-            audioService.StopLooped(instance_key);
-        }
-        // Reset TMP visibility so the full string is always shown after stop
-        dialogueText.maxVisibleCharacters = int.MaxValue;
+
+        audioService?.StopLooped(InstanceKey);
         IsTyping = false;
+
+        if (fireEvent) {
+            OnTypewriterFinished?.Invoke();
+        }
     }
 }

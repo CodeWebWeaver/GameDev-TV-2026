@@ -1,9 +1,10 @@
 //For reference:
 //When using in unity, you should be able to just call the "talk_to_name" knots - those will branch out to relevant knots based on the global flags.
-VAR player_name = "Player"
+VAR player_name = "Mimi"
 VAR player_friends_count = 0
 
-VAR dayCount = 0
+VAR dayCount = 1
+VAR actionCount = 0
 
 //player attributes
 VAR pragmatic = 0
@@ -106,7 +107,6 @@ EXTERNAL add_friend(name)
 
 -> talk_to_someone
 
-
 === talk_to_someone ===
 + Charlie
     ->talk_to_charlie
@@ -129,6 +129,67 @@ EXTERNAL add_friend(name)
 /////////////////////////////////////////
 //dog quests////////////////////////////
 /////////////////////////////////////////
+===epilogue===
+My first week in town has been such a fun one!
+//Charlie and emily, or charlie and beverly
+{dog_step==4:
+    I've gotten to dogsit for Beverly a couple of times so far. Charlie and I even walked him down to the park together. It turns out that Coco really likes to explore the city - and Charlie's mom is okay with him exploring as long as he's under a watchful eye!
+}
+{mural_loc=="empty wall":
+    August revamped the empty wall near Beverly's house, and it couldn't have turned out any better! It's practical, of course - a stylized map of town so that no more newcomers get lost. But the colors and details really demonstrate everyone's love for the community. If you look hard, you can find a miniature Coco, Charlie and Jojo and the other kids running around the town, the local stage, it seems everyone is represented here. There's even a little drawing of me running errands around town.
+}
+{emily_charlie_step==3:
+    Emily and Charlie have been having a great time exploring town together. I guess Emily grew up here in the '90s; she's showing him all her old hangout spots. The walikie-talkies really seem to hav e brought her back to the good old days.
+}
+{mural_loc=="school":
+    After Charlie's flag football game, Emily and I took some photos in front of the mural that August painted, featuring handprints of everyone from around town. I even got to put my own handprint amongst the others - I guess I'm officially part of the town now!
+}
+{jojo==3:
+    Jojo is still playing pranks on me, but I've gotten him with a few myself. I forgot how fun some of those practical jokes were - it was a great excuse to break out my old whoopie cushion and can of snakes from my childhood toys! 
+}
+{stevie>=5:
+    Stevie has started a new venture... lawn gnomes. Of course, I had to get one for my front door, but he's somehow talked me into getting several more. I've got a collection going now. It's a bit strange, but honestly, they're pretty cute!
+}
+{lino_step==3:
+    {lino_gift=="pen":
+        I guess Lino's cousin really liked the pen - she's been carrying it nonstop! And, of course, Lino is still overjoyed that his cousin is in town.
+    -else:
+        {lino_gift=="shawl":
+            I guess Lino's cousin really liked the shawl - she seems to be wearing it everywhere! And, of course, Lino is still overjoyed that his cousin is in town.
+        }
+    }
+}
+{annika_step==4:
+    Annika decided to take the job! She's still in training, but she seems to be enjoying the work she's doing. And she's keeping busy outside of work, too - she's already found a couple of clubs and seems to have really settled in!
+}
+{gophers_step==3:
+    I went to see the Four Gophers perform Friday night. I didn't expect it to be my kind of music, but I really had a great time! Korra and Annika have a lot of musical talent, and it was so nice to see them let loose on stage.
+    {mural_loc=="park":
+      August's mural gave the stage a nice touch, too - he painted all four musicians (as gophers, of course!) in all their glory. He's even making them a matching album cover for their first release!  
+    }
+}
+I'm still settling in, but I'm grateful to have made so many friends and I know it won't be long before I feel at home here.
+->END
+===action_check===
+{dayCount==1 or dayCount==2:
+    {actionCount==2:
+        ~dayCount+=1
+        ~actionCount=0
+        ->END
+    -else:
+        ->END
+    }
+-else:
+    {dayCount==3:
+        ~dayCount+=1
+        ~actionCount=0
+        ->action_check
+    -else: //day is 4 - epilogue
+        ->epilogue
+    }
+}
+
+->END
 === talk_to_coco===
 {dog_step==0:
     ->coco_meet_convo
@@ -175,6 +236,7 @@ Hey! You came back!
     #speaker: Narrator
     Quest: The Lost Dog
     Quest Complete!
+    ~actionCount+=1
     ~ add_friend("charlie")
     ~charlie+=5
     ~dog_step=4
@@ -182,7 +244,7 @@ Hey! You came back!
     ~helpful+=medChange
     ~pragmatic+=medChange
     ~friendly+=medChange
-    ->END
+    ->action_check
     
 + I found Coco!
     #speaker: Charlie
@@ -192,6 +254,7 @@ Hey! You came back!
     #speaker: Narrator
     Quest: The Lost Dog
     Quest Complete!
+    ~actionCount+=1
     ~ add_friend("charlie")
     ~charlie+=5
     ~dog_step=4
@@ -199,7 +262,7 @@ Hey! You came back!
     ~helpful+=medChange
     ~adventurous+=medChange
     ~friendly+=medChange
-    ->END
+    ->action_check
 + Got to go, we'll talk soon.
     ->END
 ===talk_to_beverly===
@@ -210,7 +273,11 @@ Hey! You came back!
         {dog_step==3:
             ->beverly_chat
         -else:
-            ->beverly_quest_start
+            {dayCount==1:
+                ->beverly_quest_start
+            -else:
+                ->beverly_chat
+            }
         }
     }
 -else:
@@ -472,19 +539,18 @@ Oh, hi, Charlie.
 ===charlie_general_chat===
 #speaker: Charlie
 Hey there! Back so soon?
-* {dog_quest==false and emily_charlie_quest==false and dog_step==0 and emily_charlie_step==0}[You said you needed help with something?]
+* {dog_quest==false and emily_charlie_quest==false and dog_step==0 and emily_charlie_step==0 and dayCount==1}[You said you needed help with something?]
     ->lost_dog_overview
 + Just stopping by, we can talk later.
     ->END
 
 === charlie_first_convo ===
 
-+ What are you doing up there?
-~char_convo=true
+* {dayCount==1}[What are you doing up there?]
+    ~char_convo=true
+    ->lost_dog_overview
 
-->lost_dog_overview
-
-* Do I know you?
++ Do I know you?
     #speaker: Charlie
     Nope! I don’t think so? Unless you’re friends with my mom?
     #speaker: Player
@@ -521,10 +587,10 @@ She wouldn’t even listen to my reason for staying out!
     You would do that for me?
     Hmm, maybe she *would* listen to another adult…
     Well, thanks! You should be able to find her on the street somewhere. 
-    I think her name is Beverly? I’m not supposed to call her that, though…
+    I think her name is Emily? I’m not supposed to call her that, though…
     #speaker: Narrator
-    Quest started: Unite Beverly and Charlie
-    Next Objective: Find Beverly
+    Quest started: Unite Emily and Charlie
+    Next Objective: Find Emily
     
     -> END
 
@@ -625,10 +691,14 @@ Hey! I'm not grounded anymore!
 === emily_day_one ===
 {emily_charlie_quest:
     {met_emily:
-        {emily_charlie_step==0:
+        {emily_charlie_step==0 and dayCount==1:
             ->emily_charlie_questintro
         -else:
-            ->emily_charlie_step1
+            {emily_charlie_step==1:
+                ->emily_charlie_step1
+            -else:
+                ->emily_chat
+            }
         }
     -else:
     -> emily_meet_convo
@@ -645,7 +715,13 @@ Kids these days...
     ->emily_charlie_overview
 + Keep Walking.
     ->END
-    
+
+===emily_chat===
+#speaker: Emily
+Hello.
+I'm sorry, I'm a bit busy right now. Maybe we can talk later...
+->END
+
 === emily_charlie_overview ===
 #speaker: Unknown
 Hmm?
@@ -653,7 +729,12 @@ Oh! Yes, I'm Emily. And you are...?
 #speaker: Player
 I'm {player_name}.
 ~met_emily = true
-->emily_charlie_questintro
+{emily_charlie_quest and dayCount==1:
+    ->emily_charlie_questintro
+-else: 
+    Good to meet you.
+    ->END
+}
 
 ===emily_charlie_questintro===
 + Your son Charlie asked me to speak with you.
@@ -738,6 +819,7 @@ Any news to share?
     #speaker: Narrator
     Quest: Emily and Charlie
     Quest Complete!
+    ~actionCount+=1
     ~ add_friend("emily")
     ~emily_charlie_step=3
     ~emily_charlie_quest=false
@@ -746,7 +828,7 @@ Any news to share?
     ~charlie+=5
     ~pragmatic+=medChange
     ~helpful+=bigChange
-    ->END
+    ->action_check
     
 + Not yet, I'll come back later.
     #speaker: Emily
@@ -788,7 +870,11 @@ I think Charlie might be getting a little sick of them!
             }
         }
     -else:
-    ->lino_quest_start
+    {dayCount==1:
+        ->lino_quest_start
+    -else:
+        ->lino_chat
+    }
     }
 -else:
 ->lino_meet_convo
@@ -830,6 +916,8 @@ Did you find something?
     Quest: A Gift for Annika
     Quest Complete!
     ~ add_friend("lino")
+    ~actionCount+=1
+    ->action_check
     ->END
 * {lino_gift=="shawl"}[Give Lino the shawl]
     #speaker: Lino
@@ -848,7 +936,8 @@ Did you find something?
     #speaker: Narrator
     Quest: A Gift for Annika
     Quest Complete!
-    ->END
+    ~actionCount+=1
+    ->action_check
 * {lino_gift=="chili"}[Give Lino the chili dog]
     #speaker: Lino
     Eh... what is that?
@@ -864,7 +953,8 @@ Did you find something?
     #speaker: Narrator
     Quest: A Gift for Annika
     Quest Complete!
-    ->END
+    ~actionCount+=1
+    ->action_check
 + Not yet. I'll let you know as soon as I do.
     ->END
     
@@ -947,7 +1037,12 @@ Not that one, either.
     My name is Lino. 
     #speaker: Lino
     ~met_lino=true
-    Can I help you with anything?
+    ->lino_checkin
++ Keep Walking.
+    ->END
+
+===lino_checkin===
+* {dayCount==1}[Can I help you with anything?]
     -> lino_quest_start
 + Keep Walking.
     ->END
@@ -980,7 +1075,7 @@ The young woman looks a bit frazzled and unfamiliar with the area.
     He's sweet, but I really need to do this on my own.
     ->annika_ask_qs
     
-+ Do you need help with anything?
+*{dayCount==2} Do you need help with anything?
     #speaker: Unknown
     Ugh, I'm just trying to get around this city!
     It's cold, the directions don't make sense, 
@@ -1016,17 +1111,29 @@ The young woman looks a bit frazzled and unfamiliar with the area.
 #speaker: Annika
 Hey, {player_name}.
 {annika_quest==false:
-    {lino_gift=="pen":
-        ->annika_chat_pen
-    -else:
-        {lino_gift=="shawl":
-            ->annika_chat_shawl
+    {annika_interviewed==false:
+        {lino_gift=="pen":
+            ->annika_chat_pen
         -else:
-            {lino_gift=="chili":
-            ->annika_chat_chili
+            {lino_gift=="shawl":
+                ->annika_chat_shawl
             -else:
-            ->END
+                {lino_gift=="chili":
+                ->annika_chat_chili
+                -else:
+                {dayCount==2:
+                    ->annika_quest_offer
+                -else:
+                    ->END
+                    }
+                }
             }
+        }
+    -else:
+        {dayCount==2:
+            ->annika_quest_offer
+        -else:
+            ->END
         }
     }
 -else:
@@ -1039,11 +1146,13 @@ I feel so much warmer and at home in the city now.
 Nothing like a warm shawl to make you feel at home.
 ~annika_interviewed=true
 ->END
+
 ===annika_chat_chili===
 #speaker: Annika
 Ugh, I feel sick.
 My dumb cousin got me a chili dog... I think it's gone bad...
 ->END
+
 ===annika_chat_pen===
 #speaker: Annika
 Thank you for helping Lino pick out a gift for me.
@@ -1105,11 +1214,11 @@ Would you believe they've already offered me a job?
         ->END
 
 ===annika_quest_progress===
-* {annika_step==0 and have_new_info_annika==false}[Can you remind me what you want me to find?]
+* {dayCount==2 and annika_step==0 and have_new_info_annika==false}[Can you remind me what you want me to find?]
     #speaker: Annika
     I need a bus plan from Stevie. He should be on this street somewhere.
     ->END
-* {annika_step==0 and have_new_info_annika}[Here, I got the bus plan from Stevie.]
+* {dayCount==2 and annika_step==0 and have_new_info_annika}[Here, I got the bus plan from Stevie.]
     #speaker: Narrator
     You give the bus plan to Annika.
     ~have_new_info_annika=false
@@ -1126,12 +1235,13 @@ Would you believe they've already offered me a job?
     #speaker Narrator
     Quest: Annika's New Job
     Next Objective: Ask Lino about his Neighborhood
-    ->END
-* {annika_step==1 and have_new_info_annika==false}[Can you remind me what you want me to find?]
+    ~actionCount+=1
+    ->action_check
+* {dayCount==2 and annika_step==1 and have_new_info_annika==false}[Can you remind me what you want me to find?]
     #speaker: Annika
     Please ask Lino what neighborhood he lives in.
     ->END
-* {annika_step==1 and have_new_info_annika}[I just talked to Lino; he lives in Orange Grove, but it may be listed as Reagent Village in the brochure.]
+* {dayCount==2 and annika_step==1 and have_new_info_annika}[I just talked to Lino; he lives in Orange Grove, but it may be listed as Reagent Village in the brochure.]
     #speaker: Annika
     Ah, I see. Excellent, yes, it's right here on the brochure.
     Thank you, this has all been really useful information.
@@ -1152,14 +1262,15 @@ Would you believe they've already offered me a job?
     #speaker Narrator
     Quest: Annika's New Job
     Next Objective: Find an advertisement for an upcoming event.
-    ->END
-* {annika_step==2 and have_new_info_annika==false}[Can you remind me what you want me to find?]
+    ~actionCount+=1
+    ->action_check
+* {dayCount==3 and annika_step==2 and have_new_info_annika==false}[Can you remind me what you want me to find?]
     #speaker: Annika
     I wish I knew of something fun happening downtown...
     Somewhere I could meet new friends and engage in the culture of the city.
     Do you think you could find something like that? Maybe a club or something?
     ->END
-* {annika_step==2 and have_new_info_annika}[Any chance you'd be interested in joining a local band?]
+* {dayCount==3 and annika_step==2 and have_new_info_annika}[Any chance you'd be interested in joining a local band?]
     #speaker: Narrator
     You hand Annika the poster for the Four Gophers' performance.
     #speaker: Annika
@@ -1180,7 +1291,8 @@ Would you believe they've already offered me a job?
     #speaker Narrator
     Quest: The Four Gophers
     Next Objective: Tell Korra the Good News
-    ->END
+    ~actionCount+=1
+    ->action_check
 * {annika_step==3}[Hi, Annika! Good to see you.]
     #speaker: Annika
     Likewise. I hope to see you at our concert on Friday!
@@ -1234,7 +1346,8 @@ Howdy there, friend!
     #speaker Narrator
     Quest: The Four Gophers
     Next Objective: Quest Complete!
-    ->END
+    ~actionCount+=1
+    ->action_check
 * {gophers_step==2}[Looiking forward to your concert this Friday!]
     You got it! It'll be a blast :-)
     ->END
@@ -1252,7 +1365,11 @@ Any chance you're around this Friday evening?
     Oh, right, I guess I should introduce myself.
     The name is Korra! :-D
     ~met_korra=true
-    ->korra_introduce
+    {dayCount==3:
+        ->korra_introduce
+    -else:
+        ->korra_pre_day3
+    }
 + Sure, sounds fun! What's going on?
     #speaker: Unknown
     Oh, wait, I guess I should introduce myself first.
@@ -1260,7 +1377,18 @@ Any chance you're around this Friday evening?
     ~adventurous+=smallChange
     ~friendly+=smallChange
     ~met_korra=true
-    ->korra_introduce
+    {dayCount==3:
+        ->korra_introduce
+    -else:
+        ->korra_pre_day3
+    }
+    
+===korra_pre_day3===
+#speaker: Korra
+I'm part of a local band.
+We've got a concert later this week, but we're still setting up.
+Hope to talk to you later :-)
+->END
 
 ==korra_introduce===
 #speaker: Korra
@@ -1307,7 +1435,7 @@ Anyways. I'm part of a 3-person alt-folk-punk-rock group. We're the Four Gophers
 ===august_chat===
 #speaker: August
 Hello, there!
-* {mural_quest==false and mural_step==0}[Is there anything I can help you with?]
+* {dayCount==3 and mural_quest==false and mural_step==0}[Is there anything I can help you with?]
     #speaker: August
     As a matter of fact, there is something I could use a hand with.
     ->august_quest_offer
@@ -1338,7 +1466,8 @@ Quest Complete!
 ~ add_friend("august")
 ~mural_quest=false
 ~mural_step=2
-->END
+~actionCount+=1
+->action_check
 
 ===august_quest_offer===
 #speaker: August
@@ -1366,7 +1495,7 @@ You have a fresh pair of eyes. Maybe you'd be willing to ask around for me?
 Hmm.
 Ah - no, that's not it.
 But perhaps...? No, not that, either.
-+ Hello there, do you need something?
+*{dayCount==3}[Hello there, do you need something?]
     #speaker: Unknown
     Hmm, what's that?
     Ah! You're new here, aren't you?
@@ -1791,3 +1920,5 @@ You think you know what's happening here.
     ===function add_friend(friend_name)===
     ~return
     
+===friend_wrapup===
+->END

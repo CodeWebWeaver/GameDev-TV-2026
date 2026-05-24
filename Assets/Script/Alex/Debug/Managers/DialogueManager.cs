@@ -2,6 +2,7 @@
 using Ink.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -29,8 +30,8 @@ public class DialogInputService : IDialogInputManager, IDisposable {
     private void Subscribe() {
         _uiActions.Submit.performed += HandleSubmit;
 
-        _uiActions.Click.performed += HandleSkip;
-        _uiActions.Continue.performed += HandleSkip;
+        _uiActions.Click.canceled += HandleSkip;
+        _uiActions.Continue.canceled += HandleSkip;
 
         _uiActions.Navigate.performed += HandleNavigation;
     }
@@ -38,8 +39,8 @@ public class DialogInputService : IDialogInputManager, IDisposable {
     private void Unsubscribe() {
         _uiActions.Submit.performed -= HandleSubmit;
 
-        _uiActions.Click.performed -= HandleSkip;
-        _uiActions.Continue.performed -= HandleSkip;
+        _uiActions.Click.canceled -= HandleSkip;
+        _uiActions.Continue.canceled -= HandleSkip;
 
         _uiActions.Navigate.performed -= HandleNavigation;
     }
@@ -161,18 +162,13 @@ public class DialogueManager : MonoBehaviour {
 
         _story.BindExternalFunction(addFriendFunc, (string name) => {
             if (_npc == null || _player == null) return;
-            if (!EqualStringsInvriant(name, _npc.Name)) return;
+            if (!EqualStringsInvariant(name, _npc.Name)) return;
             
             _npc.FriendSystem.AddFriend(_player);
             _player.FriendSystem.AddFriend(_npc);
         });
 
         _story.variablesState.variableChangedEvent += OnInkVariableChanged;
-    }
-
-    private bool EqualStringsInvriant(string value1, string value2) {
-        if (value1 == null || value2 == null) return false;
-        return value1.ToLowerInvariant().Equals(value2.ToLowerInvariant());
     }
 
     // ── Ink variable listener ─────────────────────────────────────────────
@@ -218,7 +214,6 @@ public class DialogueManager : MonoBehaviour {
     }
 
     private void HandleSkip() {
-        // If the typewriter is still running, skip it — do NOT advance yet.
         if (_dialogWindow.TrySkipTypewriter()) return;
 
         // Text is fully visible; advance on next Skip.
@@ -250,6 +245,7 @@ public class DialogueManager : MonoBehaviour {
 
     // ── Story progression ─────────────────────────────────────────────────
     private void ContinueStory() {
+        Debug.Log("[DialogueManager] Continuing story...");
         // Advance past empty, tag-only lines that have no visible text.
         while (_story.canContinue) {
             string rawLine = _story.Continue();
@@ -263,6 +259,12 @@ public class DialogueManager : MonoBehaviour {
             ProcessEventTags(_story.currentTags);
 
             string speakerName = GetSpeakerName(_story.currentTags);
+            if (speakerName.Equals("Player")) {
+                Human human = _speakers.Values.Where(speaker => speaker is Player).First();
+                if (human != null) {
+                    speakerName = human.Name;
+                } 
+            }
             Sprite speakerPortrait = GetSpeakerPortrait(speakerName);
 
             ShowLine(rawLine.Trim(), speakerName, speakerPortrait);
@@ -317,8 +319,8 @@ public class DialogueManager : MonoBehaviour {
 
     private Sprite GetSpeakerPortrait(string speakerName) {
         if (string.IsNullOrWhiteSpace(speakerName)) return null;
-
-        if (_speakers.TryGetValue(speakerName, out Human human))
+        string normalized = NormalizeName(speakerName);
+        if (_speakers.TryGetValue(normalized, out Human human))
             return human.Portrait;
 
         return null;
@@ -369,13 +371,32 @@ public class DialogueManager : MonoBehaviour {
 
     // ── Helpers ───────────────────────────────────────────────────────────
     private void CacheSpeaker(Human human) {
-        if (human != null)
-            _speakers[human.Name] = human;
+        if (human == null) return;
+        string normalizedName = NormalizeName(human.Name);
+        _speakers[normalizedName] = human;
     }
 
     private void ChangeHappiness(string name, int delta) {
         if (_player.Name.Equals(name)) _player.ChangeHappiness(delta);
         else if (_npc.Name.Equals(name)) _npc.ChangeHappiness(delta);
+    }
+
+    private static string NormalizeName(string name) {
+        if (string.IsNullOrWhiteSpace(name))
+            return string.Empty;
+
+        return string.Join(
+            " ",
+            name.Trim()
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+        );
+    }
+
+    private static bool EqualStringsInvariant(string value1, string value2) {
+        return string.Equals(
+            NormalizeName(value1),
+            NormalizeName(value2),
+            StringComparison.OrdinalIgnoreCase);
     }
 }
 
@@ -390,3 +411,4 @@ public static class DialogueEvents {
     public static void FireSfxTag(string tag) => OnSfxTag?.Invoke(tag);
     public static void FireSpeakerChanged(string speaker) => OnSpeakerChanged?.Invoke(speaker);
 }
+
