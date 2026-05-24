@@ -49,5 +49,5 @@ MonoBehaviour:
       sceneAsset: {fileID: 102900000, guid: 4927355113d0c6345a082f5bf0f2671b, type: 3}
       scenePath: Assets/Scenes/Release/MainMenu.unity
     gameScene:
-      sceneAsset: {fileID: 102900000, guid: e240eba5169e5954bb312fc7033404c3, type: 3}
-      scenePath: Assets/Scenes/Release/City on Timeline/Game_Scene.unity
+      sceneAsset: {fileID: 102900000, guid: 3da9f12905e65134c9e876b3f6a86901, type: 3}
+      scenePath: Assets/Scenes/Release/City on Timeline/Game.unity
