@@ -107,7 +107,6 @@ EXTERNAL add_friend(name)
 
 -> talk_to_someone
 
-
 === talk_to_someone ===
 + Charlie
     ->talk_to_charlie
@@ -131,6 +130,45 @@ EXTERNAL add_friend(name)
 //dog quests////////////////////////////
 /////////////////////////////////////////
 ===epilogue===
+My first week in town has been such a fun one!
+//Charlie and emily, or charlie and beverly
+{dog_step==4:
+    I've gotten to dogsit for Beverly a couple of times so far. Charlie and I even walked him down to the park together. It turns out that Coco really likes to explore the city - and Charlie's mom is okay with him exploring as long as he's under a watchful eye!
+}
+{mural_loc=="empty wall":
+    August revamped the empty wall near Beverly's house, and it couldn't have turned out any better! It's practical, of course - a stylized map of town so that no more newcomers get lost. But the colors and details really demonstrate everyone's love for the community. If you look hard, you can find a miniature Coco, Charlie and Jojo and the other kids running around the town, the local stage, it seems everyone is represented here. There's even a little drawing of me running errands around town.
+}
+{emily_charlie_step==3:
+    Emily and Charlie have been having a great time exploring town together. I guess Emily grew up here in the '90s; she's showing him all her old hangout spots. The walikie-talkies really seem to hav e brought her back to the good old days.
+}
+{mural_loc=="school":
+    After Charlie's flag football game, Emily and I took some photos in front of the mural that August painted, featuring handprints of everyone from around town. I even got to put my own handprint amongst the others - I guess I'm officially part of the town now!
+}
+{jojo==3:
+    Jojo is still playing pranks on me, but I've gotten him with a few myself. I forgot how fun some of those practical jokes were - it was a great excuse to break out my old whoopie cushion and can of snakes from my childhood toys! 
+}
+{stevie>=5:
+    Stevie has started a new venture... lawn gnomes. Of course, I had to get one for my front door, but he's somehow talked me into getting several more. I've got a collection going now. It's a bit strange, but honestly, they're pretty cute!
+}
+{lino_step==3:
+    {lino_gift=="pen":
+        I guess Lino's cousin really liked the pen - she's been carrying it nonstop! And, of course, Lino is still overjoyed that his cousin is in town.
+    -else:
+        {lino_gift=="shawl":
+            I guess Lino's cousin really liked the shawl - she seems to be wearing it everywhere! And, of course, Lino is still overjoyed that his cousin is in town.
+        }
+    }
+}
+{annika_step==4:
+    Annika decided to take the job! She's still in training, but she seems to be enjoying the work she's doing. And she's keeping busy outside of work, too - she's already found a couple of clubs and seems to have really settled in!
+}
+{gophers_step==3:
+    I went to see the Four Gophers perform Friday night. I didn't expect it to be my kind of music, but I really had a great time! Korra and Annika have a lot of musical talent, and it was so nice to see them let loose on stage.
+    {mural_loc=="park":
+      August's mural gave the stage a nice touch, too - he painted all four musicians (as gophers, of course!) in all their glory. He's even making them a matching album cover for their first release!  
+    }
+}
+I'm still settling in, but I'm grateful to have made so many friends and I know it won't be long before I feel at home here.
 ->END
 ===action_check===
 {dayCount==1 or dayCount==2:
