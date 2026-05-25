@@ -439,7 +439,7 @@ Oh, dear. Coco, Coco, please come back!
 Ah, {player_name}, it's lovely to see you, dear!
 #speaker: Beverly
 Do you need help with anything?
-* {mural_step==0}[Actually, yes! Do you know anywhere in town where August could paint their next mural?]
+* {mural_step==0 and mural_quest=true}[Actually, yes! Do you know anywhere in town where August could paint their next mural?]
     #speaker: Beverly
     August is looking for somewhere to paint their next mural?
     #speaker: Beverly
@@ -685,7 +685,7 @@ She wouldn’t even listen to my reason for staying out!
 ===charlie_post_dog===
 #speaker: Charlie
 Hey! What are you up to
-* {mural_step==0}[I'm trying to find somewhere for August to paint their next mural. Any ideas?]
+* {mural_step==0 and mural_quest==true}[I'm trying to find somewhere for August to paint their next mural. Any ideas?]
     #speaker: Charlie
     Oh, that's an easy one!
     #speaker: Charlie
@@ -1504,7 +1504,7 @@ Would you believe they've already offered me a job?
 ===korra_chat===
 #speaker: Korra
 Howdy there, friend!
-* {mural_step==0}[Any chance you're interested in a mural?]
+* {mural_step==0 and mural_quest==true}[Any chance you're interested in a mural?]
     #speaker: Korra
     A mural? I can't say I'm a fan of mushrooms.
     #speaker: Korra
