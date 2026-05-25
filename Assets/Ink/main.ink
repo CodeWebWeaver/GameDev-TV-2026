@@ -734,6 +734,7 @@ Hey! I'm not grounded anymore!
     ~mural_loc="school"
     ->END
 * {mural_step != 1} [Excellent!]
+    ~ add_friend("charlie")
     #speaker: Charlie
     Thanks for talking to my mom.
     #speaker: Charlie
