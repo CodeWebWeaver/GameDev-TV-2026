@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.02.00">
-	<object class="AudioFile" id="{4035bcb5-9bb1-4b30-8b2a-9f389297dfb4}">
+	<object class="AudioFile" id="{0985877a-69a4-401f-8566-def85ce39fae}">
 		<property name="assetPath">
-			<value>Music/Game/test_connectionjam.mp3</value>
+			<value>Music/Menu/Menu_norm.mp3</value>
 		</property>
 		<property name="isStreaming">
 			<value>true</value>
@@ -14,7 +14,7 @@
 			<value>2</value>
 		</property>
 		<property name="length">
-			<value>162.50775510204082</value>
+			<value>87.353469387755098</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{ee8b1d53-c29f-4ca0-a29d-54eaac272a33}</destination>
