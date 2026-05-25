@@ -1213,6 +1213,15 @@ The young woman looks a bit frazzled and unfamiliar with the area.
     #speaker: Annika
     He's sweet, but I really need to do this on my own.
     ->annika_ask_qs
++ Hello, it's good to meet you.
+    #speaker: Unknown
+    Hmm, what?
+    #speaker: Unknown
+    Oh. I'm Annika.
+    #speaker: Annika
+    I'm a bit busy now but maybe we can talk later.
+    ~met_annika=true
+    ->END
     
 *{dayCount==2} Do you need help with anything?
     #speaker: Annikia
@@ -1225,6 +1234,7 @@ The young woman looks a bit frazzled and unfamiliar with the area.
     The woman sighs.
     #speaker: Annikia
     Sorry, I know you were just trying to be helpful.
+    ~met_annika=true
     ->annika_quest_offer
 + She seems busy, best to not bother her...
     ->END
