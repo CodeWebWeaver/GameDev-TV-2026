@@ -1186,7 +1186,7 @@ Not that one, either.
 
 ===talk_to_annika===
 {met_annika:
-    {lino_step==0:
+    {lino_step==0 and lino_quest==true:
         ->annika_ask_qs
     -else:
         ->annika_chat_base
@@ -1200,7 +1200,7 @@ Not that one, either.
 Ugh. This stupid city...
 #speaker: Narrator
 The young woman looks a bit frazzled and unfamiliar with the area.
-* {lino_step==0}[Excuse me, are you Annika?]
+* {lino_step==0 and lino_quest==true}[Excuse me, are you Annika?]
     #speaker: Unknown
     What?
     #speaker: Unknown
@@ -1264,6 +1264,9 @@ The young woman looks a bit frazzled and unfamiliar with the area.
 ===annika_chat_base===
 #speaker: Annika
 Hey, {player_name}.
+{lino_quest==true and lino_step==0:
+    ->annika_ask_qs
+}
 {annika_quest==false:
     {annika_interviewed==false and lino_step>=4:
         {lino_gift=="pen":
