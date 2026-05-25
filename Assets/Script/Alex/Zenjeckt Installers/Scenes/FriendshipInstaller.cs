@@ -6,5 +6,6 @@ public class UntitledInstaller : MonoInstaller
     public override void InstallBindings()
     {
         Container.BindInterfacesAndSelfTo<FriendService>().FromComponentInHierarchy().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<DayProgressTracker>().AsSingle().NonLazy();
     }
 }

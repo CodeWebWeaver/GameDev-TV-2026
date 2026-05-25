@@ -98,6 +98,12 @@
 		<property name="volume">
 			<value>-12</value>
 		</property>
+		<property name="looping">
+			<value>true</value>
+		</property>
+		<property name="playlistMode">
+			<value>1</value>
+		</property>
 		<relationship name="sounds">
 			<destination>{1d1d4049-52d9-42ad-ad08-882dc0afd3df}</destination>
 			<destination>{833aec2d-0712-4af2-8f51-82800d7cacd6}</destination>

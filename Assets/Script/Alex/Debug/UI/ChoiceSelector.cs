@@ -42,7 +42,7 @@ public class ChoiceSelector : MonoBehaviour {
         );
     }
 
-    private void OnDestroy() => _pool.Dispose();
+    private void OnDestroy() => _pool?.Dispose();
 
     // ── Public API ────────────────────────────────────────────────────────────
 

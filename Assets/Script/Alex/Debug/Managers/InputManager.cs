@@ -12,18 +12,21 @@ public InputManager() {
 
 
     public void SwitchToPlayerMap() {
+        Debug.Log("Switching to Player input map...");
         _inputActions.UI.Disable();
         _inputActions.Player.Enable();
         _inputActions.Dialog.Disable();
     }
 
     public void SwitchToUIMap() {
+        Debug.Log("Switching to UI input map...");
         _inputActions.Player.Disable();
         _inputActions.UI.Enable();
         _inputActions.Dialog.Disable();
     }
 
     public void SwitchToDialogMap() {
+        Debug.Log("Switching to Dialog input map...");
         _inputActions.Player.Disable();
         _inputActions.UI.Disable();
         _inputActions.Dialog.Enable();

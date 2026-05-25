@@ -18,13 +18,16 @@ public interface IUiService {
     T InstantiateUIElement<T>(T uiPrefab, Transform parent = null) where T : Component;
     void ShowPause();
     void HidePause();
+    void ShowEndGameScreen();
+    void HideEndGameScreen();
 }
 
 public class UIManager : MonoBehaviour, IUiService {
     [Header("UI Panels")]
     [SerializeField] private UIPanel _pausePanel;
     [SerializeField] private UIPanel _settingsPanel;
-   
+    [SerializeField] private EndGamePanel _endGamePanel;
+
     [Header("Settings")]
     [SerializeField] private bool _autoCreateEventSystem = true;
     [SerializeField] private bool _logWarnings = true;
@@ -266,5 +269,13 @@ public class UIManager : MonoBehaviour, IUiService {
 
     public void HidePause() {
         _pausePanel.Hide();
+    }
+
+    public void ShowEndGameScreen() {
+        _endGamePanel.Show();
+    }
+
+    public void HideEndGameScreen() {
+        _endGamePanel.Hide();
     }
 }

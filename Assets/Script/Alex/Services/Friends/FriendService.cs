@@ -14,11 +14,11 @@ public class FriendService : MonoBehaviour
     }
 
     private void OnEnable() {
-        signalBus.Subscribe<FriendAddedSignal>(HandleFriendAdded);
+        signalBus?.Subscribe<FriendAddedSignal>(HandleFriendAdded);
     }
 
     private void OnDisable() {
-        signalBus.Unsubscribe<FriendAddedSignal>(HandleFriendAdded);
+        signalBus?.Unsubscribe<FriendAddedSignal>(HandleFriendAdded);
     }
 
     public void ShowAllFriends() {

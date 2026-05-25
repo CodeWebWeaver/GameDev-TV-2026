@@ -120,7 +120,7 @@ MonoBehaviour:
   m_text: "Oh no, your neighbor\u2019s dog is missing? I can help look for it."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 222d5f773d4eb544b89368c8b6b4d28a, type: 2}
-  m_sharedMaterial: {fileID: -6091729533155850919, guid: 222d5f773d4eb544b89368c8b6b4d28a, type: 2}
+  m_sharedMaterial: {fileID: 7941615605796078700, guid: 222d5f773d4eb544b89368c8b6b4d28a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

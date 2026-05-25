@@ -16,7 +16,7 @@ public class UIPanel : MonoBehaviour {
     private Tween _currentTween;
 
     [SerializeField] bool startVisible = false;
-    [SerializeField] private Button closeButton;
+    [SerializeField] protected Button closeButton;
 
     public event Action OnCloseButtonClicked;
 
@@ -38,7 +38,7 @@ public class UIPanel : MonoBehaviour {
         _currentTween?.Kill();
 
         IsOpen = true;
-        gameObject.SetActive(true);
+        gameObject?.SetActive(true);
 
         canvasGroup.blocksRaycasts = true;
         canvasGroup.interactable = true;
