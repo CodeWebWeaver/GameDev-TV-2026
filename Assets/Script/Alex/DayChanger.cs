@@ -159,3 +159,62 @@ public class DayCycleChangedSignal {
         this.DayPhase = dayPhase;
     }
 }
+
+
+/// <summary>
+/// Відстежує кількість завершених ігрових днів.
+/// Коли гравець переживає <see cref="DaysUntilSummary"/> днів,
+/// стріляє <see cref="EndOfGameSignal"/> і скидає лічильник.
+/// </summary>
+public class DayProgressTracker : IInitializable, IDisposable {
+    private const int DaysUntilSummary = 3;
+
+    private readonly SignalBus _signalBus;
+
+    private int _nightCount;
+    private bool _waitingForDawn;
+
+    public int CurrentDay => _nightCount;
+
+    public DayProgressTracker(SignalBus signalBus) {
+        _signalBus = signalBus;
+    }
+
+    public void Initialize() {
+        _signalBus.Subscribe<DayCycleChangedSignal>(OnPhaseChanged);
+    }
+
+    public void Dispose() {
+        _signalBus.Unsubscribe<DayCycleChangedSignal>(OnPhaseChanged);
+    }
+
+    private void OnPhaseChanged(DayCycleChangedSignal signal) {
+        switch (signal.DayPhase) {
+            case DayPhase.Night when !_waitingForDawn:
+                _waitingForDawn = true;
+                break;
+
+            case DayPhase.Dawn when _waitingForDawn:
+                _waitingForDawn = false;
+                _nightCount++;
+
+                if (_nightCount >= DaysUntilSummary) {
+                    FireEndOfDay();
+                    _nightCount = 0;
+                }
+                break;
+        }
+    }
+
+    private void FireEndOfDay() {
+        _signalBus.Fire(new EndOfGameSignal());
+    }
+}
+
+/// <summary>
+/// Сигнал, що сповіщає про завершення ігрового циклу.
+/// Містить незмінний знімок статистики гравця на момент спрацювання.
+/// </summary>
+public class EndOfGameSignal {
+
+}

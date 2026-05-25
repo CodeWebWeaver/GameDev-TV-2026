@@ -36,13 +36,13 @@ public class PersonalitiesViewManager : MonoBehaviour {
     }
 
     private void OnEnable() {
-        _signalBus.Subscribe<PersonalityParamAddedSignal>(HandleParamAdded);
-        _signalBus.Subscribe<PersonalityChangedSignal>(HandleParamChanged);
+        _signalBus?.Subscribe<PersonalityParamAddedSignal>(HandleParamAdded);
+        _signalBus?.Subscribe<PersonalityChangedSignal>(HandleParamChanged);
     }
 
     private void OnDisable() {
-        _signalBus.Unsubscribe<PersonalityParamAddedSignal>(HandleParamAdded);
-        _signalBus.Unsubscribe<PersonalityChangedSignal>(HandleParamChanged);
+        _signalBus?.Unsubscribe<PersonalityParamAddedSignal>(HandleParamAdded);
+        _signalBus?.Unsubscribe<PersonalityChangedSignal>(HandleParamChanged);
     }
 
     private void InitializePool() {
@@ -117,7 +117,7 @@ public class PlayerPersonality {
     }
 
     public event System.Action<PersonalityParam> OnParamChanged;
-    public event System.Action<PersonalityParam> OnParamAdded;
+    //public event System.Action<PersonalityParam> OnParamAdded;
     public void Initialize(List<PersonalityParamSO> allPossibleParams) {
         foreach (var paramData in allPossibleParams) {
             string name = paramData.Name.ToLowerInvariant();
@@ -126,7 +126,7 @@ public class PlayerPersonality {
             var param = new PersonalityParam(paramData, paramData.DefaultValue);
             _params[name] = param;
             param.OnValueChanged += HandleParamValueChanged;
-            _signalBus.Fire(new PersonalityParamAddedSignal(param));
+            _signalBus?.Fire(new PersonalityParamAddedSignal(param));
         }
     }
 
@@ -137,7 +137,7 @@ public class PlayerPersonality {
                 param = new PersonalityParam(paramData, 0);
                 _params[loweredName] = param;
                 param.OnValueChanged += HandleParamValueChanged;
-                _signalBus.Fire(new PersonalityParamAddedSignal(param));
+                _signalBus?.Fire(new PersonalityParamAddedSignal(param));
             } else {
                 Debug.LogWarning($"Unknown personality param: {loweredName}");
                 return;

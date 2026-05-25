@@ -37,13 +37,22 @@ public class Player : Human {
     [Tooltip("ћ≥н≥мальна в≥дстань камери в≥д гравц€")]
     [SerializeField] private float minDistanceFromPlayer = 0.5f;
 
-    protected void Awake() {
+    [Inject] PlayerData playerData;
+
+    public override FriendSystem FriendSystem => playerData.FriendSystem;
+
+    //[SerializeField] PersonDataSO testPerson;
+
+    protected override void Awake() {
+        base.Awake();
         if (playerMainCamera == null)
             Debug.LogWarning("Player main camera is not assigned in the inspector.");
         if (dialogCamera == null)
             Debug.LogWarning("Dialog camera is not assigned in the inspector.");
 
+        Debug.Log("Player Awake: And data is : " + playerData);
         Personality = new PlayerPersonality(signalBus);
+        //playerData.FriendSystem.AddFriend(new HumanData(testPerson.Name, testPerson.Portrait, signalBus));
     }
 
     private void Start() {
@@ -52,15 +61,17 @@ public class Player : Human {
     }
 
     private void OnEnable() {
+        if (playerInput != null)
         playerInput.OnInteractEnded += OnInteract;
-        signalBus.Subscribe<DialogStartedSignal>(HandleDialogStart);
-        signalBus.Subscribe<DialogEndSignal>(HandleDialogEnd);
+        signalBus?.Subscribe<DialogStartedSignal>(HandleDialogStart);
+        signalBus?.Subscribe<DialogEndSignal>(HandleDialogEnd);
     }
 
     private void OnDisable() {
+        if (playerInput != null)
         playerInput.OnInteractEnded -= OnInteract;
-        signalBus.Unsubscribe<DialogStartedSignal>(HandleDialogStart);
-        signalBus.Unsubscribe<DialogEndSignal>(HandleDialogEnd);
+        signalBus?.Unsubscribe<DialogStartedSignal>(HandleDialogStart);
+        signalBus?.Unsubscribe<DialogEndSignal>(HandleDialogEnd);
     }
 
     private void HandleDialogStart(DialogStartedSignal signal) {
@@ -150,5 +161,24 @@ public class DialogEndSignal {
     public DialogEndSignal(Player player, DialogueNPC npc) {
         Player = player;
         NPC = npc;
+    }
+}
+
+public class PersonalityChangedSignal {
+    public string ParamName { get; }
+    public int NewValue { get; }
+    public int OldValue { get; }
+    public PersonalityChangedSignal(string paramName, int newValue, int oldValue) {
+        ParamName = paramName;
+        NewValue = newValue;
+        OldValue = oldValue;
+    }
+
+}
+
+public class PersonalityParamAddedSignal {
+    public PersonalityParam Param { get; }
+    public PersonalityParamAddedSignal(PersonalityParam param) {
+        Param = param;
     }
 }

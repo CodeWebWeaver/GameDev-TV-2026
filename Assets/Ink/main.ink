@@ -439,7 +439,7 @@ Oh, dear. Coco, Coco, please come back!
 Ah, {player_name}, it's lovely to see you, dear!
 #speaker: Beverly
 Do you need help with anything?
-* {mural_step==0 and mural_quest=true}[Actually, yes! Do you know anywhere in town where August could paint their next mural?]
+* {mural_step==0 and mural_quest}[Actually, yes! Do you know anywhere in town where August could paint their next mural?]
     #speaker: Beverly
     August is looking for somewhere to paint their next mural?
     #speaker: Beverly

@@ -164,8 +164,8 @@ public class DialogueManager : MonoBehaviour {
             if (_npc == null || _player == null) return;
             if (!EqualStringsInvariant(name, _npc.Name)) return;
             
-            _npc.FriendSystem.AddFriend(_player);
-            _player.FriendSystem.AddFriend(_npc);
+            _npc.FriendSystem.AddFriend(_player.HumanData);
+            _player.FriendSystem.AddFriend(_npc.HumanData);
         });
 
         _story.variablesState.variableChangedEvent += OnInkVariableChanged;
@@ -214,9 +214,8 @@ public class DialogueManager : MonoBehaviour {
     }
 
     private void HandleSkip() {
+        if (!IsDialoguePlaying) return; // ← додати
         if (_dialogWindow.TrySkipTypewriter()) return;
-
-        // Text is fully visible; advance on next Skip.
         if (_waitingForInput) {
             _waitingForInput = false;
             ContinueStory();
@@ -362,18 +361,32 @@ public class DialogueManager : MonoBehaviour {
         IsDialoguePlaying = false;
         _waitingForInput = false;
 
+        CleanupDialogueUI();
+        OnDialogueEnd?.Invoke();
+        signalBus.Fire(new DialogEndSignal(_player, _npc));
+
+        gameManager.ResetActiveState(); // тільки при природньому завершенні
+    }
+
+    public void ForceClose() {
+        if (!IsDialoguePlaying) return;
+        CleanupDialogueUI(); // тільки UI, без ResetActiveState
+    }
+    private void CleanupDialogueUI() {
+        IsDialoguePlaying = false;
+        _waitingForInput = false;
         _dialogWindow.HideDialoguePanel();
         _choiceSelector.Hide();
         OnDialogueEnd?.Invoke();
         signalBus.Fire(new DialogEndSignal(_player, _npc));
-        gameManager.ResetActiveState();
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────
     private void CacheSpeaker(Human human) {
         if (human == null) return;
-        string normalizedName = NormalizeName(human.Name);
-        _speakers[normalizedName] = human;
+        _speakers[NormalizeName(human.Name)] = human;
+        if (human is Player)
+            _speakers["player"] = human;
     }
 
     private void ChangeHappiness(string name, int delta) {
@@ -398,6 +411,9 @@ public class DialogueManager : MonoBehaviour {
             NormalizeName(value2),
             StringComparison.OrdinalIgnoreCase);
     }
+
+   
+
 }
 
 

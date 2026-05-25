@@ -66,7 +66,7 @@ public class KinematicPlayerMovement : MonoBehaviour, ICharacterController {
         UpdateTimers();
        
         // Обробка вводу стрибка
-        if (playerInput.IsJumping) {
+        if (playerInput != null && playerInput.IsJumping) {
             jumpBufferTimer = jumpBufferTime;
         }
     }

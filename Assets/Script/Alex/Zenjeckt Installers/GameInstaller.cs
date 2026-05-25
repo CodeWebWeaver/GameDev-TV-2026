@@ -31,14 +31,17 @@ public class GameInstaller : MonoInstaller {
         Container.BindInterfacesAndSelfTo<DialogInputService>().AsSingle().NonLazy();
 
         SignalBusInstaller.Install(Container);
-        Container.DeclareSignal<FriendAddedSignal>();
+        Container.DeclareSignal<FriendAddedSignal>().OptionalSubscriber();
         Container.DeclareSignal<PersonalityChangedSignal>();
         Container.DeclareSignal<PersonalityParamAddedSignal>();
         Container.DeclareSignal<DialogStartedSignal>();
-        Container.DeclareSignal<DialogEndSignal>();
+        Container.DeclareSignal<DialogEndSignal>().OptionalSubscriber();
         Container.DeclareSignal<ButtonClickedSignal>();
         Container.DeclareSignal<ButtonSelectedSignal>();
         Container.DeclareSignal<DayCycleChangedSignal>();
+        Container.DeclareSignal<EndOfGameSignal>();
+
+        Container.Bind<PlayerData>().AsSingle().NonLazy();
     }
 
     private void StateMachineInstall() {
@@ -56,34 +59,5 @@ public class GameInstaller : MonoInstaller {
         Container.Bind<GameLoopState>().AsSingle();
         Container.Bind<PauseState>().AsSingle();
         Container.Bind<ExitState>().AsSingle();
-    }
-}
-
-public class FriendAddedSignal {
-    public Human FriendAddedBy; 
-    public Human FriendAddedOn;
-
-    public FriendAddedSignal(Human friendAddedBy, Human friendAddedOn) {
-        FriendAddedBy = friendAddedBy;
-        FriendAddedOn = friendAddedOn;
-    }
-}
-
-public class PersonalityChangedSignal {
-    public string ParamName { get; }
-    public int NewValue { get; }
-    public int OldValue { get; }
-    public PersonalityChangedSignal(string paramName, int newValue, int oldValue) {
-        ParamName = paramName;
-        NewValue = newValue;
-        OldValue = oldValue;
-    }
-
-}
-
-public class PersonalityParamAddedSignal {
-    public PersonalityParam Param { get; }
-    public PersonalityParamAddedSignal(PersonalityParam param) {
-        Param = param;
     }
 }

@@ -13,7 +13,8 @@ public class DialogueNPC : Human {
     private DialogueTrigger _dTrigger;
     [Inject] DialogueManager dialogueManager;
 
-    protected void Awake() {
+    protected override void Awake() {
+        base.Awake();
         _dTrigger = GetComponentInChildren<DialogueTrigger>();
         bodyView?.ToggleVisualCue(false);
     }
@@ -21,14 +22,14 @@ public class DialogueNPC : Human {
     private void OnEnable() {
         if (_dTrigger) _dTrigger.OnDialoguePossible += HandlePossibleDialog;
 
-        signalBus.Subscribe<DialogStartedSignal>(HandleDialogueBegin);
+        signalBus?.Subscribe<DialogStartedSignal>(HandleDialogueBegin);
     }
 
     private void OnDisable() {
         if (_dTrigger) _dTrigger.OnDialoguePossible -= HandlePossibleDialog;
 
-        signalBus.TryUnsubscribe<DialogStartedSignal>(HandleDialogueBegin);
-        signalBus.TryUnsubscribe<DialogEndSignal>(HandleDialogueEnd);
+        signalBus?.TryUnsubscribe<DialogStartedSignal>(HandleDialogueBegin);
+        signalBus?.TryUnsubscribe<DialogEndSignal>(HandleDialogueEnd);
     }
 
     private void HandlePossibleDialog(bool isPossible, Player player) {

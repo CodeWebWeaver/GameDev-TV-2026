@@ -12,11 +12,11 @@ public class NightLamp : MonoBehaviour
     }
 
     private void OnEnable() {
-        signalBus.Subscribe<DayCycleChangedSignal>(HandleCycleChanged);
+        signalBus?.Subscribe<DayCycleChangedSignal>(HandleCycleChanged);
     }
 
     private void OnDisable() {
-        signalBus.Unsubscribe<DayCycleChangedSignal>(HandleCycleChanged);
+        signalBus?.Unsubscribe<DayCycleChangedSignal>(HandleCycleChanged);
     }
 
     private void HandleCycleChanged(DayCycleChangedSignal signal) {

@@ -5,7 +5,7 @@ using UnityEngine;
 using Zenject;
 
 public class PlayerAudioSytem : MonoBehaviour {
-    [Inject] FmodAudioService audio;
+    [Inject] FmodAudioService audioService;
     [Inject] PlayerInputService input;
     [SerializeField] KinematicPlayerMovement controller;
     [SerializeField] KinematicCharacterMotor motor;
@@ -35,8 +35,8 @@ public class PlayerAudioSytem : MonoBehaviour {
         _walking = shouldWalk;
 
         if (_walking)
-            audio.PlayLooped("walking", walkEvent);
+            audioService.PlayLooped("walking", walkEvent);
         else
-            audio.StopLooped("walking");
+            audioService.StopLooped("walking");
     }
 }

@@ -102,5 +102,9 @@ public class FriendUI : MonoBehaviour {
         SetPortrait(portrait);
         PopUp();
     }
+
+    internal void SetFriendName(object name) {
+        throw new NotImplementedException();
+    }
 #endif
 }
